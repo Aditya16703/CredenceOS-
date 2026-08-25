@@ -59,22 +59,23 @@ function App() {
   return (
     <div className="app-bg">
       <header className="app-header">
-        <div className="user-info">
-          <img 
-            src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" 
-            alt="User" 
-            className="user-avatar"
-          />
-          <span className="user-name">
-            Hi, {user.name} <span className="user-role">({user.role})</span>
+        <div className="brand-area">
+          <span className="brand-logo-text">
+            🏛️ CredenceOS
           </span>
+          <span className="brand-badge">NBFC Core</span>
         </div>
-        <span className="dashboard-title">
-          {user.role} Dashboard
-        </span>
-        <button className="btn logout-btn" onClick={handleLogout}>
-          <i className="bi bi-box-arrow-right" style={{ marginRight: 6 }}></i>Logout
-        </button>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+          <div className="user-info">
+            <span className="user-name">
+              {user.name} <span className="user-role">{user.role}</span>
+            </span>
+          </div>
+          <button className="logout-btn" onClick={handleLogout}>
+            Sign Out
+          </button>
+        </div>
       </header>
       <Dashboard user={user} />
     </div>
