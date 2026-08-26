@@ -206,7 +206,6 @@ function Dashboard({ user }) {
               onClick={() => setShowNotifications(true)}
               style={{
                 background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                border: 'none',
                 borderRadius: '50%',
                 width: '45px',
                 height: '45px',
