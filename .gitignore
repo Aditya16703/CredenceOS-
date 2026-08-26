@@ -3,6 +3,9 @@
 *.env
 backend/.env
 frontend/.env
+*.sqlite
+backend/credence_dev.sqlite
+
 
 # Node modules and lock files
 node_modules/
