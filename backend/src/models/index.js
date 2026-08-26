@@ -20,6 +20,12 @@ if (process.env.DATABASE_URL) {
       idle: 10000
     }
   });
+} else if (process.env.DB_DIALECT === 'sqlite') {
+  sequelize = new Sequelize({
+    dialect: 'sqlite',
+    storage: './credence_dev.sqlite',
+    logging: false
+  });
 } else {
   sequelize = new Sequelize(
     process.env.DB_NAME || 'loan_recovery',

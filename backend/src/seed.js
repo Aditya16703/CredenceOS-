@@ -16,8 +16,8 @@ const {
   RepaymentSchedule, 
   Payment, 
   AuditLog 
-} = require('./src/models');
-const { generateAmortizationSchedule } = require('./src/services/amortizationService');
+} = require('./models');
+const { generateAmortizationSchedule } = require('./services/amortizationService');
 
 async function seedDatabase() {
   console.log('🔄 Connecting to database and synchronizing schema...');

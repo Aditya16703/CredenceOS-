@@ -297,3 +297,47 @@ exports.assignAgent = asyncHandler(async (req, res) => {
     data: { loan }
   });
 });
+
+exports.getLoansByAgent = asyncHandler(async (req, res) => {
+  const agentId = req.params.agentId;
+  const loans = await Loan.findAll({
+    where: { agentId },
+    include: [{ model: Customer, attributes: ['id', 'name', 'email', 'phone', 'address'] }, { model: RepaymentSchedule }],
+    order: [['createdAt', 'DESC']]
+  });
+
+  res.json({
+    success: true,
+    count: loans.length,
+    data: { loans }
+  });
+});
+
+exports.updateRecoveryStatus = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { recoveryStatus } = req.body;
+
+  const loan = await Loan.findByPk(id);
+  if (!loan) throw new NotFoundError('Loan record not found');
+
+  await loan.update({ recoveryStatus });
+
+  res.json({
+    success: true,
+    message: 'Recovery status updated successfully',
+    data: { loan }
+  });
+});
+
+exports.deleteLoan = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const loan = await Loan.findByPk(id);
+  if (!loan) throw new NotFoundError('Loan record not found');
+
+  await loan.destroy();
+  res.json({
+    success: true,
+    message: 'Loan deleted successfully'
+  });
+});
+
