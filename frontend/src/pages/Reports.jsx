@@ -281,10 +281,10 @@ function Reports({ user }) {
           {/* Overview Header */}
           <div style={{ textAlign: 'center', padding: '1.5rem', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', borderRadius: '16px', color: 'white', marginBottom: '0.5rem' }}>
             <h3 style={{ margin: '0 0 0.5rem 0', fontWeight: 600, fontSize: '1.5rem' }}>
-              📊 Recovery Overview Dashboard
+              📊 Portfolio Analytics & Recovery Dashboard
             </h3>
             <p style={{ margin: 0, opacity: 0.9, fontSize: '1rem' }}>
-              Real-time insights into loan recovery performance and outstanding balances
+              Real-time insights into loan portfolio performance, collections, and outstanding balances
             </p>
           </div>
 

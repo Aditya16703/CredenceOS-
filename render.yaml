@@ -1,7 +1,7 @@
 services:
   # Backend API Service
   - type: web
-    name: loan-recovery-backend
+    name: credence-backend
     env: node
     plan: free
     buildCommand: cd backend && npm install
@@ -16,19 +16,19 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: CORS_ORIGIN
-        value: https://loan-recovery-frontend.onrender.com
+        value: https://credence-frontend.onrender.com
     autoDeploy: true
     rootDir: .
 
   # Frontend Service
   - type: web
-    name: loan-recovery-frontend
+    name: credence-frontend
     env: static
     plan: free
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: frontend/dist
     envVars:
       - key: VITE_API_URL
-        value: https://loan-recovery-backend.onrender.com
+        value: https://credence-backend.onrender.com
     autoDeploy: true
     rootDir: .

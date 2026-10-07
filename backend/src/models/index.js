@@ -28,7 +28,7 @@ if (process.env.DATABASE_URL) {
   });
 } else {
   sequelize = new Sequelize(
-    process.env.DB_NAME || 'loan_recovery',
+    process.env.DB_NAME || 'credence_nbfc',
     process.env.DB_USER || 'postgres',
     process.env.DB_PASS || '',
     {

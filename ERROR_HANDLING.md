@@ -1,6 +1,6 @@
 # Error Handling Implementation
 
-This document outlines the comprehensive error handling system implemented in the Loan Recovery System.
+This document outlines the comprehensive error handling system implemented in the CredenceOS Platform.
 
 ## Overview
 

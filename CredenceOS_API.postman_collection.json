@@ -1,8 +1,8 @@
 {
 	"info": {
-		"_postman_id": "loan-recovery-system-api",
-		"name": "Loan Recovery System API",
-		"description": "Comprehensive API collection for the Loan Recovery System with authentication, loan management, payments, reports, and notifications. Includes both success and failure test cases.",
+		"_postman_id": "credenceos-api",
+		"name": "CredenceOS API",
+		"description": "Comprehensive API collection for the CredenceOS with authentication, loan management, payments, reports, and notifications. Includes both success and failure test cases.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [

@@ -19,7 +19,7 @@ app.use(logRequest);
 app.get('/health', (req, res) => {
   res.status(200).json({ 
     status: 'success', 
-    message: 'Loan Recovery System API is running',
+    message: 'CredenceOS NBFC Core API is running',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development'
   });
@@ -33,7 +33,7 @@ app.get('/', (req, res) => {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Loan Recovery System API</title>
+        <title>CredenceOS — NBFC Core API</title>
         <style>
             * {
                 margin: 0;
@@ -285,8 +285,8 @@ app.get('/', (req, res) => {
     <body>
         <div class="container">
             <div class="header">
-                <h1>🏦 Loan Recovery System</h1>
-                <p>Backend API Server</p>
+                <h1>🏦 CredenceOS</h1>
+                <p>Enterprise NBFC Lending Management Core</p>
             </div>
             
             <div class="status">
@@ -337,13 +337,15 @@ app.get('/', (req, res) => {
 // API documentation endpoint (JSON)
 app.get('/api', (req, res) => {
   res.json({ 
-    message: 'Loan Recovery System API',
+    message: 'CredenceOS NBFC Core API',
     version: '1.0.0',
     endpoints: {
       auth: '/api/auth',
       customers: '/api/customers',
       loans: '/api/loans',
       payments: '/api/payments',
+      kyc: '/api/kyc',
+      auditLogs: '/api/audit-logs',
       agents: '/api/agents',
       reports: '/api/reports',
       notifications: '/api/notifications'

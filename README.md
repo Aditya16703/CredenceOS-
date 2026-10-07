@@ -40,9 +40,9 @@ Detailed architectural specification is documented in [ARCHITECTURE.md](ARCHITEC
 
 ### 2. Database Setup
 ```sql
-CREATE DATABASE loan_recovery;
+CREATE DATABASE credence_nbfc;
 CREATE USER postgres WITH PASSWORD 'your_password';
-GRANT ALL PRIVILEGES ON DATABASE loan_recovery TO postgres;
+GRANT ALL PRIVILEGES ON DATABASE credence_nbfc TO postgres;
 ```
 
 ### 3. Environment Variables
@@ -52,7 +52,7 @@ Create `backend/.env`:
 PORT=5000
 DB_HOST=localhost
 DB_PORT=5432
-DB_NAME=loan_recovery
+DB_NAME=credence_nbfc
 DB_USER=postgres
 DB_PASS=your_password
 JWT_SECRET=your_super_secret_jwt_key

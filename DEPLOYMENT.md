@@ -19,8 +19,8 @@
 
 ### Expected URLs
 
-- **Frontend**: `https://loan-recovery-frontend.onrender.com`
-- **Backend**: `https://loan-recovery-backend.onrender.com`
+- **Frontend**: `https://credence-frontend.onrender.com`
+- **Backend**: `https://credence-backend.onrender.com`
 
 ---
 
@@ -28,7 +28,7 @@
 
 ### Overview
 
-This guide will help you deploy your Loan Recovery System to Render without Docker. The application consists of:
+This guide will help you deploy your CredenceOS Platform to Render without Docker. The application consists of:
 
 - **Backend**: Node.js/Express API
 - **Frontend**: React/Vite application
@@ -64,7 +64,7 @@ Use the `render.yaml` file for automatic deployment:
 
 1. **Create Web Service**:
 
-   - Name: `loan-recovery-backend`
+   - Name: `credence-backend`
    - Environment: `Node`
    - Build Command: `cd backend && npm install`
    - Start Command: `cd backend && npm start`
@@ -82,7 +82,7 @@ Use the `render.yaml` file for automatic deployment:
 
 1. **Create Static Site**:
 
-   - Name: `loan-recovery-frontend`
+   - Name: `credence-frontend`
    - Build Command: `cd frontend && npm install && npm run build`
    - Publish Directory: `frontend/dist`
 

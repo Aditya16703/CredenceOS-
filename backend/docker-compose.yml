@@ -5,7 +5,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: loan_recovery
+      POSTGRES_DB: credence_nbfc
     ports:
       - "5432:5432"
     volumes:
@@ -19,7 +19,7 @@ services:
       - DB_HOST=db
       - DB_USER=postgres
       - DB_PASS=postgres
-      - DB_NAME=loan_recovery
+      - DB_NAME=credence_nbfc
       - DB_PORT=5432
       - JWT_SECRET=your_jwt_secret
     depends_on:
