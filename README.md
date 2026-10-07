@@ -1,7 +1,9 @@
 # 🏦 CredenceOS — Enterprise NBFC Lending Management Platform
 
+[![CI/CD Pipeline](https://github.com/Aditya16703/CredenceOS-/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/Aditya16703/CredenceOS-/actions/workflows/ci-cd.yml)
+[![Docker](https://img.shields.io/badge/Docker-Full--Stack%20Ready-2496ED.svg?logo=docker&logoColor=white)](https://www.docker.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-20%2B-green.svg)](https://nodejs.org/)
 [![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-blue.svg)](https://www.postgresql.org/)
 [![React](https://img.shields.io/badge/Frontend-React%2019%20%2B%20Vite-61dafb.svg)](https://react.dev/)
 

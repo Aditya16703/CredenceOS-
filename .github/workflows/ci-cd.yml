@@ -1,0 +1,144 @@
+name: CredenceOS CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # =========================================================================
+  # 1. Backend Verification & Unit Tests
+  # =========================================================================
+  backend-test:
+    name: ⚙️ Backend Test Suite (Node.js 20)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Check out repository
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: backend/package.json
+
+      - name: 📦 Install Backend Dependencies
+        working-directory: backend
+        run: npm install
+
+      - name: 🧪 Run Automated Financial & Compliance Unit Tests
+        working-directory: backend
+        env:
+          NODE_ENV: test
+          DB_DIALECT: sqlite
+          JWT_SECRET: test_jwt_secret_token_12345
+        run: npm test
+
+  # =========================================================================
+  # 2. Frontend Production Build & Bundle Validation
+  # =========================================================================
+  frontend-build:
+    name: 🖥️ Frontend Build & Bundle Verification (Vite + React 19)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Check out repository
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: frontend/package.json
+
+      - name: 📦 Install Frontend Dependencies
+        working-directory: frontend
+        run: npm install --legacy-peer-deps
+
+      - name: 🏗️ Compile Production Bundle
+        working-directory: frontend
+        env:
+          VITE_API_URL: https://api.credenceos.example.com
+        run: npm run build
+
+      - name: 📤 Archive Frontend Production Dist
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist
+          retention-days: 7
+
+  # =========================================================================
+  # 3. Docker Image Build Verification
+  # =========================================================================
+  docker-build:
+    name: 🐳 Docker Multi-Container Build Validation
+    runs-on: ubuntu-latest
+    needs: [backend-test, frontend-build]
+
+    steps:
+      - name: 📥 Check out repository
+        uses: actions/checkout@v4
+
+      - name: 🛠️ Set up Docker Buildx
+        uses: actions/setup-buildx-action@v3
+
+      - name: 🔍 Validate Docker Compose Specification
+        run: docker compose config
+
+      - name: 🏗️ Test Backend Dockerfile Build
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: false
+          tags: credence-backend:test
+
+      - name: 🏗️ Test Frontend Dockerfile Build (Nginx Multi-stage)
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: false
+          tags: credence-frontend:test
+
+  # =========================================================================
+  # 4. Continuous Deployment (CD Trigger)
+  # =========================================================================
+  deploy:
+    name: 🚀 Production CD Trigger
+    needs: [backend-test, frontend-build, docker-build]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Check out repository
+        uses: actions/checkout@v4
+
+      - name: 🌐 Trigger Render Webhook (If Configured)
+        if: env.RENDER_DEPLOY_HOOK != ''
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: |
+          echo "Triggering automated backend redeployment on Render..."
+          curl -s -X POST "$RENDER_DEPLOY_HOOK"
+          echo "Deployment webhook triggered successfully."
+
+      - name: ✅ Pipeline Summary
+        run: |
+          echo "======================================================="
+          echo "🎉 CredenceOS CI/CD Pipeline Completed Successfully!"
+          echo "   - Backend Financial Engine Tests: PASS"
+          echo "   - React 19 / Vite Bundle Build:  PASS"
+          echo "   - Multi-stage Docker Images:      PASS"
+          echo "   - Branch: main (Ready for Live Production)"
+          echo "======================================================="
