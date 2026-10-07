@@ -21,8 +21,25 @@ export const api = {
     const response = await fetch(url, { ...defaultOptions, ...options });
     
     if (!response.ok) {
-      const error = new Error(`HTTP error! status: ${response.status}`);
-      error.status = response.status; // Add status for backward compatibility
+      let errBody;
+      try {
+        errBody = await response.json();
+      } catch (e) {}
+
+      let errMsg = '';
+      if (errBody?.error?.errors && Array.isArray(errBody.error.errors)) {
+        errMsg = errBody.error.errors.map(e => e.message).join('\n');
+      } else if (errBody?.error?.message) {
+        errMsg = errBody.error.message;
+      } else if (errBody?.message) {
+        errMsg = errBody.message;
+      } else {
+        errMsg = `HTTP error! status: ${response.status}`;
+      }
+
+      const error = new Error(errMsg);
+      error.status = response.status;
+      error.data = errBody;
       throw error;
     }
     

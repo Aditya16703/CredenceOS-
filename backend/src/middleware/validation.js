@@ -27,8 +27,10 @@ const validateEmail = (email) => {
 };
 
 const validatePhone = (phone) => {
-  const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
-  return phoneRegex.test(phone);
+  if (!phone || typeof phone !== 'string') return false;
+  const cleanPhone = phone.replace(/[\s\-\(\)\.]/g, '');
+  const phoneRegex = /^[\+]?[0-9]{7,15}$/;
+  return phoneRegex.test(cleanPhone);
 };
 
 const validateAmount = (amount) => {
