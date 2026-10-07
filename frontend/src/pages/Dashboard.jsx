@@ -5,7 +5,7 @@ import Reports from './Reports';
 import KYC from './KYC';
 import AuditLogs from './AuditLogs';
 import Notifications from '../components/Notifications';
-import { api, handleApiError } from '../utils/api';
+import { api } from '../utils/api';
 
 function Dashboard({ user }) {
   const [page, setPage] = useState('loans');
@@ -15,264 +15,182 @@ function Dashboard({ user }) {
   // Fetch unread notification count for agents
   const fetchUnreadCount = async () => {
     if (user.role !== 'agent') return;
-    
     try {
       const data = await api.getUnreadCount();
       setUnreadCount(data.data.unreadCount || 0);
     } catch (err) {
-      // Silently handle error - don't show error for notification count
       console.error('Failed to fetch unread count:', err);
     }
   };
 
-  // Fetch unread count on mount and every 30 seconds
   useEffect(() => {
     fetchUnreadCount();
-    
-    const interval = setInterval(() => {
-      fetchUnreadCount();
-    }, 30000); // 30 seconds
-
+    const interval = setInterval(fetchUnreadCount, 30000);
     return () => clearInterval(interval);
   }, [user]);
 
+  const navItems = [
+    { id: 'loans', label: 'Loan Portfolios', icon: '🏦', roles: ['admin', 'agent', 'customer'] },
+    { id: 'payments', label: 'Repayments & Ledger', icon: '💳', roles: ['admin', 'agent', 'customer'] },
+    { id: 'kyc', label: 'KYC & Compliance', icon: '🪪', roles: ['admin', 'agent', 'customer'] },
+    { id: 'reports', label: 'Financial Analytics', icon: '📊', roles: ['admin'] },
+    { id: 'audit', label: 'Immutable Audit Trail', icon: '📜', roles: ['admin'] }
+  ];
+
   return (
-    <div style={{ width: '100%', padding: '0 2rem' }}>
-      {/* Horizontal Navigation Bar - Full Width */}
-      <div style={{ 
-        background: '#fff', 
-        borderRadius: '0', 
-        boxShadow: '0 4px 20px rgba(0,0,0,0.08)', 
-        marginBottom: '2rem',
-        padding: '1.5rem 2rem',
+    <div style={{ width: '100%', maxWidth: 1400, margin: '0 auto', padding: '1.5rem 2rem', boxSizing: 'border-box' }}>
+      {/* Institutional Top Navigation Bar */}
+      <div style={{
+        background: '#FFFFFF',
+        borderRadius: '16px',
+        border: '1px solid #E2E8F0',
+        boxShadow: '0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.05)',
+        marginBottom: '1.75rem',
+        padding: '0.85rem 1.5rem',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         flexWrap: 'wrap',
-        width: '100%',
-        boxSizing: 'border-box'
+        gap: '1rem'
       }}>
-        {/* Navigation Buttons */}
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: '1.5rem',
+        {/* Navigation Tabs */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem',
           flexWrap: 'wrap'
         }}>
-          <button 
-            className={`btn ${page === 'loans' ? 'btn-primary' : 'btn-outline-primary'}`} 
-            style={{ 
-              fontSize: '1.1rem', 
-              padding: '0.875rem 2.5rem', 
-              borderRadius: '12px',
-              fontWeight: 600,
-              minWidth: '140px',
-              transition: 'all 0.3s ease',
-              border: page === 'loans' ? 'none' : '2px solid #396afc',
-              background: page === 'loans' ? 'linear-gradient(135deg, #396afc 0%, #2948ff 100%)' : 'transparent',
-              color: page === 'loans' ? '#fff' : '#396afc',
-              boxShadow: page === 'loans' ? '0 4px 12px rgba(57, 106, 252, 0.3)' : '0 2px 8px rgba(0,0,0,0.1)'
-            }} 
-            onClick={() => setPage('loans')}
-            onMouseEnter={(e) => {
-              if (page !== 'loans') {
-                e.target.style.transform = 'translateY(-2px)';
-                e.target.style.boxShadow = '0 6px 16px rgba(0,0,0,0.15)';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (page !== 'loans') {
-                e.target.style.transform = 'translateY(0)';
-                e.target.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
-              }
-            }}
-          >
-            <span style={{ marginRight: '0.75rem', fontSize: '1.1rem' }}>🏦</span>
-            Loans
-          </button>
-          <button 
-            className={`btn ${page === 'payments' ? 'btn-primary' : 'btn-outline-primary'}`} 
-            style={{ 
-              fontSize: '1.1rem', 
-              padding: '0.875rem 2.5rem', 
-              borderRadius: '12px',
-              fontWeight: 600,
-              minWidth: '140px',
-              transition: 'all 0.3s ease',
-              border: page === 'payments' ? 'none' : '2px solid #396afc',
-              background: page === 'payments' ? 'linear-gradient(135deg, #396afc 0%, #2948ff 100%)' : 'transparent',
-              color: page === 'payments' ? '#fff' : '#396afc',
-              boxShadow: page === 'payments' ? '0 4px 12px rgba(57, 106, 252, 0.3)' : '0 2px 8px rgba(0,0,0,0.1)'
-            }} 
-            onClick={() => setPage('payments')}
-            onMouseEnter={(e) => {
-              if (page !== 'payments') {
-                e.target.style.transform = 'translateY(-2px)';
-                e.target.style.boxShadow = '0 6px 16px rgba(0,0,0,0.15)';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (page !== 'payments') {
-                e.target.style.transform = 'translateY(0)';
-                e.target.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
-              }
-            }}
-          >
-            <span style={{ marginRight: '0.75rem', fontSize: '1.1rem' }}>💳</span>
-            Payments
-          </button>
-
-          <button 
-            className={`btn ${page === 'kyc' ? 'btn-primary' : 'btn-outline-primary'}`} 
-            style={{ 
-              fontSize: '1.1rem', 
-              padding: '0.875rem 2.5rem', 
-              borderRadius: '12px',
-              fontWeight: 600,
-              minWidth: '140px',
-              transition: 'all 0.3s ease',
-              border: page === 'kyc' ? 'none' : '2px solid #396afc',
-              background: page === 'kyc' ? 'linear-gradient(135deg, #396afc 0%, #2948ff 100%)' : 'transparent',
-              color: page === 'kyc' ? '#fff' : '#396afc',
-              boxShadow: page === 'kyc' ? '0 4px 12px rgba(57, 106, 252, 0.3)' : '0 2px 8px rgba(0,0,0,0.1)'
-            }} 
-            onClick={() => setPage('kyc')}
-          >
-            <span style={{ marginRight: '0.75rem', fontSize: '1.1rem' }}>🪪</span>
-            KYC
-          </button>
-
-          {user.role === 'admin' && (
-            <button 
-              className={`btn ${page === 'reports' ? 'btn-primary' : 'btn-outline-primary'}`} 
-              style={{ 
-                fontSize: '1.1rem', 
-                padding: '0.875rem 2.5rem', 
-                borderRadius: '12px',
-                fontWeight: 600,
-                minWidth: '140px',
-                transition: 'all 0.3s ease',
-                border: page === 'reports' ? 'none' : '2px solid #396afc',
-                background: page === 'reports' ? 'linear-gradient(135deg, #396afc 0%, #2948ff 100%)' : 'transparent',
-                color: page === 'reports' ? '#fff' : '#396afc',
-                boxShadow: page === 'reports' ? '0 4px 12px rgba(57, 106, 252, 0.3)' : '0 2px 8px rgba(0,0,0,0.1)'
-              }} 
-              onClick={() => setPage('reports')}
-              onMouseEnter={(e) => {
-                if (page !== 'reports') {
-                  e.target.style.transform = 'translateY(-2px)';
-                  e.target.style.boxShadow = '0 6px 16px rgba(0,0,0,0.15)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (page !== 'reports') {
-                  e.target.style.transform = 'translateY(0)';
-                  e.target.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
-                }
-              }}
-            >
-              <span style={{ marginRight: '0.75rem', fontSize: '1.1rem' }}>📊</span>
-              Reports
-            </button>
-          )}
-
-          {user.role === 'admin' && (
-            <button 
-              className={`btn ${page === 'audit' ? 'btn-primary' : 'btn-outline-primary'}`} 
-              style={{ 
-                fontSize: '1.1rem', 
-                padding: '0.875rem 2.5rem', 
-                borderRadius: '12px',
-                fontWeight: 600,
-                minWidth: '140px',
-                transition: 'all 0.3s ease',
-                border: page === 'audit' ? 'none' : '2px solid #396afc',
-                background: page === 'audit' ? 'linear-gradient(135deg, #396afc 0%, #2948ff 100%)' : 'transparent',
-                color: page === 'audit' ? '#fff' : '#396afc',
-                boxShadow: page === 'audit' ? '0 4px 12px rgba(57, 106, 252, 0.3)' : '0 2px 8px rgba(0,0,0,0.1)'
-              }} 
-              onClick={() => setPage('audit')}
-            >
-              <span style={{ marginRight: '0.75rem', fontSize: '1.1rem' }}>📜</span>
-              Audit Trail
-            </button>
-          )}
+          {navItems
+            .filter(item => item.roles.includes(user.role))
+            .map(item => {
+              const isActive = page === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => setPage(item.id)}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.55rem',
+                    fontSize: '0.9rem',
+                    fontWeight: 700,
+                    padding: '0.65rem 1.25rem',
+                    borderRadius: '10px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                    border: '1px solid',
+                    borderColor: isActive ? 'transparent' : '#E2E8F0',
+                    background: isActive ? '#0B132B' : '#FFFFFF',
+                    color: isActive ? '#FFFFFF' : '#475569',
+                    boxShadow: isActive ? '0 4px 12px rgba(11, 19, 43, 0.2)' : 'none'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.background = '#F8FAFC';
+                      e.currentTarget.style.color = '#0F172A';
+                      e.currentTarget.style.borderColor = '#CBD5E1';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.background = '#FFFFFF';
+                      e.currentTarget.style.color = '#475569';
+                      e.currentTarget.style.borderColor = '#E2E8F0';
+                    }
+                  }}
+                >
+                  <span style={{ fontSize: '1.1rem' }}>{item.icon}</span>
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
         </div>
 
-        {/* Notification Bell for Agents */}
-        {user.role === 'agent' && (
-          <div style={{ position: 'relative' }}>
-            <button
-              onClick={() => setShowNotifications(true)}
-              style={{
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                borderRadius: '50%',
-                width: '45px',
-                height: '45px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                fontSize: '1.3rem',
-                color: 'white',
-                boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)',
-                transition: 'all 0.3s ease',
-                position: 'relative',
-                border: '2px solid rgba(255, 255, 255, 0.2)'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.transform = 'translateY(-2px) scale(1.05)';
-                e.target.style.boxShadow = '0 6px 20px rgba(102, 126, 234, 0.5)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.transform = 'translateY(0) scale(1)';
-                e.target.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.4)';
-              }}
-            >
-              🔔
-              {unreadCount > 0 && (
-                <div style={{
-                  position: 'absolute',
-                  top: '-3px',
-                  right: '-3px',
-                  background: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%)',
-                  color: 'white',
-                  borderRadius: '50%',
-                  width: '18px',
-                  height: '18px',
+        {/* Right Info: Role Badge & Notifications */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            padding: '0.35rem 0.8rem',
+            background: '#F1F5F9',
+            borderRadius: '999px',
+            border: '1px solid #E2E8F0',
+            fontSize: '0.78rem',
+            color: '#475569',
+            fontWeight: 600
+          }}>
+            <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#10B981', boxShadow: '0 0 5px #10B981' }}></span>
+            <span>
+              {user.role === 'admin' ? 'Executive Workspace' : user.role === 'agent' ? 'Collections Desk' : 'Borrower Portal'}
+            </span>
+          </div>
+
+          {/* Agent Notifications Bell */}
+          {user.role === 'agent' && (
+            <div style={{ position: 'relative' }}>
+              <button
+                onClick={() => setShowNotifications(true)}
+                style={{
+                  background: '#FFFFFF',
+                  borderRadius: '10px',
+                  width: '40px',
+                  height: '40px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: '0.65rem',
-                  fontWeight: 'bold',
-                  border: '2px solid white',
-                  boxShadow: '0 2px 8px rgba(255, 107, 107, 0.4)',
-                  animation: unreadCount > 0 ? 'pulse 2s infinite' : 'none'
-                }}>
-                  {unreadCount > 99 ? '99+' : unreadCount}
-                </div>
-              )}
-            </button>
-            <style>
-              {`
-                @keyframes pulse {
-                  0% { transform: scale(1); }
-                  50% { transform: scale(1.1); }
-                  100% { transform: scale(1); }
-                }
-              `}
-            </style>
-          </div>
-        )}
+                  cursor: 'pointer',
+                  fontSize: '1.15rem',
+                  border: '1px solid #CBD5E1',
+                  transition: 'all 0.2s ease',
+                  position: 'relative'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#F8FAFC';
+                  e.currentTarget.style.borderColor = '#2563EB';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = '#FFFFFF';
+                  e.currentTarget.style.borderColor = '#CBD5E1';
+                }}
+                title="Agent Notifications"
+              >
+                🔔
+                {unreadCount > 0 && (
+                  <span style={{
+                    position: 'absolute',
+                    top: '-4px',
+                    right: '-4px',
+                    background: '#EF4444',
+                    color: '#FFFFFF',
+                    borderRadius: '999px',
+                    minWidth: '18px',
+                    height: '18px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '0.65rem',
+                    fontWeight: 800,
+                    border: '2px solid #FFFFFF',
+                    padding: '0 4px'
+                  }}>
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </span>
+                )}
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Content Area - Full Width */}
-      <div style={{ 
-        background: '#fff', 
-        borderRadius: '0', 
-        boxShadow: '0 4px 20px rgba(0,0,0,0.08)', 
-        padding: '2rem',
-        minHeight: '600px',
+      {/* Content Canvas */}
+      <div style={{
+        background: '#FFFFFF',
+        borderRadius: '18px',
+        border: '1px solid #E2E8F0',
+        boxShadow: '0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.05)',
+        padding: '2.25rem',
+        minHeight: '620px',
         width: '100%',
         boxSizing: 'border-box'
       }}>
@@ -284,12 +202,12 @@ function Dashboard({ user }) {
       </div>
 
       {/* Notifications Modal */}
-      <Notifications 
+      <Notifications
         user={user}
         isOpen={showNotifications}
         onClose={() => {
           setShowNotifications(false);
-          fetchUnreadCount(); // Refresh count when closing
+          fetchUnreadCount();
         }}
       />
     </div>

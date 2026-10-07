@@ -1,20 +1,27 @@
 import React, { useState } from 'react';
-import { api, handleApiError, handleApiSuccess } from '../utils/api';
+import { api, handleApiError } from '../utils/api';
 
-function Register({ onRegister, onLogin, onBackToLogin }) {
+function Register({ onLogin, onSuccess, onBackToLogin }) {
   const [form, setForm] = useState({ name: '', email: '', password: '', role: 'customer', phone: '' });
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(''); 
+    setError('');
     setSuccess('');
+
+    if (form.password.length < 6) {
+      setError('Password must contain at least 6 characters.');
+      return;
+    }
+
     setLoading(true);
-    
+
     try {
       const payload = { ...form };
       if (form.role !== 'agent') {
@@ -22,23 +29,26 @@ function Register({ onRegister, onLogin, onBackToLogin }) {
       } else if (payload.phone) {
         payload.phone = payload.phone.replace(/[\s\-\(\)]/g, '');
       }
-      
-      // Register the user
-      const registerData = await api.register(payload);
-      
-      // Automatically log in the user with the same credentials
-      const loginData = await api.login({ 
-        email: form.email, 
-        password: form.password 
+
+      // 1. Register the user
+      await api.register(payload);
+
+      // 2. Automatically log in the user
+      const loginData = await api.login({
+        email: form.email,
+        password: form.password
       });
-      
-      setSuccess('Registration successful! You have been automatically logged in.');
-      
-      // Call onLogin to set the user session
-      onLogin && onLogin(loginData.data.user, loginData.data.token);
-      
-      // Clear form
-      setForm({ name: '', email: '', password: '', role: 'customer', phone: '' });
+
+      setSuccess('Account created successfully! Launching portal...');
+
+      // Redirect directly to dashboard via onLogin
+      if (onLogin) {
+        setTimeout(() => {
+          onLogin(loginData.data.user, loginData.data.token);
+        }, 400);
+      } else if (onSuccess) {
+        onSuccess();
+      }
     } catch (err) {
       handleApiError(err, setError);
     } finally {
@@ -46,321 +56,271 @@ function Register({ onRegister, onLogin, onBackToLogin }) {
     }
   };
 
-  const formatErrorMessage = (errorMessage) => {
-    if (errorMessage.includes('\n')) {
-      return errorMessage.split('\n').map((line, index) => (
-        <div key={index} style={{ marginBottom: '0.5rem' }}>
-          {line}
-        </div>
-      ));
-    }
-    return errorMessage;
-  };
-
   return (
-    <>
-      {/* Register Form Header */}
-      <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-        <h2 style={{ 
-          fontWeight: 600, 
-          color: '#d9822b', 
-          marginBottom: '0.25rem',
-          fontSize: '1.5rem'
-        }}>
-          Create Account
+    <div>
+      <div style={{ marginBottom: '1.25rem' }}>
+        <h2 style={{ fontSize: '1.45rem', fontWeight: 800, color: '#0F172A', margin: '0 0 0.3rem 0' }}>
+          Create an Account
         </h2>
-        <p style={{ 
-          color: '#666', 
-          fontSize: '0.9rem',
-          margin: 0
-        }}>
-          Join our platform and start your loan journey
+        <p style={{ margin: 0, color: '#64748B', fontSize: '0.88rem' }}>
+          Select your portal role and enter identity details.
         </p>
       </div>
 
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '1rem' }}>
-          <label style={{ 
-            display: 'block', 
-            marginBottom: '0.25rem', 
-            fontWeight: 600, 
-            color: '#333',
-            fontSize: '0.9rem'
-          }}>
-            Full Name
-          </label>
-          <input 
-            className="form-control" 
-            name="name" 
-            type="text" 
-            placeholder="Enter your full name" 
-            value={form.name} 
-            onChange={handleChange} 
-            required 
-            disabled={loading}
+      {/* Role Selector Tabs */}
+      <div style={{ marginBottom: '1.25rem' }}>
+        <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.5rem' }}>
+          Account Type
+        </label>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.65rem' }}>
+          <button
+            type="button"
+            onClick={() => setForm(f => ({ ...f, role: 'customer' }))}
             style={{
-              width: '100%',
-              padding: '0.75rem 0.875rem',
-              borderRadius: '8px',
-              border: '2px solid #e9ecef',
-              fontSize: '0.95rem',
-              transition: 'all 0.3s ease',
-              background: '#fff',
-              boxSizing: 'border-box'
-            }}
-          />
-        </div>
-
-        <div style={{ marginBottom: '1rem' }}>
-          <label style={{ 
-            display: 'block', 
-            marginBottom: '0.25rem', 
-            fontWeight: 600, 
-            color: '#333',
-            fontSize: '0.9rem'
-          }}>
-            Email Address
-          </label>
-          <input 
-            className="form-control" 
-            name="email" 
-            type="email" 
-            placeholder="Enter your email" 
-            value={form.email} 
-            onChange={handleChange} 
-            required 
-            disabled={loading}
-            style={{
-              width: '100%',
-              padding: '0.75rem 0.875rem',
-              borderRadius: '8px',
-              border: '2px solid #e9ecef',
-              fontSize: '0.95rem',
-              transition: 'all 0.3s ease',
-              background: '#fff',
-              boxSizing: 'border-box'
-            }}
-          />
-        </div>
-
-        <div style={{ marginBottom: '1rem' }}>
-          <label style={{ 
-            display: 'block', 
-            marginBottom: '0.25rem', 
-            fontWeight: 600, 
-            color: '#333',
-            fontSize: '0.9rem'
-          }}>
-            Password
-          </label>
-          <input 
-            className="form-control" 
-            name="password" 
-            type="password" 
-            placeholder="Create a password (min 6 characters)" 
-            value={form.password} 
-            onChange={handleChange} 
-            required 
-            disabled={loading}
-            style={{
-              width: '100%',
-              padding: '0.75rem 0.875rem',
-              borderRadius: '8px',
-              border: '2px solid #e9ecef',
-              fontSize: '0.95rem',
-              transition: 'all 0.3s ease',
-              background: '#fff',
-              boxSizing: 'border-box'
-            }}
-          />
-        </div>
-
-        <div style={{ marginBottom: '1rem' }}>
-          <label style={{ 
-            display: 'block', 
-            marginBottom: '0.25rem', 
-            fontWeight: 600, 
-            color: '#333',
-            fontSize: '0.9rem'
-          }}>
-            Account Type
-          </label>
-          <select 
-            className="form-control" 
-            name="role" 
-            value={form.role} 
-            onChange={handleChange}
-            disabled={loading}
-            style={{
-              width: '100%',
-              padding: '0.75rem 0.875rem',
-              borderRadius: '8px',
-              border: '2px solid #e9ecef',
-              fontSize: '0.95rem',
-              transition: 'all 0.3s ease',
-              background: '#fff',
-              boxSizing: 'border-box',
-              cursor: 'pointer'
+              padding: '0.75rem',
+              borderRadius: '10px',
+              border: form.role === 'customer' ? '2px solid #2563EB' : '1px solid #E2E8F0',
+              background: form.role === 'customer' ? '#EFF6FF' : '#FFFFFF',
+              cursor: 'pointer',
+              textAlign: 'left',
+              transition: 'all 0.2s ease'
             }}
           >
-          <option value="customer">Customer</option>
-          <option value="agent">Agent</option>
-          <option value="admin">Admin</option>
-        </select>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 700, fontSize: '0.88rem', color: form.role === 'customer' ? '#1D4ED8' : '#0F172A' }}>
+              <span>👤</span> Borrower
+            </div>
+            <div style={{ fontSize: '0.75rem', color: '#64748B', marginTop: '0.2rem' }}>
+              Apply & service loans
+            </div>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setForm(f => ({ ...f, role: 'agent' }))}
+            style={{
+              padding: '0.75rem',
+              borderRadius: '10px',
+              border: form.role === 'agent' ? '2px solid #2563EB' : '1px solid #E2E8F0',
+              background: form.role === 'agent' ? '#EFF6FF' : '#FFFFFF',
+              cursor: 'pointer',
+              textAlign: 'left',
+              transition: 'all 0.2s ease'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 700, fontSize: '0.88rem', color: form.role === 'agent' ? '#1D4ED8' : '#0F172A' }}>
+              <span>🛡️</span> Agent / Officer
+            </div>
+            <div style={{ fontSize: '0.75rem', color: '#64748B', marginTop: '0.2rem' }}>
+              Portfolio recovery
+            </div>
+          </button>
+        </div>
+      </div>
+
+      {error && (
+        <div style={{
+          padding: '0.85rem 1rem',
+          background: '#FEF2F2',
+          border: '1px solid #FECACA',
+          color: '#991B1B',
+          borderRadius: '10px',
+          fontSize: '0.85rem',
+          marginBottom: '1.25rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.6rem'
+        }}>
+          <span>⚠️</span>
+          <span style={{ flex: 1 }}>{error}</span>
+        </div>
+      )}
+
+      {success && (
+        <div style={{
+          padding: '0.85rem 1rem',
+          background: '#ECFDF5',
+          border: '1px solid #A7F3D0',
+          color: '#065F46',
+          borderRadius: '10px',
+          fontSize: '0.85rem',
+          marginBottom: '1.25rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.6rem'
+        }}>
+          <span>✅</span>
+          <span style={{ flex: 1 }}>{success}</span>
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit}>
+        <div style={{ marginBottom: '1rem' }}>
+          <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: '#334155', marginBottom: '0.35rem' }}>
+            Full Legal Name
+          </label>
+          <input
+            name="name"
+            type="text"
+            required
+            disabled={loading}
+            placeholder="e.g. John Doe"
+            value={form.name}
+            onChange={handleChange}
+            style={{
+              width: '100%',
+              padding: '0.75rem 0.95rem',
+              borderRadius: '8px',
+              border: '1px solid #CBD5E1',
+              fontSize: '0.92rem',
+              boxSizing: 'border-box',
+              background: '#FFFFFF'
+            }}
+          />
+        </div>
+
+        <div style={{ marginBottom: '1rem' }}>
+          <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: '#334155', marginBottom: '0.35rem' }}>
+            Email Address
+          </label>
+          <input
+            name="email"
+            type="email"
+            required
+            disabled={loading}
+            placeholder="e.g. name@domain.com"
+            value={form.email}
+            onChange={handleChange}
+            style={{
+              width: '100%',
+              padding: '0.75rem 0.95rem',
+              borderRadius: '8px',
+              border: '1px solid #CBD5E1',
+              fontSize: '0.92rem',
+              boxSizing: 'border-box',
+              background: '#FFFFFF'
+            }}
+          />
+        </div>
+
+        <div style={{ marginBottom: form.role === 'agent' ? '1rem' : '1.35rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
+            <label style={{ fontSize: '0.82rem', fontWeight: 600, color: '#334155' }}>
+              Security Passcode
+            </label>
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#2563EB',
+                fontSize: '0.78rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+                padding: 0
+              }}
+            >
+              {showPassword ? '🙈 Hide' : '👁️ Show'}
+            </button>
+          </div>
+          <input
+            name="password"
+            type={showPassword ? 'text' : 'password'}
+            required
+            disabled={loading}
+            placeholder="Min 6 alphanumeric characters"
+            value={form.password}
+            onChange={handleChange}
+            style={{
+              width: '100%',
+              padding: '0.75rem 0.95rem',
+              borderRadius: '8px',
+              border: '1px solid #CBD5E1',
+              fontSize: '0.92rem',
+              boxSizing: 'border-box',
+              background: '#FFFFFF'
+            }}
+          />
         </div>
 
         {form.role === 'agent' && (
-          <div style={{ marginBottom: '1rem' }}>
-            <label style={{ 
-              display: 'block', 
-              marginBottom: '0.25rem', 
-              fontWeight: 600, 
-              color: '#333',
-              fontSize: '0.9rem'
-            }}>
-              Phone Number
+          <div style={{ marginBottom: '1.35rem' }}>
+            <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: '#334155', marginBottom: '0.35rem' }}>
+              Official Contact Phone
             </label>
-            <input 
-              className="form-control" 
-              name="phone" 
-              type="tel" 
-              placeholder="Enter your phone number" 
-              value={form.phone} 
-              onChange={handleChange} 
-              required 
+            <input
+              name="phone"
+              type="tel"
+              required
               disabled={loading}
+              placeholder="e.g. 9876543210"
+              value={form.phone}
+              onChange={handleChange}
               style={{
                 width: '100%',
-                padding: '0.75rem 0.875rem',
+                padding: '0.75rem 0.95rem',
                 borderRadius: '8px',
-                border: '2px solid #e9ecef',
-                fontSize: '0.95rem',
-                transition: 'all 0.3s ease',
-                background: '#fff',
-                boxSizing: 'border-box'
+                border: '1px solid #CBD5E1',
+                fontSize: '0.92rem',
+                boxSizing: 'border-box',
+                background: '#FFFFFF'
               }}
             />
           </div>
         )}
 
-        <button 
-          className="btn btn-primary w-100" 
+        <button
           type="submit"
           disabled={loading}
           style={{
             width: '100%',
-            padding: '0.75rem',
-            borderRadius: '8px',
-            fontWeight: 600,
-            fontSize: '0.95rem',
+            padding: '0.85rem',
+            background: 'var(--primary-blue)',
+            color: '#FFFFFF',
             border: 'none',
-            background: '#d9822b',
-            color: 'white',
-            transition: 'all 0.3s ease',
+            borderRadius: '8px',
+            fontWeight: 700,
+            fontSize: '0.95rem',
             cursor: loading ? 'not-allowed' : 'pointer',
-            opacity: loading ? 0.7 : 1
-          }}
-          onMouseEnter={(e) => {
-            if (!loading) {
-              e.target.style.background = '#cc742b';
-              e.target.style.transform = 'translateY(-1px)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (!loading) {
-              e.target.style.background = '#d9822b';
-              e.target.style.transform = 'translateY(0)';
-            }
+            boxShadow: '0 4px 14px rgba(37, 99, 235, 0.3)',
+            transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+            opacity: loading ? 0.75 : 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0.5rem'
           }}
         >
           {loading ? (
             <>
-              <i className="bi bi-arrow-clockwise" style={{ 
-                marginRight: '0.5rem',
-                animation: 'spin 1s linear infinite'
-              }}></i>
-              Creating Account...
+              <span style={{ display: 'inline-block', width: 14, height: 14, border: '2px solid #FFFFFF', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spinSlow 0.8s linear infinite' }}></span>
+              <span>Registering Account...</span>
             </>
           ) : (
-            <>
-              <i className="bi bi-person-plus" style={{ marginRight: '0.5rem' }}></i>
-              Create Account
-            </>
+            <span>Complete Registration</span>
           )}
         </button>
-
-        {error && (
-          <div className="alert alert-danger mt-3" style={{ 
-            whiteSpace: 'pre-line',
-            background: '#ffe9e9',
-            border: '1px solid #ff6a6a',
-            borderRadius: '8px',
-            padding: '0.75rem',
-            marginTop: '1rem',
-            color: '#721c24',
-            fontSize: '0.9rem'
-          }}>
-            <i className="bi bi-exclamation-triangle-fill" style={{ marginRight: '0.5rem' }}></i>
-            {formatErrorMessage(error)}
-          </div>
-        )}
-
-        {success && (
-          <div className="alert alert-success mt-3" style={{ 
-            background: '#d4edda',
-            border: '1px solid #c3e6cb',
-            borderRadius: '8px',
-            padding: '0.75rem',
-            marginTop: '1rem',
-            color: '#155724',
-            fontSize: '0.9rem'
-          }}>
-            <i className="bi bi-check-circle-fill" style={{ marginRight: '0.5rem' }}></i>
-            {success}
-          </div>
-        )}
       </form>
 
-      <div style={{ 
-        textAlign: 'center', 
-        marginTop: '1.5rem',
-        paddingTop: '1rem',
-        borderTop: '1px solid #e9ecef'
-      }}>
-        <p style={{ 
-          color: '#666', 
-          fontSize: '0.9rem',
-          margin: '0 0 0.75rem 0'
-        }}>
-          Already have an account?
-        </p>
-        <button 
-          className="btn btn-outline-primary"
-          onClick={onBackToLogin || onRegister}
+      <div style={{ marginTop: '1.35rem', textAlign: 'center', paddingTop: '1rem', borderTop: '1px solid #F1F5F9' }}>
+        <span style={{ fontSize: '0.85rem', color: '#64748B' }}>Already registered? </span>
+        <button
+          type="button"
+          onClick={onBackToLogin}
           style={{
-            background: 'transparent',
-            border: '2px solid #396afc',
-            color: '#396afc',
-            fontWeight: 600,
-            padding: '0.6rem 1.25rem',
-            borderRadius: '8px',
-            transition: 'all 0.3s ease',
-            fontSize: '0.9rem',
-            cursor: 'pointer'
-          }}
-          onMouseEnter={(e) => {
-            e.target.style.background = '#396afc';
-            e.target.style.color = 'white';
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.background = 'transparent';
-            e.target.style.color = '#396afc';
+            background: 'none',
+            border: 'none',
+            color: '#2563EB',
+            fontWeight: 700,
+            cursor: 'pointer',
+            fontSize: '0.85rem',
+            padding: 0
           }}
         >
-          Sign In Instead
+          Sign In Instead →
         </button>
+      </div>
     </div>
-    </>
   );
 }
 

@@ -139,16 +139,16 @@ function Payments({ user }) {
       }}>
         {/* Header */}
         <div style={{ 
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', 
+          background: 'linear-gradient(135deg, #0B132B 0%, #1E293B 100%)', 
           color: 'white', 
-          padding: '1.5rem', 
+          padding: '1.75rem', 
           textAlign: 'center'
         }}>
-          <h3 style={{ margin: '0 0 0.5rem 0', fontWeight: 600, fontSize: '1.5rem' }}>
-            💰 Make Payment
+          <h3 style={{ margin: '0 0 0.35rem 0', fontWeight: 700, fontSize: '1.4rem', letterSpacing: '-0.02em' }}>
+            💳 Loan Repayment Gateway
           </h3>
-          <p style={{ margin: 0, opacity: 0.9, fontSize: '1rem' }}>
-            Select a loan and make your EMI payment
+          <p style={{ margin: 0, color: '#94A3B8', fontSize: '0.9rem' }}>
+            Select an active or approved credit facility to process an EMI installment
           </p>
         </div>
 

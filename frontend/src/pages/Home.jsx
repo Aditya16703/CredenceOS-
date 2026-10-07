@@ -3,42 +3,59 @@ import Register from './Register';
 import { api, handleApiError } from '../utils/api';
 
 function Home({ onLogin }) {
-  const [showForm, setShowForm] = useState(false);
-  const [showRegister, setShowRegister] = useState(false);
+  const [authMode, setAuthMode] = useState('login'); // 'login' | 'register'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [activePersona, setActivePersona] = useState(null);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  // Quick 1-Click Persona Login
+  const handlePersonaLogin = async (role) => {
     setError('');
+    setActivePersona(role);
     setLoading(true);
 
+    let creds = { email: '', password: '' };
+    if (role === 'admin') {
+      creds = { email: 'admin@example.com', password: 'admin123' };
+    } else if (role === 'agent') {
+      creds = { email: 'agent@example.com', password: 'agent123' };
+    } else {
+      creds = { email: 'customer@example.com', password: 'customer123' };
+    }
+
+    setEmail(creds.email);
+    setPassword(creds.password);
+
     try {
-      const data = await api.login({ email, password });
-      setError('');
+      const data = await api.login(creds);
       onLogin(data.data.user, data.data.token);
     } catch (err) {
       handleApiError(err, setError);
     } finally {
       setLoading(false);
+      setActivePersona(null);
     }
   };
 
-  const setDemoCredentials = (userRole) => {
-    setShowForm(true);
-    setShowRegister(false);
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    if (!email || !password) {
+      setError('Please provide both institutional email and security passcode.');
+      return;
+    }
     setError('');
-    if (userRole === 'admin') {
-      setEmail('admin@example.com');
-      setPassword('admin123');
-    } else if (userRole === 'agent') {
-      setEmail('agent@example.com');
-      setPassword('agent123');
-    } else {
-      setEmail('customer@example.com');
-      setPassword('customer123');
+    setLoading(true);
+
+    try {
+      const data = await api.login({ email, password });
+      onLogin(data.data.user, data.data.token);
+    } catch (err) {
+      handleApiError(err, setError);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -49,247 +66,494 @@ function Home({ onLogin }) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '1.2rem 3.5rem',
-        background: '#0B192C',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.08)'
+        padding: '1rem 3rem',
+        background: '#0B132B',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+        boxShadow: '0 4px 20px rgba(11, 19, 43, 0.2)'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <span style={{ fontSize: '1.4rem', fontWeight: 800, color: '#fff', letterSpacing: '-0.02em' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+          <span style={{ fontSize: '1.4rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.03em', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             🏛️ CredenceOS
           </span>
           <span style={{
-            background: 'rgba(0, 102, 255, 0.2)',
+            background: 'rgba(37, 99, 235, 0.2)',
             color: '#60A5FA',
-            fontSize: '0.72rem',
+            fontSize: '0.7rem',
             fontWeight: 700,
-            padding: '0.2rem 0.5rem',
+            padding: '0.2rem 0.55rem',
             borderRadius: '4px',
-            border: '1px solid rgba(96, 165, 250, 0.3)'
+            border: '1px solid rgba(96, 165, 250, 0.3)',
+            letterSpacing: '0.05em'
           }}>
             LENDING OPERATING SYSTEM
           </span>
         </div>
 
-        <div style={{ display: 'flex', gap: '1rem' }}>
-          <button
-            onClick={() => { setShowForm(true); setShowRegister(false); setError(''); }}
-            style={{
-              background: showForm && !showRegister ? '#0066FF' : 'transparent',
-              color: '#FFFFFF',
-              border: '1px solid rgba(255, 255, 255, 0.25)',
-              fontWeight: 600,
-              padding: '0.65rem 1.4rem',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontSize: '0.9rem',
-              transition: 'all 0.2s ease'
-            }}
-          >
-            Portal Login
-          </button>
-          <button
-            onClick={() => { setShowForm(true); setShowRegister(true); setError(''); }}
-            style={{
-              background: '#0066FF',
-              color: '#FFFFFF',
-              border: 'none',
-              fontWeight: 600,
-              padding: '0.65rem 1.4rem',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontSize: '0.9rem',
-              boxShadow: '0 4px 12px rgba(0, 102, 255, 0.3)'
-            }}
-          >
-            Register Account
-          </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            background: 'rgba(255, 255, 255, 0.06)',
+            padding: '0.4rem 0.8rem',
+            borderRadius: '20px',
+            fontSize: '0.78rem',
+            color: '#94A3B8',
+            border: '1px solid rgba(255, 255, 255, 0.08)'
+          }}>
+            <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#10B981', boxShadow: '0 0 6px #10B981' }}></span>
+            <span>API v2.4 Online (Neon PostgreSQL)</span>
+          </div>
+          <div style={{
+            display: 'inline-flex',
+            background: 'rgba(255, 255, 255, 0.08)',
+            padding: '3px',
+            borderRadius: '8px',
+            border: '1px solid rgba(255, 255, 255, 0.12)'
+          }}>
+            <button
+              onClick={() => { setAuthMode('login'); setError(''); }}
+              style={{
+                background: authMode === 'login' ? '#2563EB' : 'transparent',
+                color: '#FFFFFF',
+                border: 'none',
+                fontWeight: 600,
+                padding: '0.45rem 1rem',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '0.85rem',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              Sign In
+            </button>
+            <button
+              onClick={() => { setAuthMode('register'); setError(''); }}
+              style={{
+                background: authMode === 'register' ? '#2563EB' : 'transparent',
+                color: '#FFFFFF',
+                border: 'none',
+                fontWeight: 600,
+                padding: '0.45rem 1rem',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '0.85rem',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              Register
+            </button>
+          </div>
         </div>
       </header>
 
-      {/* Main Container */}
+      {/* Main Hero & Auth Split */}
       <main style={{
         flex: 1,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '3rem 2rem',
-        maxWidth: 1300,
+        padding: '2.5rem 2rem',
+        maxWidth: 1320,
         margin: '0 auto',
         width: '100%',
-        gap: '4rem'
+        gap: '3.5rem',
+        boxSizing: 'border-box'
       }}>
-        {/* Left Side: Product Positioning & Real Capabilities */}
-        <div style={{ flex: 1.2 }}>
+        {/* Left Side: Institutional Product Positioning */}
+        <div style={{ flex: 1.25 }}>
           <div style={{
             display: 'inline-flex',
             alignItems: 'center',
             gap: '0.5rem',
-            padding: '0.35rem 0.8rem',
-            background: 'rgba(0, 102, 255, 0.08)',
-            border: '1px solid rgba(0, 102, 255, 0.15)',
-            borderRadius: '20px',
-            color: '#0066FF',
-            fontSize: '0.8rem',
+            padding: '0.35rem 0.85rem',
+            background: 'rgba(37, 99, 235, 0.08)',
+            border: '1px solid rgba(37, 99, 235, 0.2)',
+            borderRadius: '999px',
+            color: '#2563EB',
+            fontSize: '0.78rem',
             fontWeight: 700,
-            marginBottom: '1.5rem'
+            letterSpacing: '0.04em',
+            marginBottom: '1.25rem'
           }}>
-            <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#059669' }}></span>
-            ENTERPRISE CREDIT & UNDERWRITING INFRASTRUCTURE
+            <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#10B981' }}></span>
+            RESERVE BANK OF INDIA COMPLIANT NBFC CORE
           </div>
 
           <h1 style={{
-            fontSize: '3.2rem',
+            fontSize: '3rem',
             lineHeight: 1.15,
             fontWeight: 800,
             letterSpacing: '-0.03em',
             color: '#0F172A',
-            marginBottom: '1.25rem'
+            marginBottom: '1.2rem'
           }}>
-            Institutional lending lifecycle. <br />
-            <span style={{ color: '#0066FF' }}>Zero ambiguity.</span>
+            Institutional Lending Lifecycle. <br />
+            <span style={{ background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+              Zero Ambiguity.
+            </span>
           </h1>
 
           <p style={{
-            fontSize: '1.1rem',
+            fontSize: '1.05rem',
             lineHeight: 1.6,
             color: '#475569',
-            marginBottom: '2.5rem',
-            maxWidth: 580
+            marginBottom: '2rem',
+            maxWidth: 600
           }}>
-            CredenceOS powers end-to-end digital credit delivery for regulated NBFCs: deterministic finite state machines, mathematical reducing-balance amortization, transparent DTI underwriting, and immutable audit logs.
+            CredenceOS provides enterprise-grade digital credit rails for Non-Banking Financial Companies: deterministic state machines, mathematical reducing-balance amortization, automated DTI underwriting, and tamper-proof compliance ledgers.
           </p>
 
-          {/* Core Feature Badges */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.2rem', marginBottom: '2.5rem' }}>
-            <div style={{ padding: '1rem', background: '#FFFFFF', borderRadius: '10px', border: '1px solid #E2E8F0', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
-              <div style={{ fontWeight: 700, color: '#0F172A', fontSize: '0.95rem', marginBottom: '0.3rem' }}>📊 Explainable Underwriting</div>
-              <div style={{ color: '#64748B', fontSize: '0.85rem' }}>Automated Debt-to-Income (DTI) computation with rule-based credit scoring.</div>
+          {/* Core Feature Matrix */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: '1rem',
+            marginBottom: '2rem'
+          }}>
+            <div style={{
+              padding: '1.1rem',
+              background: '#FFFFFF',
+              borderRadius: '12px',
+              border: '1px solid #E2E8F0',
+              boxShadow: '0 2px 4px rgba(15, 23, 42, 0.04)',
+              transition: 'all 0.2s ease'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, color: '#0F172A', fontSize: '0.92rem', marginBottom: '0.35rem' }}>
+                <span style={{ fontSize: '1.1rem' }}>📊</span> Explainable Underwriting
+              </div>
+              <div style={{ color: '#64748B', fontSize: '0.82rem', lineHeight: 1.45 }}>
+                Real-time Debt-to-Income (DTI) evaluation with multi-factor risk categorization.
+              </div>
             </div>
-            <div style={{ padding: '1rem', background: '#FFFFFF', borderRadius: '10px', border: '1px solid #E2E8F0', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
-              <div style={{ fontWeight: 700, color: '#0F172A', fontSize: '0.95rem', marginBottom: '0.3rem' }}>📈 Precision Amortization</div>
-              <div style={{ color: '#64748B', fontSize: '0.85rem' }}>Reducing-balance monthly schedules with final-installment cent reconciliation.</div>
+
+            <div style={{
+              padding: '1.1rem',
+              background: '#FFFFFF',
+              borderRadius: '12px',
+              border: '1px solid #E2E8F0',
+              boxShadow: '0 2px 4px rgba(15, 23, 42, 0.04)',
+              transition: 'all 0.2s ease'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, color: '#0F172A', fontSize: '0.92rem', marginBottom: '0.35rem' }}>
+                <span style={{ fontSize: '1.1rem' }}>📈</span> Reducing-Balance EMI
+              </div>
+              <div style={{ color: '#64748B', fontSize: '0.82rem', lineHeight: 1.45 }}>
+                Precision monthly amortization schedules with cent-level closing reconciliation.
+              </div>
             </div>
-            <div style={{ padding: '1rem', background: '#FFFFFF', borderRadius: '10px', border: '1px solid #E2E8F0', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
-              <div style={{ fontWeight: 700, color: '#0F172A', fontSize: '0.95rem', marginBottom: '0.3rem' }}>🔒 Payment Idempotency</div>
-              <div style={{ color: '#64748B', fontSize: '0.85rem' }}>Atomic transactional boundaries preventing double-debits on retry.</div>
+
+            <div style={{
+              padding: '1.1rem',
+              background: '#FFFFFF',
+              borderRadius: '12px',
+              border: '1px solid #E2E8F0',
+              boxShadow: '0 2px 4px rgba(15, 23, 42, 0.04)',
+              transition: 'all 0.2s ease'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, color: '#0F172A', fontSize: '0.92rem', marginBottom: '0.35rem' }}>
+                <span style={{ fontSize: '1.1rem' }}>🔒</span> Payment Idempotency
+              </div>
+              <div style={{ color: '#64748B', fontSize: '0.82rem', lineHeight: 1.45 }}>
+                Double-debit protection utilizing unique cryptographic transaction headers.
+              </div>
             </div>
-            <div style={{ padding: '1rem', background: '#FFFFFF', borderRadius: '10px', border: '1px solid #E2E8F0', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
-              <div style={{ fontWeight: 700, color: '#0F172A', fontSize: '0.95rem', marginBottom: '0.3rem' }}>📜 Tamper-Proof Audit Trail</div>
-              <div style={{ color: '#64748B', fontSize: '0.85rem' }}>Append-only compliance ledger tracking actor, IP, and state deltas.</div>
+
+            <div style={{
+              padding: '1.1rem',
+              background: '#FFFFFF',
+              borderRadius: '12px',
+              border: '1px solid #E2E8F0',
+              boxShadow: '0 2px 4px rgba(15, 23, 42, 0.04)',
+              transition: 'all 0.2s ease'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, color: '#0F172A', fontSize: '0.92rem', marginBottom: '0.35rem' }}>
+                <span style={{ fontSize: '1.1rem' }}>📜</span> Immutable Audit Trails
+              </div>
+              <div style={{ color: '#64748B', fontSize: '0.82rem', lineHeight: 1.45 }}>
+                Append-only event sourcing capturing actor, IP, timestamp, and state diffs.
+              </div>
             </div>
           </div>
 
-          {/* Quick Demo Switcher */}
-          <div style={{ padding: '1.25rem', background: '#F1F5F9', borderRadius: '10px', border: '1px solid #CBD5E1' }}>
-            <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.6rem' }}>
-              ⚡ Quick Fill Demo Credentials (For Evaluators)
+          {/* Quick Metrics Bar */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '1rem 1.5rem',
+            background: '#F1F5F9',
+            borderRadius: '12px',
+            border: '1px solid #CBD5E1'
+          }}>
+            <div>
+              <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>Database Engine</div>
+              <div style={{ fontSize: '0.9rem', color: '#0F172A', fontWeight: 700 }}>Neon PostgreSQL (SSL)</div>
             </div>
-            <div style={{ display: 'flex', gap: '0.75rem' }}>
-              <button
-                onClick={() => setDemoCredentials('admin')}
-                style={{ padding: '0.45rem 0.9rem', fontSize: '0.85rem', fontWeight: 600, background: '#0F172A', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
-              >
-                Admin (Full Access)
-              </button>
-              <button
-                onClick={() => setDemoCredentials('agent')}
-                style={{ padding: '0.45rem 0.9rem', fontSize: '0.85rem', fontWeight: 600, background: '#1E3E62', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
-              >
-                Recovery Officer
-              </button>
-              <button
-                onClick={() => setDemoCredentials('customer')}
-                style={{ padding: '0.45rem 0.9rem', fontSize: '0.85rem', fontWeight: 600, background: '#0066FF', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
-              >
-                Borrower / Customer
-              </button>
+            <div style={{ height: 28, width: 1, background: '#CBD5E1' }}></div>
+            <div>
+              <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>Underwriting Engine</div>
+              <div style={{ fontSize: '0.9rem', color: '#0F172A', fontWeight: 700 }}>Rule-Based (DTI & Risk)</div>
+            </div>
+            <div style={{ height: 28, width: 1, background: '#CBD5E1' }}></div>
+            <div>
+              <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>Architecture</div>
+              <div style={{ fontSize: '0.9rem', color: '#0F172A', fontWeight: 700 }}>Dockerized Microservices</div>
             </div>
           </div>
         </div>
 
-        {/* Right Side: Auth Card */}
-        <div style={{ flex: 0.9, maxWidth: 460, width: '100%' }}>
+        {/* Right Side: Elite Auth Hub */}
+        <div style={{ flex: 0.95, maxWidth: 480, width: '100%' }}>
           <div style={{
             background: '#FFFFFF',
-            borderRadius: '16px',
+            borderRadius: '18px',
             border: '1px solid #E2E8F0',
-            boxShadow: '0 20px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04)',
-            padding: '2.5rem'
+            boxShadow: '0 20px 35px -5px rgba(15, 23, 42, 0.08), 0 10px 15px -5px rgba(15, 23, 42, 0.04)',
+            padding: '2.25rem',
+            boxSizing: 'border-box'
           }}>
-            {showRegister ? (
+            {/* Segmented Auth Mode Switcher */}
+            <div style={{
+              display: 'flex',
+              background: '#F1F5F9',
+              padding: '4px',
+              borderRadius: '10px',
+              marginBottom: '1.75rem',
+              border: '1px solid #E2E8F0'
+            }}>
+              <button
+                type="button"
+                onClick={() => { setAuthMode('login'); setError(''); }}
+                style={{
+                  flex: 1,
+                  padding: '0.65rem 0',
+                  border: 'none',
+                  borderRadius: '7px',
+                  background: authMode === 'login' ? '#FFFFFF' : 'transparent',
+                  color: authMode === 'login' ? '#0F172A' : '#64748B',
+                  fontWeight: 700,
+                  fontSize: '0.9rem',
+                  cursor: 'pointer',
+                  boxShadow: authMode === 'login' ? '0 2px 6px rgba(15, 23, 42, 0.08)' : 'none',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                🔐 Sign In
+              </button>
+              <button
+                type="button"
+                onClick={() => { setAuthMode('register'); setError(''); }}
+                style={{
+                  flex: 1,
+                  padding: '0.65rem 0',
+                  border: 'none',
+                  borderRadius: '7px',
+                  background: authMode === 'register' ? '#FFFFFF' : 'transparent',
+                  color: authMode === 'register' ? '#0F172A' : '#64748B',
+                  fontWeight: 700,
+                  fontSize: '0.9rem',
+                  cursor: 'pointer',
+                  boxShadow: authMode === 'register' ? '0 2px 6px rgba(15, 23, 42, 0.08)' : 'none',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                📝 Create Account
+              </button>
+            </div>
+
+            {authMode === 'register' ? (
               <Register
                 onLogin={onLogin}
-                onSuccess={() => { setShowRegister(false); setShowForm(true); }}
-                onBackToLogin={() => setShowRegister(false)}
+                onSuccess={() => setAuthMode('login')}
+                onBackToLogin={() => setAuthMode('login')}
               />
             ) : (
               <div>
-                <div style={{ marginBottom: '1.75rem' }}>
-                  <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0F172A', margin: '0 0 0.35rem 0' }}>
-                    Access CredenceOS Portal
+                <div style={{ marginBottom: '1.5rem' }}>
+                  <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0F172A', margin: '0 0 0.3rem 0' }}>
+                    Welcome to CredenceOS
                   </h2>
-                  <p style={{ margin: 0, color: '#64748B', fontSize: '0.9rem' }}>
-                    Enter institutional credentials or select an evaluator profile.
+                  <p style={{ margin: 0, color: '#64748B', fontSize: '0.88rem' }}>
+                    Sign in with institutional credentials or test with evaluator personas.
                   </p>
+                </div>
+
+                {/* 1-Click Instant Persona Sign-in */}
+                <div style={{
+                  background: '#F8FAFC',
+                  borderRadius: '12px',
+                  padding: '1rem',
+                  border: '1px solid #E2E8F0',
+                  marginBottom: '1.5rem'
+                }}>
+                  <div style={{
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                    color: '#64748B',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    marginBottom: '0.65rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between'
+                  }}>
+                    <span>⚡ 1-Click Evaluator Login</span>
+                    <span style={{ color: '#2563EB', fontWeight: 600 }}>Instant Access</span>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
+                    <button
+                      type="button"
+                      disabled={loading}
+                      onClick={() => handlePersonaLogin('admin')}
+                      style={{
+                        padding: '0.6rem 0.4rem',
+                        fontSize: '0.78rem',
+                        fontWeight: 700,
+                        background: activePersona === 'admin' ? '#1E293B' : '#0B132B',
+                        color: '#FFFFFF',
+                        border: 'none',
+                        borderRadius: '8px',
+                        cursor: loading ? 'not-allowed' : 'pointer',
+                        textAlign: 'center',
+                        transition: 'all 0.2s ease',
+                        boxShadow: '0 2px 4px rgba(11, 19, 43, 0.15)'
+                      }}
+                    >
+                      👑 Admin
+                    </button>
+                    <button
+                      type="button"
+                      disabled={loading}
+                      onClick={() => handlePersonaLogin('agent')}
+                      style={{
+                        padding: '0.6rem 0.4rem',
+                        fontSize: '0.78rem',
+                        fontWeight: 700,
+                        background: activePersona === 'agent' ? '#2563EB' : '#1C2541',
+                        color: '#FFFFFF',
+                        border: 'none',
+                        borderRadius: '8px',
+                        cursor: loading ? 'not-allowed' : 'pointer',
+                        textAlign: 'center',
+                        transition: 'all 0.2s ease',
+                        boxShadow: '0 2px 4px rgba(28, 37, 65, 0.15)'
+                      }}
+                    >
+                      🛡️ Officer
+                    </button>
+                    <button
+                      type="button"
+                      disabled={loading}
+                      onClick={() => handlePersonaLogin('customer')}
+                      style={{
+                        padding: '0.6rem 0.4rem',
+                        fontSize: '0.78rem',
+                        fontWeight: 700,
+                        background: activePersona === 'customer' ? '#1D4ED8' : '#2563EB',
+                        color: '#FFFFFF',
+                        border: 'none',
+                        borderRadius: '8px',
+                        cursor: loading ? 'not-allowed' : 'pointer',
+                        textAlign: 'center',
+                        transition: 'all 0.2s ease',
+                        boxShadow: '0 2px 4px rgba(37, 99, 235, 0.25)'
+                      }}
+                    >
+                      👤 Borrower
+                    </button>
+                  </div>
                 </div>
 
                 {error && (
                   <div style={{
-                    padding: '0.75rem 1rem',
+                    padding: '0.85rem 1rem',
                     background: '#FEF2F2',
                     border: '1px solid #FECACA',
                     color: '#991B1B',
-                    borderRadius: '8px',
+                    borderRadius: '10px',
                     fontSize: '0.85rem',
-                    marginBottom: '1.25rem'
+                    marginBottom: '1.25rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.6rem'
                   }}>
-                    {error}
+                    <span>⚠️</span>
+                    <span style={{ flex: 1 }}>{error}</span>
+                    <button
+                      type="button"
+                      onClick={() => setError('')}
+                      style={{ background: 'none', border: 'none', color: '#991B1B', cursor: 'pointer', fontWeight: 700 }}
+                    >
+                      ×
+                    </button>
                   </div>
                 )}
 
                 <form onSubmit={handleLogin}>
-                  <div style={{ marginBottom: '1.25rem' }}>
-                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.4rem' }}>
+                  <div style={{ marginBottom: '1.2rem' }}>
+                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: '#334155', marginBottom: '0.4rem' }}>
                       Institutional Email Address
                     </label>
-                    <input
-                      type="email"
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="e.g. admin@example.com"
-                      style={{
-                        width: '100%',
-                        padding: '0.75rem 0.9rem',
-                        borderRadius: '8px',
-                        border: '1px solid #CBD5E1',
-                        fontSize: '0.95rem',
-                        boxSizing: 'border-box',
-                        background: '#F8FAFC'
-                      }}
-                    />
+                    <div style={{ position: 'relative' }}>
+                      <input
+                        type="email"
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="e.g. admin@example.com"
+                        style={{
+                          width: '100%',
+                          padding: '0.8rem 1rem',
+                          borderRadius: '8px',
+                          border: '1px solid #CBD5E1',
+                          fontSize: '0.92rem',
+                          boxSizing: 'border-box',
+                          background: '#FFFFFF'
+                        }}
+                      />
+                    </div>
                   </div>
 
                   <div style={{ marginBottom: '1.5rem' }}>
-                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.4rem' }}>
-                      Security Passcode
-                    </label>
-                    <input
-                      type="password"
-                      required
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="••••••••"
-                      style={{
-                        width: '100%',
-                        padding: '0.75rem 0.9rem',
-                        borderRadius: '8px',
-                        border: '1px solid #CBD5E1',
-                        fontSize: '0.95rem',
-                        boxSizing: 'border-box',
-                        background: '#F8FAFC'
-                      }}
-                    />
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                      <label style={{ fontSize: '0.82rem', fontWeight: 600, color: '#334155' }}>
+                        Security Passcode
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: '#2563EB',
+                          fontSize: '0.78rem',
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                          padding: 0
+                        }}
+                      >
+                        {showPassword ? '🙈 Hide' : '👁️ Show'}
+                      </button>
+                    </div>
+                    <div style={{ position: 'relative' }}>
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        required
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="••••••••"
+                        style={{
+                          width: '100%',
+                          padding: '0.8rem 1rem',
+                          borderRadius: '8px',
+                          border: '1px solid #CBD5E1',
+                          fontSize: '0.92rem',
+                          boxSizing: 'border-box',
+                          background: '#FFFFFF'
+                        }}
+                      />
+                    </div>
                   </div>
 
                   <button
@@ -298,36 +562,49 @@ function Home({ onLogin }) {
                     style={{
                       width: '100%',
                       padding: '0.85rem',
-                      background: '#0066FF',
+                      background: 'var(--primary-blue)',
                       color: '#FFFFFF',
                       border: 'none',
                       borderRadius: '8px',
                       fontWeight: 700,
                       fontSize: '0.95rem',
                       cursor: loading ? 'not-allowed' : 'pointer',
-                      boxShadow: '0 4px 12px rgba(0, 102, 255, 0.25)',
-                      transition: 'all 0.2s ease'
+                      boxShadow: '0 4px 14px rgba(37, 99, 235, 0.3)',
+                      transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                      opacity: loading ? 0.75 : 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.5rem'
                     }}
                   >
-                    {loading ? 'Authenticating...' : 'Sign In to Portal'}
+                    {loading ? (
+                      <>
+                        <span style={{ display: 'inline-block', width: 14, height: 14, border: '2px solid #FFFFFF', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spinSlow 0.8s linear infinite' }}></span>
+                        <span>Authenticating Session...</span>
+                      </>
+                    ) : (
+                      <span>Sign In to CredenceOS</span>
+                    )}
                   </button>
                 </form>
 
-                <div style={{ marginTop: '1.5rem', textAlign: 'center', paddingTop: '1.25rem', borderTop: '1px solid #F1F5F9' }}>
-                  <span style={{ fontSize: '0.85rem', color: '#64748B' }}>Need an account? </span>
+                <div style={{ marginTop: '1.5rem', textAlign: 'center', paddingTop: '1.2rem', borderTop: '1px solid #F1F5F9' }}>
+                  <span style={{ fontSize: '0.85rem', color: '#64748B' }}>First time here? </span>
                   <button
-                    onClick={() => setShowRegister(true)}
+                    type="button"
+                    onClick={() => { setAuthMode('register'); setError(''); }}
                     style={{
                       background: 'none',
                       border: 'none',
-                      color: '#0066FF',
-                      fontWeight: 600,
+                      color: '#2563EB',
+                      fontWeight: 700,
                       cursor: 'pointer',
                       fontSize: '0.85rem',
                       padding: 0
                     }}
                   >
-                    Register as borrower
+                    Open Borrower Account →
                   </button>
                 </div>
               </div>

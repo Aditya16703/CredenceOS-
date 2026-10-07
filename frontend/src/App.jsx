@@ -66,13 +66,16 @@ function App() {
           <span className="brand-badge">NBFC Core</span>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
           <div className="user-info">
+            <div className="user-avatar">
+              {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+            </div>
             <span className="user-name">
               {user.name} <span className="user-role">{user.role}</span>
             </span>
           </div>
-          <button className="logout-btn" onClick={handleLogout}>
+          <button className="logout-btn" onClick={handleLogout} title="Sign out of CredenceOS">
             Sign Out
           </button>
         </div>

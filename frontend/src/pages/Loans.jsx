@@ -322,16 +322,16 @@ function Loans({ user }) {
         }}>
           {/* Header */}
           <div style={{ 
-            background: 'linear-gradient(135deg, #ffc107 0%, #fd7e14 100%)', 
+            background: 'linear-gradient(135deg, #0B132B 0%, #1E293B 100%)', 
             color: 'white', 
-            padding: '1.5rem', 
+            padding: '1.75rem', 
             textAlign: 'center'
           }}>
-            <h3 style={{ margin: '0 0 0.5rem 0', fontWeight: 600, fontSize: '1.5rem' }}>
-              🔍 Recovery Management
+            <h3 style={{ margin: '0 0 0.35rem 0', fontWeight: 700, fontSize: '1.4rem', letterSpacing: '-0.02em' }}>
+              🛡️ Portfolio Recovery Desk
             </h3>
-            <p style={{ margin: 0, opacity: 0.9, fontSize: '1rem' }}>
-              Manage recovery status for your assigned loans
+            <p style={{ margin: 0, color: '#94A3B8', fontSize: '0.9rem' }}>
+              Manage delinquency stages, agent assignments, and collections status
             </p>
           </div>
 
@@ -662,16 +662,16 @@ function Loans({ user }) {
             }}>
               {/* Header */}
               <div style={{ 
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', 
+                background: 'linear-gradient(135deg, #0B132B 0%, #1E293B 100%)', 
                 color: 'white', 
-                padding: '1.5rem', 
+                padding: '1.75rem', 
                 textAlign: 'center'
               }}>
-                <h3 style={{ margin: '0 0 0.5rem 0', fontWeight: 600, fontSize: '1.5rem' }}>
-                  📝 Apply for Loan
+                <h3 style={{ margin: '0 0 0.35rem 0', fontWeight: 700, fontSize: '1.4rem', letterSpacing: '-0.02em' }}>
+                  🏛️ Credit Facility Application
                 </h3>
-                <p style={{ margin: 0, opacity: 0.9, fontSize: '1rem' }}>
-                  Submit your loan application with automatic interest rate calculation
+                <p style={{ margin: 0, color: '#94A3B8', fontSize: '0.9rem' }}>
+                  Submit credit parameters for real-time automated underwriting and reducing-balance amortization
                 </p>
               </div>
 
@@ -787,29 +787,23 @@ function Loans({ user }) {
                     readOnly 
                   />
                   <button 
-                    className="btn btn-success" 
+                    className="btn btn-primary" 
                     style={{ 
-                      fontSize: '1rem', 
+                      fontSize: '0.95rem', 
                       padding: '0.875rem 2rem', 
-                      minWidth: 140,
+                      minWidth: 150,
                       borderRadius: '8px',
-                      fontWeight: 600,
-                      border: '2px solid #28a745',
-                      transition: 'all 0.3s ease',
-                      boxShadow: '0 2px 8px rgba(40, 167, 69, 0.2)'
+                      fontWeight: 700,
+                      background: 'var(--primary-blue)',
+                      border: 'none',
+                      color: '#FFFFFF',
+                      transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                      boxShadow: '0 4px 12px rgba(37, 99, 235, 0.25)',
+                      cursor: 'pointer'
                     }} 
                     type="submit"
-                    onMouseEnter={(e) => {
-                      e.target.style.transform = 'translateY(-2px)';
-                      e.target.style.boxShadow = '0 4px 12px rgba(40, 167, 69, 0.3)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.target.style.transform = 'translateY(0)';
-                      e.target.style.boxShadow = '0 2px 8px rgba(40, 167, 69, 0.2)';
-                    }}
                   >
-                    <i className="bi bi-send" style={{ marginRight: '0.5rem' }}></i>
-                    Apply for Loan
+                    🚀 Submit Application
                   </button>
             </form>
 
@@ -857,18 +851,18 @@ function Loans({ user }) {
       }}>
         {/* Header */}
         <div style={{ 
-          background: 'linear-gradient(135deg, #17a2b8 0%, #138496 100%)', 
+          background: 'linear-gradient(135deg, #0B132B 0%, #1E293B 100%)', 
           color: 'white', 
-          padding: '1.5rem', 
+          padding: '1.75rem', 
           textAlign: 'center'
         }}>
-          <h3 style={{ margin: '0 0 0.5rem 0', fontWeight: 600, fontSize: '1.5rem' }}>
-            📊 Loan Overview
+          <h3 style={{ margin: '0 0 0.35rem 0', fontWeight: 700, fontSize: '1.4rem', letterSpacing: '-0.02em' }}>
+            📊 Active Credit Registry & Underwriting Status
           </h3>
-          <p style={{ margin: 0, opacity: 0.9, fontSize: '1rem' }}>
-            {user.role === 'customer' ? 'Your loan applications and status' : 
-             user.role === 'agent' ? 'Your assigned loans for recovery' : 
-             'All loan applications and management'}
+          <p style={{ margin: 0, color: '#94A3B8', fontSize: '0.9rem' }}>
+            {user.role === 'customer' ? 'Your active facilities, approved applications, and repayment schedules' : 
+             user.role === 'agent' ? 'Assigned delinquent accounts and recovery pipeline' : 
+             'Institutional credit ledger and underwriting decisioning stream'}
           </p>
         </div>
 
