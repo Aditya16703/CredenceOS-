@@ -34,7 +34,7 @@ exports.createPayment = asyncHandler(async (req, res) => {
     throw new AuthorizationError('You can only make payments towards your own loans');
   }
 
-  if (!['ACTIVE', 'OVERDUE', 'DISBURSED'].includes(loan.status)) {
+  if (!['ACTIVE', 'OVERDUE', 'DISBURSED', 'APPROVED'].includes(loan.status)) {
     throw new ValidationError(`Cannot accept payments for loans in ${loan.status} state`);
   }
 
@@ -61,8 +61,11 @@ exports.createPayment = asyncHandler(async (req, res) => {
 
     if (newBalance <= 0) {
       updates.status = 'CLOSED';
-    } else if (loan.status === 'OVERDUE') {
-      updates.status = 'ACTIVE'; // Mark back to active upon payment
+    } else if (loan.status === 'OVERDUE' || loan.status === 'APPROVED') {
+      updates.status = 'ACTIVE'; // Mark to active upon payment
+      if (loan.status === 'APPROVED') {
+        updates.disbursedDate = new Date();
+      }
     }
 
     await loan.update(updates, { transaction: t });

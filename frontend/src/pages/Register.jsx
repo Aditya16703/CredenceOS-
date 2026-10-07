@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { api, handleApiError, handleApiSuccess } from '../utils/api';
 
-function Register({ onRegister, onLogin }) {
+function Register({ onRegister, onLogin, onBackToLogin }) {
   const [form, setForm] = useState({ name: '', email: '', password: '', role: 'customer', phone: '' });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -17,7 +17,11 @@ function Register({ onRegister, onLogin }) {
     
     try {
       const payload = { ...form };
-      if (form.role !== 'agent') delete payload.phone;
+      if (form.role !== 'agent') {
+        delete payload.phone;
+      } else if (payload.phone) {
+        payload.phone = payload.phone.replace(/[\s\-\(\)]/g, '');
+      }
       
       // Register the user
       const registerData = await api.register(payload);
@@ -332,7 +336,7 @@ function Register({ onRegister, onLogin }) {
         </p>
         <button 
           className="btn btn-outline-primary"
-          onClick={onRegister}
+          onClick={onBackToLogin || onRegister}
           style={{
             background: 'transparent',
             border: '2px solid #396afc',

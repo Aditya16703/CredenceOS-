@@ -8,7 +8,7 @@ function Loans({ user }) {
   const [editingRecovery, setEditingRecovery] = useState({}); // { [loanId]: true/false }
   const [selectedRecovery, setSelectedRecovery] = useState({}); // { [loanId]: value }
   const [error, setError] = useState('');
-  const [form, setForm] = useState({ amount: '', interestRate: '', termMonths: '' });
+  const [form, setForm] = useState({ amount: '', interestRate: '', termMonths: '', monthlyIncome: '', existingDebts: '' });
   const [success, setSuccess] = useState('');
   const [assignAgentId, setAssignAgentId] = useState({});
 
@@ -105,12 +105,16 @@ function Loans({ user }) {
         customerId: user.id,
         amount: parseFloat(form.amount),
         interestRate: parseFloat(form.interestRate),
-        termMonths: parseInt(form.termMonths)
+        termMonths: parseInt(form.termMonths),
+        monthlyIncome: parseFloat(form.monthlyIncome) || 50000,
+        existingMonthlyDebt: parseFloat(form.existingDebts) || 0,
+        creditScore: 700,
+        employmentType: 'SALARIED'
       };
       
       const data = await api.createLoan(loanData);
       handleApiSuccess('Loan application submitted!', setSuccess);
-      setForm({ amount: '', interestRate: '', termMonths: '' });
+      setForm({ amount: '', interestRate: '', termMonths: '', monthlyIncome: '', existingDebts: '' });
       
       // Refresh loans list
       const loansData = await api.getLoansByCustomer(user.id);
@@ -693,10 +697,50 @@ function Loans({ user }) {
                       transition: 'border-color 0.3s ease'
                     }} 
                     name="amount" 
-                    placeholder="Loan Amount" 
+                    placeholder="Loan Amount (₹)" 
+                    type="number"
+                    min="5000"
+                    max="2500000"
                     value={form.amount} 
                     onChange={handleFormChange} 
                     required 
+                  />
+                  <input 
+                    className="form-control" 
+                    style={{ 
+                      minWidth: 200, 
+                      fontSize: '1rem', 
+                      flex: 1,
+                      padding: '0.875rem 1rem',
+                      borderRadius: '8px',
+                      border: '2px solid #e9ecef',
+                      transition: 'border-color 0.3s ease'
+                    }} 
+                    name="monthlyIncome" 
+                    placeholder="Monthly Income (₹)" 
+                    type="number"
+                    min="1000"
+                    value={form.monthlyIncome} 
+                    onChange={handleFormChange} 
+                    required 
+                  />
+                  <input 
+                    className="form-control" 
+                    style={{ 
+                      minWidth: 200, 
+                      fontSize: '1rem', 
+                      flex: 1,
+                      padding: '0.875rem 1rem',
+                      borderRadius: '8px',
+                      border: '2px solid #e9ecef',
+                      transition: 'border-color 0.3s ease'
+                    }} 
+                    name="existingDebts" 
+                    placeholder="Existing Monthly Debts (₹)" 
+                    type="number"
+                    min="0"
+                    value={form.existingDebts} 
+                    onChange={handleFormChange} 
                   />
                   <select 
                     className="form-control" 

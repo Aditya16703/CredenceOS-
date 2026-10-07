@@ -218,6 +218,7 @@ function Home({ onLogin }) {
           }}>
             {showRegister ? (
               <Register
+                onLogin={onLogin}
                 onSuccess={() => { setShowRegister(false); setShowForm(true); }}
                 onBackToLogin={() => setShowRegister(false)}
               />

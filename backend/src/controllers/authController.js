@@ -42,7 +42,7 @@ exports.register = asyncHandler(async (req, res) => {
       await Customer.create({ 
         name, 
         email, 
-        phone: phone || '', 
+        phone: phone || 'N/A', 
         address: '', 
         id: user.id 
       });

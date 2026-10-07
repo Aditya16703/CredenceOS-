@@ -62,8 +62,8 @@ const Customer = sequelize.define('Customer', {
   id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
   name: { type: DataTypes.STRING, allowNull: false },
   email: { type: DataTypes.STRING, allowNull: false, unique: true },
-  phone: { type: DataTypes.STRING, allowNull: false },
-  address: { type: DataTypes.STRING },
+  phone: { type: DataTypes.STRING, allowNull: true, defaultValue: '' },
+  address: { type: DataTypes.STRING, allowNull: true, defaultValue: '' },
 }, { timestamps: true });
 
 const Agent = sequelize.define('Agent', {

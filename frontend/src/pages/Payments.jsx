@@ -178,10 +178,18 @@ function Payments({ user }) {
               onChange={handleFormChange} 
               required
             >
-            <option value="" disabled>Select Loan</option>
-            {loans.filter(l => l.status === 'approved').map(l => (
-                <option key={l.id} value={l.id}>Loan #{l.id} - ₹{l.amount}</option>
-            ))}
+            {loans.length === 0 ? (
+              <option value="" disabled>No loans found — Apply for a loan first</option>
+            ) : loans.filter(l => ['APPROVED', 'ACTIVE', 'OVERDUE', 'DISBURSED'].includes(l.status)).length === 0 ? (
+              <option value="" disabled>No active loans — Pending approval ({loans.length} in review)</option>
+            ) : (
+              <>
+                <option value="" disabled>Select Loan</option>
+                {loans.filter(l => ['APPROVED', 'ACTIVE', 'OVERDUE', 'DISBURSED'].includes(l.status)).map(l => (
+                  <option key={l.id} value={l.id}>Loan #{l.id} - ₹{l.amount} ({l.status})</option>
+                ))}
+              </>
+            )}
           </select>
             <input 
               className="form-control" 
