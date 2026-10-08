@@ -23,4 +23,8 @@ backend/logs/
 .idea/
 .DS_Store
 Thumbs.db
- 
+
+# Local Project History & Chat Logs (Never committed to GitHub)
+PROJECT_CHAT_HISTORY.md
+*.chat_history.md
+.chat_history/
