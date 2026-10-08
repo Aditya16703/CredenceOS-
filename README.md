@@ -2,12 +2,14 @@
 
 <p align="center">
   <a href="https://github.com/Aditya16703/CredenceOS-">
-    <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=11,18,24&height=220&section=header&text=CredenceOS&fontSize=52&fontColor=ffffff&fontAlignY=38&desc=Institutional%20NBFC%20Credit%20%26%20Lending%20Operating%20System&descAlignY=60&descSize=18" alt="CredenceOS Header" width="100%" />
+    <img src="./assets/credenceos-header.svg" alt="CredenceOS - Institutional NBFC Lending &amp; Debt Recovery Management Platform" width="100%" />
   </a>
 </p>
 
 <p align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=Plus+Jakarta+Sans&weight=700&size=24&duration=3000&pause=1000&color=2563EB&center=true&vCenter=true&multiline=true&width=750&height=85&lines=🏛️+Institutional+Lending+Lifecycle+·+Zero+Ambiguity;⚡+Automated+DTI+Underwriting+%26+Credit+Scoring+Engine;📈+Mathematical+Reducing-Balance+Amortization;🔒+Cryptographic+Payment+Idempotency+%26+Audit+Trail" alt="Typing Banner" />
+  <a href="https://credence-os.vercel.app">
+    <img src="https://readme-typing-svg.demolab.com?font=Plus+Jakarta+Sans&weight=700&size=24&duration=3000&pause=1000&color=2563EB&center=true&vCenter=true&multiline=true&width=780&height=80&lines=%F0%9F%8F%9B%EF%B8%8F+Institutional+Lending+Lifecycle+%C2%B7+Zero+Ambiguity;%E2%9A%A1+Automated+DTI+Underwriting+%26+Credit+Scoring+Engine;%F0%9F%93%88+Mathematical+Reducing-Balance+Amortization;%F0%9F%94%92+Cryptographic+Payment+Idempotency+%26+Audit+Trail" alt="Typing Banner" />
+  </a>
 </p>
 
 <p align="center">
@@ -271,5 +273,5 @@ CredenceOS-
 This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for complete details.
 
 <p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=11,18,24&height=100&section=footer" width="100%" />
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0B132B,1E3A8A,2563EB&height=100&section=footer" width="100%" />
 </p>
