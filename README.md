@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <a href="https://credenceos.vercel.app"><img src="https://img.shields.io/badge/🚀_Live_Demo-Vercel_Production-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo Vercel" /></a>
+  <a href="https://credence-os.vercel.app"><img src="https://img.shields.io/badge/🚀_Live_Demo-Vercel_Production-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo Vercel" /></a>
   <a href="https://credenceos.onrender.com/health"><img src="https://img.shields.io/badge/⚡_API_Gateway-Render_Live-46E3B7?style=for-the-badge&logo=render&logoColor=white" alt="API Render" /></a>
   <a href="https://github.com/Aditya16703/CredenceOS-/actions/workflows/ci-cd.yml"><img src="https://img.shields.io/github/actions/workflow/status/Aditya16703/CredenceOS-/ci-cd.yml?branch=main&label=CI%2FCD&style=for-the-badge&logo=githubactions&logoColor=white" alt="CI Status" /></a>
 </p>
@@ -33,7 +33,7 @@ Experience the live institutional lending platform across our production environ
 
 | Environment | Service | Live Link | Status |
 | :--- | :--- | :--- | :--- |
-| **Frontend Web App** | React 19 + Vite UI | [**credenceos.vercel.app**](https://credenceos.vercel.app) *(or [Backup Mirror](https://credence-frontend.onrender.com))* | 🟢 Live |
+| **Frontend Web App** | React 19 + Vite UI | [**credence-os.vercel.app**](https://credence-os.vercel.app) | 🟢 Live |
 | **Backend REST API** | Express.js Core Engine | [**credenceos.onrender.com**](https://credenceos.onrender.com) | 🟢 Live |
 | **Database** | Neon Cloud PostgreSQL (SSL) | `ep-red-star-b3l0toch-pooler (AWS ap-southeast-1)` | 🟢 Active |
 | **Source Code** | GitHub Repository | [**Aditya16703/CredenceOS-**](https://github.com/Aditya16703/CredenceOS-) | 🟢 Public |
@@ -50,7 +50,7 @@ Test the complete institutional lending and debt recovery lifecycle without manu
 | 🛡️ **Recovery Officer** | `agent` | `agent@example.com` / `agent123` | Delinquent borrower worklists, debt recovery status tracking, and collections queue |
 | 👤 **Retail Borrower** | `customer` | `customer@example.com` / `customer123` | Regulatory KYC onboarding, credit application, amortization schedule inspection, and payments |
 
-> 💡 *Tip: On the [Live Portal](https://credenceos.vercel.app), click any of the **"⚡ 1-Click Evaluator Login"** buttons to auto-authenticate instantly.*
+> 💡 *Tip: On the [Live Portal](https://credence-os.vercel.app), click any of the **"⚡ 1-Click Evaluator Login"** buttons to auto-authenticate instantly.*
 
 ---
 

@@ -67,7 +67,7 @@ jobs:
       - name: 🏗️ Compile Production Bundle
         working-directory: frontend
         env:
-          VITE_API_URL: https://api.credenceos.example.com
+          VITE_API_URL: https://credenceos.onrender.com
         run: npm run build
 
       - name: 📤 Archive Frontend Production Dist

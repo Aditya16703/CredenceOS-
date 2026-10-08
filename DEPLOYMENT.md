@@ -19,8 +19,8 @@
 
 ### Expected URLs
 
-- **Frontend**: `https://credence-frontend.onrender.com`
-- **Backend**: `https://credence-backend.onrender.com`
+- **Frontend**: `https://credence-os.vercel.app`
+- **Backend**: `https://credenceos.onrender.com`
 
 ---
 
