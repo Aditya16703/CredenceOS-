@@ -5,6 +5,8 @@ import Dashboard from './pages/Dashboard';
 import './AppHeader.css';
 import sessionManager from './utils/sessionManager';
 
+import { Landmark, LogOut } from 'lucide-react';
+
 function App() {
   const [user, setUser] = useState(() => {
     // Check if session is valid on app load
@@ -59,9 +61,21 @@ function App() {
   return (
     <div className="app-bg">
       <header className="app-header">
-        <div className="brand-area">
-          <span className="brand-logo-text">
-            🏛️ CredenceOS
+        <div className="brand-area" style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+          <div style={{
+            background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(37, 99, 235, 0.25))',
+            border: '1px solid rgba(56, 189, 248, 0.35)',
+            padding: '6px',
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 0 12px rgba(56, 189, 248, 0.2)'
+          }}>
+            <Landmark size={20} color="#38BDF8" />
+          </div>
+          <span className="brand-logo-text" style={{ letterSpacing: '-0.02em', fontWeight: 800 }}>
+            Credence<span style={{ color: '#38BDF8' }}>OS</span>
           </span>
           <span className="brand-badge">NBFC Core</span>
         </div>
@@ -75,8 +89,9 @@ function App() {
               {user.name} <span className="user-role">{user.role}</span>
             </span>
           </div>
-          <button className="logout-btn" onClick={handleLogout} title="Sign out of CredenceOS">
-            Sign Out
+          <button className="logout-btn" onClick={handleLogout} title="Sign out of CredenceOS" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+            <LogOut size={15} />
+            <span>Sign Out</span>
           </button>
         </div>
       </header>

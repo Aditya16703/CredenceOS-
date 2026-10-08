@@ -1,6 +1,27 @@
 import React, { useState } from 'react';
 import Register from './Register';
 import { api, handleApiError } from '../utils/api';
+import { 
+  Landmark, 
+  ShieldAlert, 
+  Briefcase, 
+  UserCheck, 
+  Zap, 
+  LogIn, 
+  UserPlus, 
+  AlertCircle, 
+  Eye, 
+  EyeOff, 
+  BarChart3, 
+  TrendingUp, 
+  Lock, 
+  FileCheck,
+  CheckCircle2,
+  Database,
+  Cpu,
+  Layers,
+  ArrowRight
+} from 'lucide-react';
 
 function Home({ onLogin }) {
   const [authMode, setAuthMode] = useState('login'); // 'login' | 'register'
@@ -72,8 +93,20 @@ function Home({ onLogin }) {
         boxShadow: '0 4px 20px rgba(11, 19, 43, 0.2)'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-          <span style={{ fontSize: '1.4rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.03em', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            🏛️ CredenceOS
+          <div style={{
+            background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(37, 99, 235, 0.25))',
+            border: '1px solid rgba(56, 189, 248, 0.35)',
+            padding: '6px',
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 0 12px rgba(56, 189, 248, 0.2)'
+          }}>
+            <Landmark size={20} color="#38BDF8" />
+          </div>
+          <span style={{ fontSize: '1.4rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.03em' }}>
+            Credence<span style={{ color: '#38BDF8' }}>OS</span>
           </span>
           <span style={{
             background: 'rgba(37, 99, 235, 0.2)',
@@ -220,7 +253,8 @@ function Home({ onLogin }) {
               transition: 'all 0.2s ease'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, color: '#0F172A', fontSize: '0.92rem', marginBottom: '0.35rem' }}>
-                <span style={{ fontSize: '1.1rem' }}>📊</span> Explainable Underwriting
+                <BarChart3 size={17} color="#2563EB" />
+                <span>Explainable Underwriting</span>
               </div>
               <div style={{ color: '#64748B', fontSize: '0.82rem', lineHeight: 1.45 }}>
                 Real-time Debt-to-Income (DTI) evaluation with multi-factor risk categorization.
@@ -236,7 +270,8 @@ function Home({ onLogin }) {
               transition: 'all 0.2s ease'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, color: '#0F172A', fontSize: '0.92rem', marginBottom: '0.35rem' }}>
-                <span style={{ fontSize: '1.1rem' }}>📈</span> Reducing-Balance EMI
+                <TrendingUp size={17} color="#2563EB" />
+                <span>Reducing-Balance EMI</span>
               </div>
               <div style={{ color: '#64748B', fontSize: '0.82rem', lineHeight: 1.45 }}>
                 Precision monthly amortization schedules with cent-level closing reconciliation.
@@ -252,7 +287,8 @@ function Home({ onLogin }) {
               transition: 'all 0.2s ease'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, color: '#0F172A', fontSize: '0.92rem', marginBottom: '0.35rem' }}>
-                <span style={{ fontSize: '1.1rem' }}>🔒</span> Payment Idempotency
+                <Lock size={17} color="#2563EB" />
+                <span>Payment Idempotency</span>
               </div>
               <div style={{ color: '#64748B', fontSize: '0.82rem', lineHeight: 1.45 }}>
                 Double-debit protection utilizing unique cryptographic transaction headers.
@@ -268,7 +304,8 @@ function Home({ onLogin }) {
               transition: 'all 0.2s ease'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, color: '#0F172A', fontSize: '0.92rem', marginBottom: '0.35rem' }}>
-                <span style={{ fontSize: '1.1rem' }}>📜</span> Immutable Audit Trails
+                <FileCheck size={17} color="#2563EB" />
+                <span>Immutable Audit Trails</span>
               </div>
               <div style={{ color: '#64748B', fontSize: '0.82rem', lineHeight: 1.45 }}>
                 Append-only event sourcing capturing actor, IP, timestamp, and state diffs.
@@ -287,18 +324,24 @@ function Home({ onLogin }) {
             border: '1px solid #CBD5E1'
           }}>
             <div>
-              <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>Database Engine</div>
+              <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <Database size={12} color="#2563EB" /> Database
+              </div>
               <div style={{ fontSize: '0.9rem', color: '#0F172A', fontWeight: 700 }}>Neon PostgreSQL (SSL)</div>
             </div>
             <div style={{ height: 28, width: 1, background: '#CBD5E1' }}></div>
             <div>
-              <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>Underwriting Engine</div>
-              <div style={{ fontSize: '0.9rem', color: '#0F172A', fontWeight: 700 }}>Rule-Based (DTI & Risk)</div>
+              <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <Cpu size={12} color="#2563EB" /> Underwriting
+              </div>
+              <div style={{ fontSize: '0.9rem', color: '#0F172A', fontWeight: 700 }}>Rule-Based (DTI Engine)</div>
             </div>
             <div style={{ height: 28, width: 1, background: '#CBD5E1' }}></div>
             <div>
-              <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>Architecture</div>
-              <div style={{ fontSize: '0.9rem', color: '#0F172A', fontWeight: 700 }}>Dockerized Microservices</div>
+              <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <Layers size={12} color="#2563EB" /> Architecture
+              </div>
+              <div style={{ fontSize: '0.9rem', color: '#0F172A', fontWeight: 700 }}>Docker Multi-Container</div>
             </div>
           </div>
         </div>
@@ -336,10 +379,15 @@ function Home({ onLogin }) {
                   fontSize: '0.9rem',
                   cursor: 'pointer',
                   boxShadow: authMode === 'login' ? '0 2px 6px rgba(15, 23, 42, 0.08)' : 'none',
-                  transition: 'all 0.2s ease'
+                  transition: 'all 0.2s ease',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px'
                 }}
               >
-                🔐 Sign In
+                <LogIn size={15} />
+                <span>Sign In</span>
               </button>
               <button
                 type="button"
@@ -355,10 +403,15 @@ function Home({ onLogin }) {
                   fontSize: '0.9rem',
                   cursor: 'pointer',
                   boxShadow: authMode === 'register' ? '0 2px 6px rgba(15, 23, 42, 0.08)' : 'none',
-                  transition: 'all 0.2s ease'
+                  transition: 'all 0.2s ease',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px'
                 }}
               >
-                📝 Create Account
+                <UserPlus size={15} />
+                <span>Create Account</span>
               </button>
             </div>
 
@@ -398,7 +451,9 @@ function Home({ onLogin }) {
                     alignItems: 'center',
                     justifyContent: 'space-between'
                   }}>
-                    <span>⚡ 1-Click Evaluator Login</span>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                      <Zap size={14} color="#F59E0B" /> 1-Click Evaluator Login
+                    </span>
                     <span style={{ color: '#2563EB', fontWeight: 600 }}>Instant Access</span>
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
@@ -417,10 +472,15 @@ function Home({ onLogin }) {
                         cursor: loading ? 'not-allowed' : 'pointer',
                         textAlign: 'center',
                         transition: 'all 0.2s ease',
-                        boxShadow: '0 2px 4px rgba(11, 19, 43, 0.15)'
+                        boxShadow: '0 2px 4px rgba(11, 19, 43, 0.15)',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '5px'
                       }}
                     >
-                      👑 Admin
+                      <ShieldAlert size={14} color="#38BDF8" />
+                      <span>Admin</span>
                     </button>
                     <button
                       type="button"
@@ -437,10 +497,15 @@ function Home({ onLogin }) {
                         cursor: loading ? 'not-allowed' : 'pointer',
                         textAlign: 'center',
                         transition: 'all 0.2s ease',
-                        boxShadow: '0 2px 4px rgba(28, 37, 65, 0.15)'
+                        boxShadow: '0 2px 4px rgba(28, 37, 65, 0.15)',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '5px'
                       }}
                     >
-                      🛡️ Officer
+                      <Briefcase size={14} color="#60A5FA" />
+                      <span>Officer</span>
                     </button>
                     <button
                       type="button"
@@ -457,10 +522,15 @@ function Home({ onLogin }) {
                         cursor: loading ? 'not-allowed' : 'pointer',
                         textAlign: 'center',
                         transition: 'all 0.2s ease',
-                        boxShadow: '0 2px 4px rgba(37, 99, 235, 0.25)'
+                        boxShadow: '0 2px 4px rgba(37, 99, 235, 0.25)',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '5px'
                       }}
                     >
-                      👤 Borrower
+                      <UserCheck size={14} color="#93C5FD" />
+                      <span>Borrower</span>
                     </button>
                   </div>
                 </div>
@@ -478,7 +548,7 @@ function Home({ onLogin }) {
                     alignItems: 'center',
                     gap: '0.6rem'
                   }}>
-                    <span>⚠️</span>
+                    <AlertCircle size={16} color="#991B1B" />
                     <span style={{ flex: 1 }}>{error}</span>
                     <button
                       type="button"
@@ -530,10 +600,12 @@ function Home({ onLogin }) {
                           fontSize: '0.78rem',
                           fontWeight: 600,
                           cursor: 'pointer',
-                          padding: 0
+                          padding: 0,
+                          display: 'inline-flex',
+                          alignItems: 'center'
                         }}
                       >
-                        {showPassword ? '🙈 Hide' : '👁️ Show'}
+                        {showPassword ? <><EyeOff size={13} style={{ marginRight: 4 }} /> Hide</> : <><Eye size={13} style={{ marginRight: 4 }} /> Show</>}
                       </button>
                     </div>
                     <div style={{ position: 'relative' }}>
@@ -584,7 +656,10 @@ function Home({ onLogin }) {
                         <span>Authenticating Session...</span>
                       </>
                     ) : (
-                      <span>Sign In to CredenceOS</span>
+                      <>
+                        <LogIn size={16} />
+                        <span>Sign In to CredenceOS</span>
+                      </>
                     )}
                   </button>
                 </form>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { BarChart3, CheckCircle2, Clock, FileSpreadsheet, RefreshCw } from 'lucide-react';
 import { api, handleApiError, handleTokenExpiration } from '../utils/api';
 
 function Reports({ user }) {
@@ -211,7 +212,7 @@ function Reports({ user }) {
             }
           }}
         >
-          📊 Overview
+          <BarChart3 size={16} style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Overview
         </button>
         <button 
           className={`btn ${activeTab === 'recovered' ? 'btn-success' : 'btn-outline-success'}`}
@@ -280,8 +281,8 @@ function Reports({ user }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           {/* Overview Header */}
           <div style={{ textAlign: 'center', padding: '1.5rem', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', borderRadius: '16px', color: 'white', marginBottom: '0.5rem' }}>
-            <h3 style={{ margin: '0 0 0.5rem 0', fontWeight: 600, fontSize: '1.5rem' }}>
-              📊 Portfolio Analytics & Recovery Dashboard
+            <h3 style={{ margin: '0 0 0.5rem 0', fontWeight: 600, fontSize: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+              <BarChart3 size={24} /> Portfolio Analytics & Recovery Dashboard
             </h3>
             <p style={{ margin: 0, opacity: 0.9, fontSize: '1rem' }}>
               Real-time insights into loan portfolio performance, collections, and outstanding balances
@@ -331,8 +332,8 @@ function Reports({ user }) {
             padding: '1.5rem', 
             textAlign: 'center'
           }}>
-            <h3 style={{ margin: '0 0 0.5rem 0', fontWeight: 600, fontSize: '1.5rem' }}>
-              ✅ Recovered Loans
+            <h3 style={{ margin: '0 0 0.5rem 0', fontWeight: 600, fontSize: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+              <CheckCircle2 size={24} /> Recovered Loans
             </h3>
             <p style={{ margin: 0, opacity: 0.9, fontSize: '1rem' }}>
               Successfully recovered loans ({recoveredLoans.length})
@@ -468,7 +469,7 @@ function Reports({ user }) {
           </table>
             ) : (
               <div style={{ padding: '3rem 2rem', textAlign: 'center', color: '#666' }}>
-                <div style={{ fontSize: '3rem', marginBottom: '1rem', opacity: 0.3 }}>📋</div>
+                <div style={{ marginBottom: '1rem', opacity: 0.3 }}><FileSpreadsheet size={44} /></div>
                 <h4 style={{ margin: '0 0 0.5rem 0', color: '#333', fontWeight: 600 }}>No Recovered Loans</h4>
                 <p style={{ margin: 0, fontSize: '0.9rem' }}>
                   No loans have been recovered yet
@@ -488,8 +489,8 @@ function Reports({ user }) {
             padding: '1.5rem', 
             textAlign: 'center'
           }}>
-            <h3 style={{ margin: '0 0 0.5rem 0', fontWeight: 600, fontSize: '1.5rem' }}>
-              ⏳ Outstanding Loans
+            <h3 style={{ margin: '0 0 0.5rem 0', fontWeight: 600, fontSize: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+              <Clock size={24} /> Outstanding Loans
             </h3>
             <p style={{ margin: 0, opacity: 0.9, fontSize: '1rem' }}>
               Loans pending recovery ({outstandingLoans.length})
@@ -649,7 +650,7 @@ function Reports({ user }) {
           </table>
             ) : (
               <div style={{ padding: '3rem 2rem', textAlign: 'center', color: '#666' }}>
-                <div style={{ fontSize: '3rem', marginBottom: '1rem', opacity: 0.3 }}>✅</div>
+                <div style={{ marginBottom: '1rem', opacity: 0.3 }}><CheckCircle2 size={44} /></div>
                 <h4 style={{ margin: '0 0 0.5rem 0', color: '#333', fontWeight: 600 }}>No Outstanding Loans</h4>
                 <p style={{ margin: 0, fontSize: '0.9rem' }}>
                   All loans have been successfully recovered!

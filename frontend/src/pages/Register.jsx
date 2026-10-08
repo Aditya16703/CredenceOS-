@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { api, handleApiError } from '../utils/api';
+import { User, Briefcase, Eye, EyeOff, AlertCircle, CheckCircle2, UserPlus } from 'lucide-react';
 
 function Register({ onLogin, onSuccess, onBackToLogin }) {
   const [form, setForm] = useState({ name: '', email: '', password: '', role: 'customer', phone: '' });
@@ -87,10 +88,10 @@ function Register({ onLogin, onSuccess, onBackToLogin }) {
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 700, fontSize: '0.88rem', color: form.role === 'customer' ? '#1D4ED8' : '#0F172A' }}>
-              <span>👤</span> Borrower
+              <User size={16} /> Borrower
             </div>
             <div style={{ fontSize: '0.75rem', color: '#64748B', marginTop: '0.2rem' }}>
-              Apply & service loans
+              Apply &amp; service loans
             </div>
           </button>
 
@@ -108,7 +109,7 @@ function Register({ onLogin, onSuccess, onBackToLogin }) {
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 700, fontSize: '0.88rem', color: form.role === 'agent' ? '#1D4ED8' : '#0F172A' }}>
-              <span>🛡️</span> Agent / Officer
+              <Briefcase size={16} /> Officer / Agent
             </div>
             <div style={{ fontSize: '0.75rem', color: '#64748B', marginTop: '0.2rem' }}>
               Portfolio recovery
@@ -130,7 +131,7 @@ function Register({ onLogin, onSuccess, onBackToLogin }) {
           alignItems: 'center',
           gap: '0.6rem'
         }}>
-          <span>⚠️</span>
+          <AlertCircle size={16} />
           <span style={{ flex: 1 }}>{error}</span>
         </div>
       )}
@@ -148,7 +149,7 @@ function Register({ onLogin, onSuccess, onBackToLogin }) {
           alignItems: 'center',
           gap: '0.6rem'
         }}>
-          <span>✅</span>
+          <CheckCircle2 size={16} />
           <span style={{ flex: 1 }}>{success}</span>
         </div>
       )}
@@ -217,10 +218,12 @@ function Register({ onLogin, onSuccess, onBackToLogin }) {
                 fontSize: '0.78rem',
                 fontWeight: 600,
                 cursor: 'pointer',
-                padding: 0
+                padding: 0,
+                display: 'inline-flex',
+                alignItems: 'center'
               }}
             >
-              {showPassword ? '🙈 Hide' : '👁️ Show'}
+              {showPassword ? <><EyeOff size={13} style={{ marginRight: 4 }} /> Hide</> : <><Eye size={13} style={{ marginRight: 4 }} /> Show</>}
             </button>
           </div>
           <input
@@ -297,7 +300,10 @@ function Register({ onLogin, onSuccess, onBackToLogin }) {
               <span>Registering Account...</span>
             </>
           ) : (
-            <span>Complete Registration</span>
+            <>
+              <UserPlus size={16} />
+              <span>Complete Registration</span>
+            </>
           )}
         </button>
       </form>

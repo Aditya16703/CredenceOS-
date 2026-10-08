@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { ShieldCheck, RefreshCw, CheckCircle2, Clock, AlertTriangle } from 'lucide-react';
 import { api } from '../utils/api';
 
 export default function KYC({ user }) {
@@ -71,16 +72,18 @@ export default function KYC({ user }) {
     <div style={{ maxWidth: 1100, margin: '0 auto', padding: '1.5rem', background: '#fff', borderRadius: 12, boxShadow: '0 4px 20px rgba(0,0,0,0.06)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid #edf2f7', paddingBottom: '1rem' }}>
         <div>
-          <h2 style={{ margin: 0, color: '#1a202c', fontSize: '1.6rem' }}>🪪 Customer KYC Verification</h2>
+          <h2 style={{ margin: 0, color: '#1a202c', fontSize: '1.6rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <ShieldCheck size={26} color="#2563EB" /> Customer KYC Verification
+          </h2>
           <p style={{ margin: '4px 0 0 0', color: '#718096', fontSize: '0.95rem' }}>
             Regulatory verification portal for PAN, masked Aadhaar, and identity compliance.
           </p>
         </div>
         <button 
           onClick={fetchStatus} 
-          style={{ padding: '0.5rem 1rem', background: '#edf2f7', border: 'none', borderRadius: 8, cursor: 'pointer', fontWeight: 600 }}
+          style={{ padding: '0.5rem 1rem', background: '#edf2f7', border: 'none', borderRadius: 8, cursor: 'pointer', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '6px' }}
         >
-          🔄 Refresh
+          <RefreshCw size={14} /> Refresh
         </button>
       </div>
 
@@ -91,7 +94,9 @@ export default function KYC({ user }) {
         <div>
           {kycData && kycData.status === 'VERIFIED' ? (
             <div style={{ padding: '2rem', background: '#f0fff4', border: '1px solid #9ae6b4', borderRadius: 12, textAlign: 'center' }}>
-              <h3 style={{ color: '#22543d', margin: '0 0 0.5rem 0' }}>✅ KYC Verified Successfully</h3>
+              <h3 style={{ color: '#22543d', margin: '0 0 0.5rem 0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                <CheckCircle2 size={22} color="#22543d" /> KYC Verified Successfully
+              </h3>
               <p style={{ color: '#276749' }}>Your customer profile is active. You are fully authorized to apply for credit facilities.</p>
               <div style={{ display: 'inline-block', textAlign: 'left', marginTop: '1rem', background: '#fff', padding: '1rem 2rem', borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
                 <div><strong>Masked PAN:</strong> {kycData.maskedPAN}</div>
@@ -102,7 +107,9 @@ export default function KYC({ user }) {
             </div>
           ) : kycData && (kycData.status === 'SUBMITTED' || kycData.status === 'UNDER_REVIEW') ? (
             <div style={{ padding: '2rem', background: '#feebc8', border: '1px solid #fbd38d', borderRadius: 12 }}>
-              <h3 style={{ color: '#7b341e', margin: 0 }}>⏳ KYC Under Review ({kycData.status})</h3>
+              <h3 style={{ color: '#7b341e', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Clock size={20} color="#7b341e" /> KYC Under Review ({kycData.status})
+              </h3>
               <p style={{ color: '#9c4221', marginTop: '0.5rem' }}>
                 Your identity documents have been submitted and are queued for verification by our underwriting officer.
               </p>
@@ -115,8 +122,9 @@ export default function KYC({ user }) {
           ) : (
             <div>
               {kycData?.status === 'REJECTED' && (
-                <div style={{ padding: '1rem', background: '#fff5f5', border: '1px solid #feb2b2', borderRadius: 8, marginBottom: '1.5rem', color: '#9b2c2c' }}>
-                  <strong>⚠️ Previous Submission Rejected:</strong> {kycData.rejectionReason || 'Please resubmit valid credentials.'}
+                <div style={{ padding: '1rem', background: '#fff5f5', border: '1px solid #feb2b2', borderRadius: 8, marginBottom: '1.5rem', color: '#9b2c2c', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <AlertTriangle size={18} color="#9b2c2c" />
+                  <div><strong>Previous Submission Rejected:</strong> {kycData.rejectionReason || 'Please resubmit valid credentials.'}</div>
                 </div>
               )}
               <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.2rem' }}>

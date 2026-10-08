@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import { CreditCard, Clock, Receipt } from 'lucide-react';
 import { api, handleApiError, handleApiSuccess, handleTokenExpiration } from '../utils/api';
 
 function Payments({ user }) {
@@ -144,8 +145,8 @@ function Payments({ user }) {
           padding: '1.75rem', 
           textAlign: 'center'
         }}>
-          <h3 style={{ margin: '0 0 0.35rem 0', fontWeight: 700, fontSize: '1.4rem', letterSpacing: '-0.02em' }}>
-            💳 Loan Repayment Gateway
+          <h3 style={{ margin: '0 0 0.35rem 0', fontWeight: 700, fontSize: '1.4rem', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+            <CreditCard size={22} color="#38BDF8" /> Loan Repayment Gateway
           </h3>
           <p style={{ margin: 0, color: '#94A3B8', fontSize: '0.9rem' }}>
             Select an active or approved credit facility to process an EMI installment
@@ -242,7 +243,7 @@ function Payments({ user }) {
             >
               {loading ? (
                 <>
-                  <span style={{ marginRight: '0.5rem' }}>⏳</span>
+                  <Clock size={16} style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} />
                   Processing...
                 </>
               ) : user.role === 'admin' || user.role === 'agent' ? (
@@ -251,7 +252,7 @@ function Payments({ user }) {
                 </>
               ) : (
                 <>
-                  <span style={{ marginRight: '0.5rem' }}>💳</span>
+                  <CreditCard size={16} style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} />
                   Pay EMI
                 </>
               )}
@@ -419,8 +420,8 @@ function Payments({ user }) {
           padding: '1.5rem', 
           textAlign: 'center'
         }}>
-          <h3 style={{ margin: '0 0 0.5rem 0', fontWeight: 600, fontSize: '1.5rem' }}>
-            📋 Payment History
+          <h3 style={{ margin: '0 0 0.5rem 0', fontWeight: 600, fontSize: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+            <Receipt size={22} /> Payment History
           </h3>
           <p style={{ margin: 0, opacity: 0.9, fontSize: '1rem' }}>
             Track all your payment transactions ({payments.length} payments)
@@ -534,7 +535,7 @@ function Payments({ user }) {
           </table>
           ) : (
             <div style={{ padding: '3rem 2rem', textAlign: 'center', color: '#666' }}>
-              <div style={{ fontSize: '3rem', marginBottom: '1rem', opacity: 0.3 }}>💳</div>
+              <div style={{ marginBottom: '1rem', opacity: 0.3 }}><CreditCard size={44} /></div>
               <h4 style={{ margin: '0 0 0.5rem 0', color: '#333', fontWeight: 600 }}>No Payments Yet</h4>
               <p style={{ margin: 0, fontSize: '0.9rem' }}>
                 Select a loan above to make your first payment

@@ -6,6 +6,7 @@ import KYC from './KYC';
 import AuditLogs from './AuditLogs';
 import Notifications from '../components/Notifications';
 import { api } from '../utils/api';
+import { Building2, CreditCard, ShieldCheck, BarChart3, History, Bell, Shield } from 'lucide-react';
 
 function Dashboard({ user }) {
   const [page, setPage] = useState('loans');
@@ -30,11 +31,11 @@ function Dashboard({ user }) {
   }, [user]);
 
   const navItems = [
-    { id: 'loans', label: 'Loan Portfolios', icon: '🏦', roles: ['admin', 'agent', 'customer'] },
-    { id: 'payments', label: 'Repayments & Ledger', icon: '💳', roles: ['admin', 'agent', 'customer'] },
-    { id: 'kyc', label: 'KYC & Compliance', icon: '🪪', roles: ['admin', 'agent', 'customer'] },
-    { id: 'reports', label: 'Financial Analytics', icon: '📊', roles: ['admin'] },
-    { id: 'audit', label: 'Immutable Audit Trail', icon: '📜', roles: ['admin'] }
+    { id: 'loans', label: 'Loan Portfolios', icon: Building2, roles: ['admin', 'agent', 'customer'] },
+    { id: 'payments', label: 'Repayments & Ledger', icon: CreditCard, roles: ['admin', 'agent', 'customer'] },
+    { id: 'kyc', label: 'KYC & Compliance', icon: ShieldCheck, roles: ['admin', 'agent', 'customer'] },
+    { id: 'reports', label: 'Financial Analytics', icon: BarChart3, roles: ['admin'] },
+    { id: 'audit', label: 'Immutable Audit Trail', icon: History, roles: ['admin'] }
   ];
 
   return (
@@ -64,6 +65,7 @@ function Dashboard({ user }) {
             .filter(item => item.roles.includes(user.role))
             .map(item => {
               const isActive = page === item.id;
+              const IconComponent = item.icon;
               return (
                 <button
                   key={item.id}
@@ -99,7 +101,7 @@ function Dashboard({ user }) {
                     }
                   }}
                 >
-                  <span style={{ fontSize: '1.1rem' }}>{item.icon}</span>
+                  <IconComponent size={17} color={isActive ? '#38BDF8' : '#64748B'} />
                   <span>{item.label}</span>
                 </button>
               );
@@ -140,7 +142,6 @@ function Dashboard({ user }) {
                   alignItems: 'center',
                   justifyContent: 'center',
                   cursor: 'pointer',
-                  fontSize: '1.15rem',
                   border: '1px solid #CBD5E1',
                   transition: 'all 0.2s ease',
                   position: 'relative'
@@ -155,7 +156,7 @@ function Dashboard({ user }) {
                 }}
                 title="Agent Notifications"
               >
-                🔔
+                <Bell size={18} color="#475569" />
                 {unreadCount > 0 && (
                   <span style={{
                     position: 'absolute',

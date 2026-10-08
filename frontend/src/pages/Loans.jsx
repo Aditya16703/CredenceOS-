@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Shield, Landmark, Send, BarChart3, Search, AlertCircle, CheckCircle2 } from 'lucide-react';
 import Agents from './Agents';
 import { api, handleApiError, handleApiSuccess, handleTokenExpiration } from '../utils/api';
 
@@ -327,8 +328,8 @@ function Loans({ user }) {
             padding: '1.75rem', 
             textAlign: 'center'
           }}>
-            <h3 style={{ margin: '0 0 0.35rem 0', fontWeight: 700, fontSize: '1.4rem', letterSpacing: '-0.02em' }}>
-              🛡️ Portfolio Recovery Desk
+            <h3 style={{ margin: '0 0 0.35rem 0', fontWeight: 700, fontSize: '1.4rem', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+              <Shield size={22} color="#38BDF8" /> Portfolio Recovery Desk
             </h3>
             <p style={{ margin: 0, color: '#94A3B8', fontSize: '0.9rem' }}>
               Manage delinquency stages, agent assignments, and collections status
@@ -638,7 +639,7 @@ function Loans({ user }) {
           </table>
             ) : (
               <div style={{ padding: '3rem 2rem', textAlign: 'center', color: '#666' }}>
-                <div style={{ fontSize: '3rem', marginBottom: '1rem', opacity: 0.3 }}>🔍</div>
+                <div style={{ marginBottom: '1rem', opacity: 0.4 }}><Search size={44} color="#64748B" /></div>
                 <h4 style={{ margin: '0 0 0.5rem 0', color: '#333', fontWeight: 600 }}>No Assigned Loans</h4>
                 <p style={{ margin: 0, fontSize: '0.9rem' }}>
                   No loans have been assigned to you for recovery yet
@@ -667,8 +668,8 @@ function Loans({ user }) {
                 padding: '1.75rem', 
                 textAlign: 'center'
               }}>
-                <h3 style={{ margin: '0 0 0.35rem 0', fontWeight: 700, fontSize: '1.4rem', letterSpacing: '-0.02em' }}>
-                  🏛️ Credit Facility Application
+                <h3 style={{ margin: '0 0 0.35rem 0', fontWeight: 700, fontSize: '1.4rem', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                  <Landmark size={22} color="#38BDF8" /> Credit Facility Application
                 </h3>
                 <p style={{ margin: 0, color: '#94A3B8', fontSize: '0.9rem' }}>
                   Submit credit parameters for real-time automated underwriting and reducing-balance amortization
@@ -803,7 +804,7 @@ function Loans({ user }) {
                     }} 
                     type="submit"
                   >
-                    🚀 Submit Application
+                    <Send size={16} style={{ marginRight: '8px', verticalAlign: 'middle' }} /> Submit Application
                   </button>
             </form>
 
@@ -856,8 +857,8 @@ function Loans({ user }) {
           padding: '1.75rem', 
           textAlign: 'center'
         }}>
-          <h3 style={{ margin: '0 0 0.35rem 0', fontWeight: 700, fontSize: '1.4rem', letterSpacing: '-0.02em' }}>
-            📊 Active Credit Registry & Underwriting Status
+          <h3 style={{ margin: '0 0 0.35rem 0', fontWeight: 700, fontSize: '1.4rem', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+            <BarChart3 size={22} color="#38BDF8" /> Active Credit Registry & Underwriting Status
           </h3>
           <p style={{ margin: 0, color: '#94A3B8', fontSize: '0.9rem' }}>
             {user.role === 'customer' ? 'Your active facilities, approved applications, and repayment schedules' : 
@@ -1275,7 +1276,7 @@ function Loans({ user }) {
             </table>
           ) : (
             <div style={{ padding: '3rem 2rem', textAlign: 'center', color: '#666' }}>
-              <div style={{ fontSize: '3rem', marginBottom: '1rem', opacity: 0.3 }}>📊</div>
+              <div style={{ marginBottom: '1rem', opacity: 0.4 }}><BarChart3 size={44} color="#64748B" /></div>
               <h4 style={{ margin: '0 0 0.5rem 0', color: '#333', fontWeight: 600 }}>
                 {user.role === 'customer' ? 'No Loans Yet' : 'No Loans Found'}
               </h4>

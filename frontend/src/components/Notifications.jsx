@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Bell } from 'lucide-react';
 import { api, handleApiError } from '../utils/api';
 
 function Notifications({ user, isOpen, onClose }) {
@@ -120,8 +121,8 @@ function Notifications({ user, isOpen, onClose }) {
           justifyContent: 'space-between'
         }}>
           <div>
-            <h3 style={{ margin: '0 0 0.5rem 0', fontWeight: 600, fontSize: '1.5rem' }}>
-              🔔 Notifications
+            <h3 style={{ margin: '0 0 0.5rem 0', fontWeight: 600, fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Bell size={22} /> Notifications
             </h3>
             <p style={{ margin: 0, opacity: 0.9, fontSize: '0.9rem' }}>
               {unreadCount} unread • {notifications.length} total
@@ -215,7 +216,7 @@ function Notifications({ user, isOpen, onClose }) {
             </div>
           ) : notifications.length === 0 ? (
             <div style={{ padding: '3rem 2rem', textAlign: 'center', color: '#666' }}>
-              <div style={{ fontSize: '3rem', marginBottom: '1rem', opacity: 0.3 }}>🔔</div>
+              <div style={{ marginBottom: '1rem', opacity: 0.3 }}><Bell size={44} /></div>
               <h4 style={{ margin: '0 0 0.5rem 0', color: '#333', fontWeight: 600 }}>No Notifications</h4>
               <p style={{ margin: 0, fontSize: '0.9rem' }}>
                 You're all caught up! New notifications will appear here.

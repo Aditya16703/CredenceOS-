@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../utils/api';
+import { History, RefreshCw } from 'lucide-react';
 
 export default function AuditLogs() {
   const [logs, setLogs] = useState([]);
@@ -26,18 +27,21 @@ export default function AuditLogs() {
 
   return (
     <div style={{ maxWidth: 1200, margin: '0 auto', padding: '1.5rem', background: '#fff', borderRadius: 12, boxShadow: '0 4px 20px rgba(0,0,0,0.06)' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid #edf2f7', paddingBottom: '1rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid #edf2f7', paddingBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h2 style={{ margin: 0, color: '#1a202c', fontSize: '1.6rem' }}>📜 Compliance Audit Trail</h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+            <History size={24} color="#2563EB" />
+            <h2 style={{ margin: 0, color: '#1a202c', fontSize: '1.6rem', fontWeight: 800 }}>Compliance Audit Trail</h2>
+          </div>
           <p style={{ margin: '4px 0 0 0', color: '#718096', fontSize: '0.95rem' }}>
             Append-only tamper-resistant system log recording state transitions, underwriting events, and financial activities.
           </p>
         </div>
-        <div style={{ display: 'flex', gap: '1rem' }}>
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
           <select 
             value={filterAction} 
             onChange={(e) => setFilterAction(e.target.value)}
-            style={{ padding: '0.5rem 0.8rem', borderRadius: 8, border: '1px solid #cbd5e0' }}
+            style={{ padding: '0.5rem 0.8rem', borderRadius: 8, border: '1px solid #cbd5e0', fontSize: '0.9rem' }}
           >
             <option value="">All Audit Actions</option>
             <option value="KYC_SUBMIT">KYC_SUBMIT</option>
@@ -46,8 +50,22 @@ export default function AuditLogs() {
             <option value="LOAN_STATUS_APPROVED">LOAN_STATUS_APPROVED</option>
             <option value="PAYMENT_RECEIVED">PAYMENT_RECEIVED</option>
           </select>
-          <button onClick={fetchLogs} style={{ padding: '0.5rem 1rem', background: '#edf2f7', border: 'none', borderRadius: 8, cursor: 'pointer', fontWeight: 600 }}>
-            🔄 Refresh
+          <button 
+            onClick={fetchLogs} 
+            style={{ 
+              padding: '0.5rem 1rem', 
+              background: '#edf2f7', 
+              border: 'none', 
+              borderRadius: 8, 
+              cursor: 'pointer', 
+              fontWeight: 600,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}
+          >
+            <RefreshCw size={14} />
+            <span>Refresh</span>
           </button>
         </div>
       </div>
