@@ -21,7 +21,7 @@ const {
 // Valid state transitions
 const VALID_TRANSITIONS = {
   'DRAFT': ['SUBMITTED', 'CANCELLED'],
-  'SUBMITTED': ['UNDER_REVIEW', 'REJECTED', 'CANCELLED'],
+  'SUBMITTED': ['UNDER_REVIEW', 'APPROVED', 'REJECTED', 'CANCELLED'],
   'UNDER_REVIEW': ['APPROVED', 'REJECTED'],
   'APPROVED': ['DISBURSED', 'CANCELLED'],
   'DISBURSED': ['ACTIVE'],
@@ -247,17 +247,18 @@ exports.updateLoanStatus = asyncHandler(async (req, res) => {
 
   const currentStatus = loan.status;
   const validNext = VALID_TRANSITIONS[currentStatus] || [];
+  const normalizedStatus = (status || '').toUpperCase();
 
-  if (!validNext.includes(status)) {
-    throw new ValidationError(`Invalid state transition from ${currentStatus} to ${status}. Allowed: ${validNext.join(', ') || 'NONE'}`);
+  if (!validNext.includes(normalizedStatus)) {
+    throw new ValidationError(`Invalid state transition from ${currentStatus} to ${normalizedStatus}. Allowed: ${validNext.join(', ') || 'NONE'}`);
   }
 
   const prevState = loan.toJSON();
-  const updateData = { status };
+  const updateData = { status: normalizedStatus };
 
-  if (status === 'APPROVED') {
+  if (normalizedStatus === 'APPROVED') {
     updateData.startDate = new Date();
-  } else if (status === 'DISBURSED') {
+  } else if (normalizedStatus === 'DISBURSED') {
     updateData.disbursedDate = new Date();
     updateData.status = 'ACTIVE'; // Auto-transition to ACTIVE once funds are released
   }

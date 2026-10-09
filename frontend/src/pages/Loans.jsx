@@ -316,6 +316,126 @@ function Loans({ user }) {
     };
   };
 
+  // Helper: High-contrast status pill badge
+  const renderStatusBadge = (status) => {
+    const s = (status || '').toUpperCase();
+    let bg = '#F1F5F9';
+    let color = '#334155';
+    let border = '#CBD5E1';
+    let label = status || '-';
+
+    if (s === 'APPROVED' || s === 'ACTIVE' || s === 'DISBURSED') {
+      bg = '#DCFCE7';
+      color = '#15803D';
+      border = '#86EFAC';
+      label = s === 'ACTIVE' ? 'Active' : s === 'APPROVED' ? 'Approved' : 'Disbursed';
+    } else if (s === 'SUBMITTED' || s === 'PENDING' || s === 'UNDER_REVIEW') {
+      bg = '#FEF3C7';
+      color = '#B45309';
+      border = '#FCD34D';
+      label = s === 'SUBMITTED' ? 'Submitted' : s === 'UNDER_REVIEW' ? 'Under Review' : 'Pending';
+    } else if (s === 'REJECTED' || s === 'CANCELLED') {
+      bg = '#FEE2E2';
+      color = '#B91C1C';
+      border = '#FCA5A5';
+      label = s === 'REJECTED' ? 'Rejected' : 'Cancelled';
+    } else if (s === 'OVERDUE') {
+      bg = '#FFE4E6';
+      color = '#BE123C';
+      border = '#FDA4AF';
+      label = 'Overdue';
+    } else if (s === 'CLOSED') {
+      bg = '#E0F2FE';
+      color = '#0369A1';
+      border = '#7DD3FC';
+      label = 'Closed';
+    }
+
+    return (
+      <span style={{
+        fontSize: '0.72rem',
+        fontWeight: 700,
+        padding: '0.22rem 0.6rem',
+        borderRadius: '6px',
+        background: bg,
+        color: color,
+        border: `1px solid ${border}`,
+        display: 'inline-block',
+        letterSpacing: '0.02em',
+        whiteSpace: 'nowrap'
+      }}>
+        {label}
+      </span>
+    );
+  };
+
+  // Helper: High-contrast recovery badge
+  const renderRecoveryBadge = (recoveryStatus) => {
+    const r = (recoveryStatus || '').toLowerCase();
+    let bg = '#F8FAFC';
+    let color = '#334155';
+    let border = '#CBD5E1';
+
+    if (r === 'recovered') {
+      bg = '#DCFCE7';
+      color = '#15803D';
+      border = '#86EFAC';
+    } else if (r === 'in_progress' || r.includes('assigned')) {
+      bg = '#E0F2FE';
+      color = '#0369A1';
+      border = '#7DD3FC';
+    } else if (r === 'pending') {
+      bg = '#FEF3C7';
+      color = '#B45309';
+      border = '#FCD34D';
+    }
+
+    return (
+      <span style={{
+        fontSize: '0.72rem',
+        fontWeight: 650,
+        padding: '0.2rem 0.55rem',
+        borderRadius: '6px',
+        background: bg,
+        color: color,
+        border: `1px solid ${border}`,
+        display: 'inline-block',
+        whiteSpace: 'nowrap'
+      }}>
+        {formatRecoveryStatus(recoveryStatus)}
+      </span>
+    );
+  };
+
+  // Helper: Prominent high-contrast CIR Audit button
+  const renderCIRAuditButton = (loan) => (
+    <button
+      type="button"
+      onClick={() => setSelectedUnderwritingLoan(loan)}
+      title="View CIBIL Bureau & Underwriting Audit Dossier"
+      style={{
+        fontSize: '0.74rem',
+        padding: '0.3rem 0.65rem',
+        borderRadius: '6px',
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '5px',
+        fontWeight: 700,
+        border: '1px solid #0284C7',
+        color: '#FFFFFF',
+        background: '#0284C7',
+        cursor: 'pointer',
+        whiteSpace: 'nowrap',
+        boxShadow: '0 2px 5px rgba(2, 132, 199, 0.25)',
+        transition: 'all 0.15s ease'
+      }}
+    >
+      <Shield size={13} color="#FFFFFF" />
+      <span>CIR Audit</span>
+    </button>
+  );
+
   return (
     <div style={{ width: '100%' }}>
       {/* Agent view: show only relevant fields */}
@@ -345,304 +465,288 @@ function Loans({ user }) {
           {/* Table Content */}
           <div style={{ padding: '0', overflowX: 'auto' }}>
             {loans.length > 0 ? (
-              <table className="table table-hover mb-0" style={{ margin: 0, minWidth: '100%', tableLayout: 'fixed' }}>
+              <table className="table table-hover mb-0" style={{ margin: 0, minWidth: '1050px', width: '100%' }}>
                 <thead style={{ 
-                  background: '#f8f9fa', 
-                  borderBottom: '2px solid #dee2e6'
+                  background: '#F8FAFC', 
+                  borderBottom: '1px solid #E2E8F0'
                 }}>
                   <tr>
                     <th style={{ 
-                      padding: '0.75rem', 
-                      fontWeight: 600, 
-                      color: '#495057',
-                      fontSize: '0.8rem',
+                      padding: '0.85rem 0.75rem', 
+                      fontWeight: 700, 
+                      color: '#334155',
+                      fontSize: '0.78rem',
                       textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
-                      width: '7%'
+                      letterSpacing: '0.05em',
+                      textAlign: 'center',
+                      minWidth: '70px'
                     }}>Loan ID</th>
                     <th style={{ 
-                      padding: '0.75rem', 
-                      fontWeight: 600, 
-                      color: '#495057',
-                      fontSize: '0.8rem',
+                      padding: '0.85rem 0.75rem', 
+                      fontWeight: 700, 
+                      color: '#334155',
+                      fontSize: '0.78rem',
                       textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
-                      width: '10%'
+                      letterSpacing: '0.05em',
+                      minWidth: '120px'
                     }}>Customer</th>
                     <th style={{ 
-                      padding: '0.75rem', 
-                      fontWeight: 600, 
-                      color: '#495057',
-                      fontSize: '0.8rem',
+                      padding: '0.85rem 0.75rem', 
+                      fontWeight: 700, 
+                      color: '#334155',
+                      fontSize: '0.78rem',
                       textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
+                      letterSpacing: '0.05em',
                       textAlign: 'right',
-                      width: '9%'
+                      minWidth: '95px'
                     }}>Amount</th>
                     <th style={{ 
-                      padding: '0.75rem', 
-                      fontWeight: 600, 
-                      color: '#495057',
-                      fontSize: '0.8rem',
+                      padding: '0.85rem 0.75rem', 
+                      fontWeight: 700, 
+                      color: '#334155',
+                      fontSize: '0.78rem',
                       textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
+                      letterSpacing: '0.05em',
                       textAlign: 'center',
-                      width: '7%'
+                      minWidth: '80px'
                     }}>Interest</th>
                     <th style={{ 
-                      padding: '0.75rem', 
-                      fontWeight: 600, 
-                      color: '#495057',
-                      fontSize: '0.8rem',
+                      padding: '0.85rem 0.75rem', 
+                      fontWeight: 700, 
+                      color: '#334155',
+                      fontSize: '0.78rem',
                       textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
+                      letterSpacing: '0.05em',
                       textAlign: 'center',
-                      width: '7%'
+                      minWidth: '70px'
                     }}>Term</th>
                     <th style={{ 
-                      padding: '0.75rem', 
-                      fontWeight: 600, 
-                      color: '#495057',
-                      fontSize: '0.8rem',
+                      padding: '0.85rem 0.75rem', 
+                      fontWeight: 700, 
+                      color: '#334155',
+                      fontSize: '0.78rem',
                       textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
+                      letterSpacing: '0.05em',
                       textAlign: 'center',
-                      width: '9%'
+                      minWidth: '105px'
                     }}>Status</th>
                     <th style={{ 
-                      padding: '0.75rem', 
-                      fontWeight: 600, 
-                      color: '#495057',
-                      fontSize: '0.8rem',
+                      padding: '0.85rem 0.75rem', 
+                      fontWeight: 700, 
+                      color: '#334155',
+                      fontSize: '0.78rem',
                       textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
+                      letterSpacing: '0.05em',
                       textAlign: 'center',
-                      width: '10%'
+                      minWidth: '110px'
                     }}>Recovery</th>
                     <th style={{ 
-                      padding: '0.75rem', 
-                      fontWeight: 600, 
-                      color: '#495057',
-                      fontSize: '0.8rem',
+                      padding: '0.85rem 0.75rem', 
+                      fontWeight: 700, 
+                      color: '#334155',
+                      fontSize: '0.78rem',
                       textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
+                      letterSpacing: '0.05em',
                       textAlign: 'center',
-                      width: '10%'
+                      minWidth: '110px'
                     }}>Progress</th>
                     <th style={{ 
-                      padding: '0.75rem', 
-                      fontWeight: 600, 
-                      color: '#495057',
-                      fontSize: '0.8rem',
+                      padding: '0.85rem 0.75rem', 
+                      fontWeight: 700, 
+                      color: '#334155',
+                      fontSize: '0.78rem',
                       textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
+                      letterSpacing: '0.05em',
                       textAlign: 'right',
-                      width: '11%'
+                      minWidth: '100px'
                     }}>Balance</th>
                     <th style={{ 
-                      padding: '0.75rem', 
-                      fontWeight: 600, 
-                      color: '#495057',
-                      fontSize: '0.8rem',
+                      padding: '0.85rem 0.75rem', 
+                      fontWeight: 700, 
+                      color: '#334155',
+                      fontSize: '0.78rem',
                       textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
+                      letterSpacing: '0.05em',
                       textAlign: 'center',
-                      width: '20%'
-                    }}>Update Recovery</th>
+                      minWidth: '150px'
+                    }}>Actions &amp; Recovery</th>
               </tr>
             </thead>
             <tbody>
               {[...loans].sort((a, b) => {
-                if (a.status === 'rejected' && b.status !== 'rejected') return 1;
-                if (a.status !== 'rejected' && b.status === 'rejected') return -1;
+                const aRej = (a.status || '').toUpperCase() === 'REJECTED';
+                const bRej = (b.status || '').toUpperCase() === 'REJECTED';
+                if (aRej && !bRej) return 1;
+                if (!aRej && bRej) return -1;
                 return 0;
                   }).map((loan, index) => (
                     <tr key={loan.id} style={{ 
-                      borderBottom: index < loans.length - 1 ? '1px solid #f8f9fa' : 'none'
+                      borderBottom: index < loans.length - 1 ? '1px solid #F1F5F9' : 'none'
                     }}>
-                      <td style={{ padding: '0.75rem', verticalAlign: 'middle' }}>
+                      <td style={{ padding: '0.85rem 0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
                         <div style={{ 
-                          background: '#ffc107', 
-                          color: 'white', 
-                          width: '30px', 
-                          height: '30px', 
-                          borderRadius: '50%', 
+                          background: '#0F172A', 
+                          color: '#FFFFFF', 
+                          width: '32px', 
+                          height: '32px', 
+                          borderRadius: '8px', 
                           display: 'flex', 
                           alignItems: 'center', 
                           justifyContent: 'center', 
-                          fontSize: '0.7rem', 
-                          fontWeight: 600,
+                          fontSize: '0.75rem', 
+                          fontWeight: 750,
                           margin: '0 auto'
                         }}>
                           #{loan.id}
                         </div>
                       </td>
-                      <td style={{ padding: '0.75rem', verticalAlign: 'middle' }}>
-                        <div style={{ fontWeight: 600, color: '#333', fontSize: '0.85rem' }}>
+                      <td style={{ padding: '0.85rem 0.75rem', verticalAlign: 'middle' }}>
+                        <div style={{ fontWeight: 650, color: '#0F172A', fontSize: '0.88rem' }}>
                           {loan.Customer ? loan.Customer.name : '-'}
                         </div>
                       </td>
-                      <td style={{ padding: '0.75rem', verticalAlign: 'middle', textAlign: 'right' }}>
-                        <div style={{ fontWeight: 600, color: '#333', fontSize: '0.85rem' }}>
-                          ₹{loan.amount}
+                      <td style={{ padding: '0.85rem 0.75rem', verticalAlign: 'middle', textAlign: 'right' }}>
+                        <div style={{ fontWeight: 700, color: '#0F172A', fontSize: '0.9rem' }}>
+                          ₹{parseFloat(loan.amount).toLocaleString('en-IN')}
                         </div>
                       </td>
-                      <td style={{ padding: '0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
+                      <td style={{ padding: '0.85rem 0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
                         <div style={{ 
-                          fontSize: '0.8rem', 
-                          color: '#666', 
-                          fontWeight: 500
+                          fontSize: '0.82rem', 
+                          color: '#334155', 
+                          fontWeight: 600
                         }}>
                           {parseFloat(loan.interestRate).toFixed(1)}%
                         </div>
                       </td>
-                      <td style={{ padding: '0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
+                      <td style={{ padding: '0.85rem 0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
                         <div style={{ 
-                          fontSize: '0.8rem', 
-                          color: '#666', 
-                          fontWeight: 500
+                          fontSize: '0.82rem', 
+                          color: '#334155', 
+                          fontWeight: 600
                         }}>
                           {loan.termMonths}m
                         </div>
                       </td>
-                      <td style={{ padding: '0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
-                        <div style={{ 
-                          fontSize: '0.7rem', 
-                          fontWeight: 500,
-                          padding: '0.15rem 0.4rem',
-                          borderRadius: '8px',
-                          display: 'inline-block',
-                          background: loan.status === 'approved' ? '#d4edda' : 
-                                     loan.status === 'pending' ? '#fff3cd' : 
-                                     loan.status === 'rejected' ? '#f8d7da' : '#e2e3e5',
-                          color: loan.status === 'approved' ? '#155724' : 
-                                loan.status === 'pending' ? '#856404' : 
-                                loan.status === 'rejected' ? '#721c24' : '#6c757d',
-                          whiteSpace: 'nowrap'
-                        }}>
-                          {loan.status.charAt(0).toUpperCase() + loan.status.slice(1)}
-                        </div>
+                      <td style={{ padding: '0.85rem 0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
+                        {renderStatusBadge(loan.status)}
                       </td>
-                      <td style={{ padding: '0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
-                        <div style={{ 
-                          fontSize: '0.7rem', 
-                          fontWeight: 500,
-                          padding: '0.15rem 0.4rem',
-                          borderRadius: '8px',
-                          display: 'inline-block',
-                          background: loan.recoveryStatus === 'recovered' ? '#d4edda' : 
-                                     loan.recoveryStatus === 'pending' ? '#fff3cd' : 
-                                     loan.recoveryStatus === 'in_progress' ? '#d1ecf1' : '#e2e3e5',
-                          color: loan.recoveryStatus === 'recovered' ? '#155724' : 
-                                loan.recoveryStatus === 'pending' ? '#856404' : 
-                                loan.recoveryStatus === 'in_progress' ? '#0c5460' : '#6c757d',
-                          whiteSpace: 'nowrap'
-                        }}>
-                          {formatRecoveryStatus(loan.recoveryStatus)}
-                        </div>
+                      <td style={{ padding: '0.85rem 0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
+                        {renderRecoveryBadge(loan.recoveryStatus)}
                       </td>
-                      <td style={{ padding: '0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
+                      <td style={{ padding: '0.85rem 0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
                         <div style={{ 
                           fontSize: '0.7rem', 
                           fontWeight: 500,
-                          padding: '0.15rem 0.4rem',
+                          padding: '0.2rem 0.45rem',
                           borderRadius: '8px',
                           display: 'inline-block',
-                          background: '#f8f9fa',
-                          border: '1px solid #dee2e6',
+                          background: '#F8FAFC',
+                          border: '1px solid #E2E8F0',
                           whiteSpace: 'nowrap'
                         }}>
                           <div style={{ 
-                            fontSize: '0.65rem', 
-                            fontWeight: 600,
+                            fontSize: '0.68rem', 
+                            fontWeight: 700,
                             marginBottom: '0.2rem',
-                            color: '#495057'
+                            color: '#334155'
                           }}>
                             {getPaymentProgress(loan).text}
                           </div>
                           <div style={{ 
                             width: '100%', 
-                            minWidth: '80px',
-                            height: '6px', 
-                            background: '#e9ecef', 
-                            borderRadius: '3px',
-                            overflow: 'hidden'
+                            minWidth: '80px', 
+                            height: '5px', 
+                            background: '#E2E8F0', 
+                            borderRadius: '3px', 
+                            overflow: 'hidden' 
                           }}>
                             <div style={{ 
                               width: `${Math.min(getPaymentProgress(loan).percentage, 100)}%`,
                               height: '100%',
-                              background: getPaymentProgress(loan).isGood ? '#28a745' : '#dc3545',
+                              background: getPaymentProgress(loan).isGood ? '#10B981' : '#EF4444',
                               borderRadius: '3px',
                               transition: 'width 0.3s ease'
                             }}></div>
                           </div>
                         </div>
                       </td>
-                      <td style={{ padding: '0.75rem', verticalAlign: 'middle', textAlign: 'right' }}>
+                      <td style={{ padding: '0.85rem 0.75rem', verticalAlign: 'middle', textAlign: 'right' }}>
                         <div style={{ 
-                          fontWeight: 700, 
-                          fontSize: '0.85rem',
-                          color: getLoanDetails(loan, paymentsByLoan[loan.id] || []).balance === "0.00" ? '#28a745' : '#dc3545'
+                          fontWeight: 750, 
+                          fontSize: '0.88rem',
+                          color: getLoanDetails(loan, paymentsByLoan[loan.id] || []).balance === "0.00" ? '#10B981' : '#DC2626'
                         }}>
                           {getLoanDetails(loan, paymentsByLoan[loan.id] || []).balance === "0.00" ? (
-                            <span style={{ fontSize: '0.7rem' }}>Fully Paid</span>
+                            <span style={{ fontSize: '0.72rem', background: '#DCFCE7', color: '#15803D', padding: '0.15rem 0.45rem', borderRadius: '4px' }}>Fully Paid</span>
                           ) : (
                             `₹${getLoanDetails(loan, paymentsByLoan[loan.id] || []).balance}`
                           )}
                         </div>
                       </td>
-                      <td style={{ padding: '0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
-                    {loan.agentId === user.id && (
-                      editingRecovery[loan.id] ? (
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
-                          <select 
-                                className="form-control form-control-sm" 
-                            value={selectedRecovery[loan.id] || ''}
-                            onChange={e => handleRecoverySelect(loan.id, e.target.value)}
+                      <td style={{ padding: '0.85rem 0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', alignItems: 'center' }}>
+                          {/* Always accessible CIR Audit button */}
+                          {renderCIRAuditButton(loan)}
+
+                          {loan.agentId === user.id && (
+                            editingRecovery[loan.id] ? (
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                                <select 
+                                  className="form-control form-control-sm" 
+                                  value={selectedRecovery[loan.id] || ''}
+                                  onChange={e => handleRecoverySelect(loan.id, e.target.value)}
+                                  style={{
+                                    fontSize: '0.72rem',
+                                    padding: '0.2rem 0.4rem',
+                                    borderRadius: '6px',
+                                    border: '1px solid #CBD5E1',
+                                    color: '#0F172A'
+                                  }}
+                                >
+                                  <option value="">Select Status</option>
+                                  <option value="pending">Pending</option>
+                                  <option value="in_progress">In Progress</option>
+                                  <option value="recovered">Recovered</option>
+                                </select>
+                                {selectedRecovery[loan.id] && (
+                                  <button 
+                                    className="btn btn-success btn-sm"
+                                    onClick={() => handleRecoverySave(loan.id)}
+                                    style={{
+                                      fontSize: '0.7rem',
+                                      padding: '0.2rem 0.5rem',
+                                      borderRadius: '6px',
+                                      fontWeight: 650
+                                    }}
+                                  >
+                                    Save
+                                  </button>
+                                )}
+                              </div>
+                            ) : (
+                              <button 
+                                className="btn btn-outline-secondary btn-sm"
+                                onClick={() => handleRecoveryEdit(loan.id)}
                                 style={{
                                   fontSize: '0.7rem',
-                                  padding: '0.2rem 0.4rem',
-                                  borderRadius: '4px'
+                                  padding: '0.2rem 0.5rem',
+                                  borderRadius: '6px',
+                                  fontWeight: 600,
+                                  color: '#475569',
+                                  border: '1px solid #CBD5E1'
                                 }}
-                          >
-                            <option value="">Select Status</option>
-                            <option value="pending">Pending</option>
-                            <option value="in_progress">In Progress</option>
-                            <option value="recovered">Recovered</option>
-                          </select>
-                          {selectedRecovery[loan.id] && (
-                            <button 
-                              className="btn btn-success btn-sm"
-                              onClick={() => handleRecoverySave(loan.id)}
-                                  style={{
-                                    fontSize: '0.7rem',
-                                    padding: '0.2rem 0.4rem',
-                                    borderRadius: '4px'
-                                  }}
-                            >
-                              Save
-                            </button>
+                              >
+                                Edit Recovery
+                              </button>
+                            )
                           )}
                         </div>
-                      ) : (
-                        <button 
-                          className="btn btn-primary btn-sm"
-                          onClick={() => handleRecoveryEdit(loan.id)}
-                              style={{
-                                fontSize: '0.7rem',
-                                padding: '0.2rem 0.4rem',
-                                borderRadius: '4px'
-                              }}
-                        >
-                          Edit
-                        </button>
-                      )
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             ) : (
               <div style={{ padding: '3rem 2rem', textAlign: 'center', color: '#666' }}>
                 <div style={{ marginBottom: '1rem', opacity: 0.4 }}><Search size={44} color="#64748B" /></div>
@@ -655,8 +759,8 @@ function Loans({ user }) {
           </div>
         </div>
       ) : (
-        // ...existing customer/admin view...
         <>
+          {/* Customer and Admin view */}
           {/* Customer Loan Application Section */}
           {user.role === 'customer' && (
             <div style={{ 
@@ -897,340 +1001,315 @@ function Loans({ user }) {
         {/* Table Content */}
         <div style={{ padding: '0', overflowX: 'auto' }}>
           {loans.length > 0 ? (
-            <table className="table table-hover mb-0" style={{ margin: 0, minWidth: '100%', tableLayout: 'fixed' }}>
+            <table className="table table-hover mb-0" style={{ margin: 0, minWidth: '1150px', width: '100%' }}>
               <thead style={{ 
-                background: '#f8f9fa', 
-                borderBottom: '2px solid #dee2e6'
+                background: '#F8FAFC', 
+                borderBottom: '1px solid #E2E8F0'
               }}>
                 <tr>
                   <th style={{ 
-                    padding: '0.75rem', 
-                    fontWeight: 600, 
-                    color: '#495057',
-                    fontSize: '0.8rem',
+                    padding: '0.85rem 0.75rem', 
+                    fontWeight: 700, 
+                    color: '#334155',
+                    fontSize: '0.78rem',
                     textTransform: 'uppercase',
-                    letterSpacing: '0.5px',
+                    letterSpacing: '0.04em',
+                    textAlign: 'center',
                     width: '7%'
                   }}>Loan ID</th>
                   {(user.role === 'admin' || user.role === 'agent') && (
                     <th style={{ 
-                      padding: '0.75rem', 
-                      fontWeight: 600, 
-                      color: '#495057',
-                      fontSize: '0.8rem',
+                      padding: '0.85rem 0.75rem', 
+                      fontWeight: 700, 
+                      color: '#334155',
+                      fontSize: '0.78rem',
                       textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
-                      width: '10%'
+                      letterSpacing: '0.04em',
+                      width: '12%'
                     }}>Customer</th>
                   )}
                   <th style={{ 
-                    padding: '0.75rem', 
-                    fontWeight: 600, 
-                    color: '#495057',
-                    fontSize: '0.8rem',
+                    padding: '0.85rem 0.75rem', 
+                    fontWeight: 700, 
+                    color: '#334155',
+                    fontSize: '0.78rem',
                     textTransform: 'uppercase',
-                    letterSpacing: '0.5px',
+                    letterSpacing: '0.04em',
                     textAlign: 'right',
-                    width: '9%'
+                    width: '10%'
                   }}>Amount</th>
                   <th style={{ 
-                    padding: '0.75rem', 
-                    fontWeight: 600, 
-                    color: '#495057',
-                    fontSize: '0.8rem',
+                    padding: '0.85rem 0.75rem', 
+                    fontWeight: 700, 
+                    color: '#334155',
+                    fontSize: '0.78rem',
                     textTransform: 'uppercase',
-                    letterSpacing: '0.5px',
+                    letterSpacing: '0.04em',
                     textAlign: 'center',
-                    width: '7%'
+                    width: '8%'
                   }}>Interest</th>
                   <th style={{ 
-                    padding: '0.75rem', 
-                    fontWeight: 600, 
-                    color: '#495057',
-                    fontSize: '0.8rem',
+                    padding: '0.85rem 0.75rem', 
+                    fontWeight: 700, 
+                    color: '#334155',
+                    fontSize: '0.78rem',
                     textTransform: 'uppercase',
-                    letterSpacing: '0.5px',
+                    letterSpacing: '0.04em',
                     textAlign: 'center',
                     width: '7%'
-                  }}>Term</th>
+                  }}>Tenure</th>
                   <th style={{ 
-                    padding: '0.75rem', 
-                    fontWeight: 600, 
-                    color: '#495057',
-                    fontSize: '0.8rem',
+                    padding: '0.85rem 0.75rem', 
+                    fontWeight: 700, 
+                    color: '#334155',
+                    fontSize: '0.78rem',
                     textTransform: 'uppercase',
-                    letterSpacing: '0.5px',
+                    letterSpacing: '0.04em',
                     textAlign: 'center',
-                    width: '9%'
+                    width: '10%'
                   }}>Status</th>
                   {(user.role === 'admin' || user.role === 'agent') && (
                     <th style={{ 
-                      padding: '0.75rem', 
-                      fontWeight: 600, 
-                      color: '#495057',
-                      fontSize: '0.8rem',
+                      padding: '0.85rem 0.75rem', 
+                      fontWeight: 700, 
+                      color: '#334155',
+                      fontSize: '0.78rem',
                       textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
+                      letterSpacing: '0.04em',
                       textAlign: 'center',
-                      width: '10%'
-                    }}>Agent</th>
+                      width: '11%'
+                    }}>Recovery Agent</th>
                   )}
                   <th style={{ 
-                    padding: '0.75rem', 
-                    fontWeight: 600, 
-                    color: '#495057',
-                    fontSize: '0.8rem',
+                    padding: '0.85rem 0.75rem', 
+                    fontWeight: 700, 
+                    color: '#334155',
+                    fontSize: '0.78rem',
                     textTransform: 'uppercase',
-                    letterSpacing: '0.5px',
+                    letterSpacing: '0.04em',
                     textAlign: 'center',
-                    width: '10%'
+                    width: '9%'
                   }}>Recovery</th>
                   <th style={{ 
-                    padding: '0.75rem', 
-                    fontWeight: 600, 
-                    color: '#495057',
-                    fontSize: '0.8rem',
+                    padding: '0.85rem 0.75rem', 
+                    fontWeight: 700, 
+                    color: '#334155',
+                    fontSize: '0.78rem',
                     textTransform: 'uppercase',
-                    letterSpacing: '0.5px',
+                    letterSpacing: '0.04em',
                     textAlign: 'center',
                     width: '10%'
-                  }}>Progress</th>
+                  }}>EMIs Repaid</th>
                   <th style={{ 
-                    padding: '0.75rem', 
-                    fontWeight: 600, 
-                    color: '#495057',
-                    fontSize: '0.8rem',
+                    padding: '0.85rem 0.75rem', 
+                    fontWeight: 700, 
+                    color: '#334155',
+                    fontSize: '0.78rem',
                     textTransform: 'uppercase',
-                    letterSpacing: '0.5px',
+                    letterSpacing: '0.04em',
                     textAlign: 'right',
-                    width: '15%'
-                  }}>Balance</th>
+                    width: '12%'
+                  }}>Outstanding Balance</th>
                   <th style={{ 
-                    padding: '0.75rem', 
-                    fontWeight: 600, 
-                    color: '#495057',
-                    fontSize: '0.8rem',
+                    padding: '0.85rem 0.75rem', 
+                    fontWeight: 700, 
+                    color: '#334155',
+                    fontSize: '0.78rem',
                     textTransform: 'uppercase',
-                    letterSpacing: '0.5px',
+                    letterSpacing: '0.04em',
                     textAlign: 'center',
-                    width: '10%'
-                  }}>Actions</th>
+                    width: '14%'
+                  }}>Bureau & Actions</th>
                 </tr>
               </thead>
               <tbody>
               {[...loans].sort((a, b) => {
-                if (a.status === 'rejected' && b.status !== 'rejected') return 1;
-                if (a.status !== 'rejected' && b.status === 'rejected') return -1;
+                const isARejected = (a.status || '').toUpperCase() === 'REJECTED';
+                const isBRejected = (b.status || '').toUpperCase() === 'REJECTED';
+                if (isARejected && !isBRejected) return 1;
+                if (!isARejected && isBRejected) return -1;
                 return 0;
                 }).map((loan, index) => (
                   <tr key={loan.id} style={{ 
-                    borderBottom: index < loans.length - 1 ? '1px solid #f8f9fa' : 'none'
+                    borderBottom: index < loans.length - 1 ? '1px solid #F1F5F9' : 'none'
                   }}>
-                    <td style={{ padding: '0.75rem', verticalAlign: 'middle' }}>
+                    <td style={{ padding: '0.85rem 0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
                       <div style={{ 
-                        background: '#17a2b8', 
-                        color: 'white', 
-                        width: '30px', 
-                        height: '30px', 
-                        borderRadius: '50%', 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'center', 
-                        fontSize: '0.7rem', 
-                        fontWeight: 600,
-                        margin: '0 auto'
+                        background: '#0F172A', 
+                        color: '#38BDF8', 
+                        padding: '0.22rem 0.5rem', 
+                        borderRadius: '6px', 
+                        display: 'inline-block',
+                        fontSize: '0.75rem', 
+                        fontWeight: 700,
+                        letterSpacing: '0.02em',
+                        border: '1px solid #1E293B'
                       }}>
                         #{loan.id}
                       </div>
                     </td>
                     {(user.role === 'admin' || user.role === 'agent') && (
-                      <td style={{ padding: '0.75rem', verticalAlign: 'middle' }}>
-                        <div style={{ fontWeight: 600, color: '#333', fontSize: '0.85rem' }}>
+                      <td style={{ padding: '0.85rem 0.75rem', verticalAlign: 'middle' }}>
+                        <div style={{ fontWeight: 650, color: '#0F172A', fontSize: '0.86rem' }}>
                           {loan.Customer ? loan.Customer.name : '-'}
                         </div>
+                        {loan.Customer?.phone && (
+                          <div style={{ fontSize: '0.72rem', color: '#64748B' }}>
+                            {loan.Customer.phone}
+                          </div>
+                        )}
                       </td>
                     )}
-                    <td style={{ padding: '0.75rem', verticalAlign: 'middle', textAlign: 'right' }}>
-                      <div style={{ fontWeight: 600, color: '#333', fontSize: '0.85rem' }}>
-                        ₹{loan.amount}
+                    <td style={{ padding: '0.85rem 0.75rem', verticalAlign: 'middle', textAlign: 'right' }}>
+                      <div style={{ fontWeight: 700, color: '#0F172A', fontSize: '0.9rem' }}>
+                        ₹{Number(loan.amount).toLocaleString('en-IN')}
                       </div>
                     </td>
-                    <td style={{ padding: '0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
+                    <td style={{ padding: '0.85rem 0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
                       <div style={{ 
-                        fontSize: '0.8rem', 
-                        color: '#666', 
-                        fontWeight: 500
+                        fontSize: '0.82rem', 
+                        color: '#1E293B', 
+                        fontWeight: 600
                       }}>
-                        {parseFloat(loan.interestRate).toFixed(1)}%
+                        {parseFloat(loan.interestRate).toFixed(1)}% p.a.
                       </div>
                     </td>
-                    <td style={{ padding: '0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
+                    <td style={{ padding: '0.85rem 0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
                       <div style={{ 
-                        fontSize: '0.8rem', 
-                        color: '#666', 
-                        fontWeight: 500
+                        fontSize: '0.82rem', 
+                        color: '#334155', 
+                        fontWeight: 600
                       }}>
                         {loan.termMonths}m
                       </div>
                     </td>
-                    <td style={{ padding: '0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
-                      <div style={{ 
-                        fontSize: '0.7rem', 
-                        fontWeight: 500,
-                        padding: '0.15rem 0.4rem',
-                        borderRadius: '8px',
-                        display: 'inline-block',
-                        background: loan.status === 'approved' ? '#d4edda' : 
-                                   loan.status === 'pending' ? '#fff3cd' : 
-                                   loan.status === 'rejected' ? '#f8d7da' : '#e2e3e5',
-                        color: loan.status === 'approved' ? '#155724' : 
-                              loan.status === 'pending' ? '#856404' : 
-                              loan.status === 'rejected' ? '#721c24' : '#6c757d',
-                        whiteSpace: 'nowrap'
-                      }}>
-                        {loan.status.charAt(0).toUpperCase() + loan.status.slice(1)}
-                      </div>
+                    <td style={{ padding: '0.85rem 0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
+                      {renderStatusBadge(loan.status)}
                     </td>
                     {(user.role === 'admin' || user.role === 'agent') && (
-                      <td style={{ padding: '0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
-                        <div style={{ fontWeight: 600, color: '#333', fontSize: '0.85rem' }}>
-                          {loan.Agent ? loan.Agent.name : '-'}
+                      <td style={{ padding: '0.85rem 0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
+                        <div style={{ fontWeight: 600, color: '#0F172A', fontSize: '0.82rem' }}>
+                          {loan.Agent ? loan.Agent.name : <span style={{ color: '#94A3B8' }}>Unassigned</span>}
                         </div>
                         {/* Show assign agent select for approved loans without agent */}
-                      {user.role === 'admin' && loan.status === 'approved' && !loan.Agent && (
-                          <div style={{ marginTop: '0.25rem' }}>
-                          <Agents onSelect={agentId => setAssignAgentId(prev => ({ ...prev, [loan.id]: agentId }))} />
+                        {user.role === 'admin' && (['APPROVED', 'approved', 'ACTIVE', 'SUBMITTED'].includes(loan.status)) && !loan.Agent && (
+                          <div style={{ marginTop: '0.35rem' }}>
+                            <Agents onSelect={agentId => setAssignAgentId(prev => ({ ...prev, [loan.id]: agentId }))} />
                             <button 
                               className="btn btn-primary btn-sm mt-1" 
                               disabled={!assignAgentId[loan.id]} 
                               onClick={() => handleAssignAgent(loan.id, assignAgentId[loan.id])}
                               style={{
                                 fontSize: '0.7rem',
-                                padding: '0.2rem 0.4rem',
-                                borderRadius: '4px'
+                                padding: '0.2rem 0.45rem',
+                                borderRadius: '4px',
+                                fontWeight: 600
                               }}
                             >
                               Assign
                             </button>
-                        </div>
-                      )}
-                    </td>
+                          </div>
+                        )}
+                      </td>
                     )}
-                    <td style={{ padding: '0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
-                      <div style={{ 
-                        fontSize: '0.7rem', 
-                        fontWeight: 500,
-                        padding: '0.15rem 0.4rem',
-                        borderRadius: '8px',
-                        display: 'inline-block',
-                        background: loan.recoveryStatus === 'recovered' ? '#d4edda' : 
-                                   loan.recoveryStatus === 'pending' ? '#fff3cd' : 
-                                   loan.recoveryStatus === 'in_progress' ? '#d1ecf1' : '#e2e3e5',
-                        color: loan.recoveryStatus === 'recovered' ? '#155724' : 
-                              loan.recoveryStatus === 'pending' ? '#856404' : 
-                              loan.recoveryStatus === 'in_progress' ? '#0c5460' : '#6c757d',
-                        whiteSpace: 'nowrap'
-                      }}>
-                        {formatRecoveryStatus(loan.recoveryStatus)}
-                      </div>
+                    <td style={{ padding: '0.85rem 0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
+                      {renderRecoveryBadge(loan.recoveryStatus)}
                     </td>
-                    <td style={{ padding: '0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
+                    <td style={{ padding: '0.85rem 0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
                       <div style={{ 
                         fontSize: '0.7rem', 
                         fontWeight: 500,
-                        padding: '0.15rem 0.4rem',
-                        borderRadius: '8px',
+                        padding: '0.25rem 0.5rem',
+                        borderRadius: '6px',
                         display: 'inline-block',
-                        background: '#f8f9fa',
-                        border: '1px solid #dee2e6',
+                        background: '#F8FAFC',
+                        border: '1px solid #E2E8F0',
                         whiteSpace: 'nowrap'
                       }}>
                         <div style={{ 
-                          fontSize: '0.65rem', 
-                          fontWeight: 600,
-                          marginBottom: '0.2rem',
-                          color: '#495057'
+                          fontSize: '0.7rem', 
+                          fontWeight: 700,
+                          marginBottom: '0.25rem',
+                          color: '#334155'
                         }}>
-                          {getPaymentProgress(loan).text}
+                          {getPaymentProgress(loan).text} EMIs
                         </div>
                         <div style={{ 
                           width: '100%', 
-                          minWidth: '80px',
-                          height: '4px', 
-                          background: '#e9ecef', 
-                          borderRadius: '2px',
+                          minWidth: '85px',
+                          height: '5px', 
+                          background: '#E2E8F0', 
+                          borderRadius: '3px',
                           overflow: 'hidden'
                         }}>
                           <div style={{ 
                             width: `${Math.min(getPaymentProgress(loan).percentage, 100)}%`,
                             height: '100%',
-                            background: getPaymentProgress(loan).isGood ? '#28a745' : '#dc3545',
-                            borderRadius: '2px',
+                            background: getPaymentProgress(loan).isGood ? '#16A34A' : '#E11D48',
+                            borderRadius: '3px',
                             transition: 'width 0.3s ease'
                           }}></div>
                         </div>
                       </div>
                     </td>
-                    <td style={{ padding: '0.75rem', verticalAlign: 'middle', textAlign: 'right' }}>
+                    <td style={{ padding: '0.85rem 0.75rem', verticalAlign: 'middle', textAlign: 'right' }}>
                       <div style={{ 
-                        fontWeight: 700, 
-                        fontSize: '0.85rem',
-                        color: getLoanDetails(loan, paymentsByLoan[loan.id] || []).balance === "0.00" ? '#28a745' : '#dc3545'
+                        fontWeight: 750, 
+                        fontSize: '0.88rem',
+                        color: getLoanDetails(loan, paymentsByLoan[loan.id] || []).balance === "0.00" ? '#16A34A' : '#BE123C'
                       }}>
                       {getLoanDetails(loan, paymentsByLoan[loan.id] || []).balance === "0.00" ? (
-                          <span style={{ fontSize: '0.7rem' }}>Fully Paid</span>
+                          <span style={{ 
+                            background: '#DCFCE7', 
+                            color: '#15803D', 
+                            padding: '0.2rem 0.5rem', 
+                            borderRadius: '5px', 
+                            fontSize: '0.72rem', 
+                            fontWeight: 700,
+                            border: '1px solid #86EFAC'
+                          }}>
+                            Paid in Full
+                          </span>
                       ) : (
-                          `₹${getLoanDetails(loan, paymentsByLoan[loan.id] || []).balance}`
+                          `₹${Number(getLoanDetails(loan, paymentsByLoan[loan.id] || []).balance).toLocaleString('en-IN')}`
                       )}
                       </div>
                     </td>
                     {/* Unified Actions Column for all roles */}
-                    <td style={{ padding: '0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', alignItems: 'center' }}>
+                    <td style={{ padding: '0.85rem 0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', alignItems: 'center' }}>
                         {/* Bureau CIR & Underwriting Audit Button */}
-                        <button 
-                          onClick={() => setSelectedUnderwritingLoan(loan)}
-                          title="View Institutional Credit Bureau & Underwriting Dossier"
-                          style={{
-                            fontSize: '0.72rem',
-                            padding: '0.2rem 0.5rem',
-                            borderRadius: '6px',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '4px',
-                            fontWeight: 650,
-                            border: '1px solid #BAE6FD',
-                            color: '#0369A1',
-                            background: '#F0F9FF',
-                            cursor: 'pointer',
-                            whiteSpace: 'nowrap'
-                          }}
-                        >
-                          <Shield size={12} color="#0284C7" />
-                          <span>CIR Audit</span>
-                        </button>
+                        {renderCIRAuditButton(loan)}
 
-                        {/* Approve/Reject buttons for pending loans */}
-                        {loan.status === 'pending' && user.role !== 'agent' && user.role !== 'customer' && (
-                          <div style={{ display: 'flex', gap: '0.2rem' }}>
+                        {/* Approve/Reject buttons for submitted/pending loans */}
+                        {(['SUBMITTED', 'PENDING', 'UNDER_REVIEW', 'pending'].includes(loan.status)) && user.role !== 'agent' && user.role !== 'customer' && (
+                          <div style={{ display: 'flex', gap: '0.35rem' }}>
                             <button 
                               className="btn btn-success btn-sm"
-                              onClick={() => handleStatus(loan.id, 'approved')}
+                              onClick={() => handleStatus(loan.id, 'APPROVED')}
                               style={{
-                                fontSize: '0.7rem',
-                                padding: '0.15rem 0.4rem',
-                                borderRadius: '4px'
+                                fontSize: '0.72rem',
+                                padding: '0.22rem 0.55rem',
+                                borderRadius: '5px',
+                                fontWeight: 700,
+                                background: '#16A34A',
+                                border: 'none',
+                                boxShadow: '0 1px 3px rgba(22, 163, 74, 0.3)'
                               }}
                             >
                               Approve
                             </button>
                             <button 
                               className="btn btn-danger btn-sm"
-                              onClick={() => handleStatus(loan.id, 'rejected')}
+                              onClick={() => handleStatus(loan.id, 'REJECTED')}
                               style={{
-                                fontSize: '0.7rem',
-                                padding: '0.15rem 0.4rem',
-                                borderRadius: '4px'
+                                fontSize: '0.72rem',
+                                padding: '0.22rem 0.55rem',
+                                borderRadius: '5px',
+                                fontWeight: 700,
+                                background: '#DC2626',
+                                border: 'none',
+                                boxShadow: '0 1px 3px rgba(220, 38, 38, 0.3)'
                               }}
                             >
                               Reject
@@ -1242,15 +1321,16 @@ function Loans({ user }) {
                         {(user.role === 'admin' || (user.role === 'agent' && loan.agentId === user.id)) && (
                           <div>
                             {editingRecovery[loan.id] ? (
-                              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                                 <select 
                                   className="form-control form-control-sm" 
                                   value={selectedRecovery[loan.id] || ''}
                                   onChange={e => handleRecoverySelect(loan.id, e.target.value)}
                                   style={{
-                                    fontSize: '0.7rem',
+                                    fontSize: '0.72rem',
                                     padding: '0.2rem 0.4rem',
-                                    borderRadius: '4px'
+                                    borderRadius: '5px',
+                                    borderColor: '#CBD5E1'
                                   }}
                                 >
                                   <option value="">Select Status</option>
@@ -1264,8 +1344,9 @@ function Loans({ user }) {
                                     onClick={() => handleRecoverySave(loan.id)}
                                     style={{
                                       fontSize: '0.7rem',
-                                      padding: '0.2rem 0.4rem',
-                                      borderRadius: '4px'
+                                      padding: '0.18rem 0.45rem',
+                                      borderRadius: '4px',
+                                      fontWeight: 650
                                     }}
                                   >
                                     Save
@@ -1274,29 +1355,33 @@ function Loans({ user }) {
                               </div>
                             ) : (
                               <button 
-                                className="btn btn-primary btn-sm"
+                                className="btn btn-outline-secondary btn-sm"
                                 onClick={() => handleRecoveryEdit(loan.id)}
                                 style={{
                                   fontSize: '0.7rem',
-                                  padding: '0.15rem 0.4rem',
-                                  borderRadius: '4px'
+                                  padding: '0.18rem 0.5rem',
+                                  borderRadius: '5px',
+                                  fontWeight: 600,
+                                  color: '#334155',
+                                  borderColor: '#CBD5E1'
                                 }}
                               >
-                                Edit
+                                Edit Recovery
                               </button>
                             )}
                           </div>
                         )}
                         
                         {/* Delete button for rejected loans */}
-                        {loan.status === 'rejected' && (
+                        {((loan.status || '').toUpperCase() === 'REJECTED') && (
                           <button 
-                            className="btn btn-danger btn-sm"
+                            className="btn btn-outline-danger btn-sm"
                             onClick={() => handleDeleteLoan(loan.id)}
                             style={{
-                              fontSize: '0.7rem',
-                              padding: '0.15rem 0.4rem',
-                              borderRadius: '4px'
+                              fontSize: '0.68rem',
+                              padding: '0.15rem 0.45rem',
+                              borderRadius: '4px',
+                              fontWeight: 600
                             }}
                           >
                             Delete
