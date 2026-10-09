@@ -1074,29 +1074,54 @@ function Payments({ user }) {
 
       {/* Official Transaction Voucher Modal */}
       {selectedReceipt && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(15, 23, 42, 0.75)',
-          backdropFilter: 'blur(6px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 9999,
-          padding: '1rem'
-        }}>
-          <div style={{
-            background: '#FFFFFF',
-            borderRadius: '20px',
-            width: '100%',
-            maxWidth: '500px',
-            boxShadow: '0 25px 60px rgba(0, 0, 0, 0.3)',
-            overflow: 'hidden',
-            border: '1px solid #E2E8F0'
-          }}>
+        <div 
+          onClick={() => setSelectedReceipt(null)}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(15, 23, 42, 0.75)',
+            backdropFilter: 'blur(6px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: '1rem'
+          }}
+        >
+          <style>{`
+            @media print {
+              body * { visibility: hidden !important; }
+              .printable-receipt-card, .printable-receipt-card * { visibility: visible !important; }
+              .printable-receipt-card {
+                position: fixed !important;
+                left: 50% !important;
+                top: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                width: 100% !important;
+                max-width: 550px !important;
+                box-shadow: none !important;
+                border: 1px solid #CBD5E1 !important;
+              }
+              .receipt-no-print { display: none !important; }
+            }
+          `}</style>
+
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="printable-receipt-card"
+            style={{
+              background: '#FFFFFF',
+              borderRadius: '20px',
+              width: '100%',
+              maxWidth: '520px',
+              boxShadow: '0 25px 60px rgba(0, 0, 0, 0.3)',
+              overflow: 'hidden',
+              border: '1px solid #E2E8F0'
+            }}
+          >
             {/* Modal Header */}
             <div style={{
               background: 'linear-gradient(135deg, #0B132B 0%, #1E293B 100%)',
@@ -1114,6 +1139,7 @@ function Payments({ user }) {
               </div>
               <button
                 type="button"
+                className="receipt-no-print"
                 onClick={() => setSelectedReceipt(null)}
                 style={{
                   background: 'transparent',
@@ -1131,8 +1157,8 @@ function Payments({ user }) {
             <div style={{ padding: '2rem' }}>
               <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
                 <div style={{
-                  width: '54px',
-                  height: '54px',
+                  width: '56px',
+                  height: '56px',
                   borderRadius: '50%',
                   background: '#DCFCE7',
                   border: '2px solid #86EFAC',
@@ -1141,62 +1167,86 @@ function Payments({ user }) {
                   justifyContent: 'center',
                   margin: '0 auto 12px auto'
                 }}>
-                  <CheckCircle2 size={28} color="#15803D" />
+                  <CheckCircle2 size={30} color="#15803D" />
                 </div>
-                <div style={{ fontSize: '1.85rem', fontWeight: 800, color: '#0F172A' }}>
-                  ₹{Number(selectedReceipt.amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                <div style={{ fontSize: '1.95rem', fontWeight: 800, color: '#0F172A' }}>
+                  ₹{Number(selectedReceipt.amount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </div>
                 <div style={{ fontSize: '0.84rem', color: '#16A34A', fontWeight: 700, marginTop: '2px' }}>
-                  SETTLEMENT COMPLETED & RECONCILED
+                  SETTLEMENT CLEARED & RECONCILED
                 </div>
               </div>
 
+              {/* Transaction Voucher Metadata Box */}
               <div style={{ background: '#F8FAFC', borderRadius: '12px', padding: '1.25rem', border: '1px solid #E2E8F0', marginBottom: '1.5rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.82rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '9px', fontSize: '0.83rem' }}>
                   <span style={{ color: '#64748B' }}>Transaction Reference</span>
                   <span style={{ fontWeight: 700, fontFamily: 'monospace', color: '#0F172A' }}>
                     {selectedReceipt.transactionReference || `TXN-0${selectedReceipt.id}A9`}
                   </span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.82rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '9px', fontSize: '0.83rem' }}>
                   <span style={{ color: '#64748B' }}>Credit Facility ID</span>
                   <span style={{ fontWeight: 700, color: '#0F172A' }}>Loan #{selectedReceipt.loanId}</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.82rem' }}>
-                  <span style={{ color: '#64748B' }}>Value Date</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '9px', fontSize: '0.83rem' }}>
+                  <span style={{ color: '#64748B' }}>Beneficiary</span>
+                  <span style={{ fontWeight: 650, color: '#0F172A' }}>CredenceOS NBFC Treasury</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '9px', fontSize: '0.83rem' }}>
+                  <span style={{ color: '#64748B' }}>Value Date & Time</span>
                   <span style={{ fontWeight: 650, color: '#0F172A' }}>
                     {new Date(selectedReceipt.createdAt || selectedReceipt.paymentDate).toLocaleString('en-IN')}
                   </span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.83rem' }}>
                   <span style={{ color: '#64748B' }}>Clearing Channel</span>
-                  <span style={{ fontWeight: 650, color: '#0284C7' }}>
+                  <span style={{ fontWeight: 700, color: '#0284C7' }}>
                     {selectedReceipt.paymentMethod || 'NPCI UPI Auto-Debit'}
                   </span>
                 </div>
               </div>
 
-              <button
-                type="button"
-                onClick={() => window.print()}
-                style={{
-                  width: '100%',
-                  padding: '0.85rem',
-                  borderRadius: '10px',
-                  border: '1.5px solid #CBD5E1',
-                  background: '#FFFFFF',
-                  color: '#0F172A',
-                  fontSize: '0.9rem',
-                  fontWeight: 700,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                  cursor: 'pointer'
-                }}
-              >
-                <Printer size={16} /> Print Official Banking Receipt
-              </button>
+              {/* Action Buttons in Modal */}
+              <div className="receipt-no-print" style={{ display: 'flex', gap: '10px' }}>
+                <button
+                  type="button"
+                  onClick={() => window.print()}
+                  style={{
+                    flex: 1,
+                    padding: '0.85rem',
+                    borderRadius: '10px',
+                    border: 'none',
+                    background: 'linear-gradient(135deg, #0284C7 0%, #0369A1 100%)',
+                    color: '#FFFFFF',
+                    fontSize: '0.9rem',
+                    fontWeight: 700,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <Printer size={16} /> Print Voucher
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedReceipt(null)}
+                  style={{
+                    padding: '0.85rem 1.5rem',
+                    borderRadius: '10px',
+                    border: '1.5px solid #CBD5E1',
+                    background: '#FFFFFF',
+                    color: '#334155',
+                    fontSize: '0.9rem',
+                    fontWeight: 650,
+                    cursor: 'pointer'
+                  }}
+                >
+                  Close
+                </button>
+              </div>
             </div>
           </div>
         </div>

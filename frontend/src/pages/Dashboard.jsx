@@ -30,6 +30,17 @@ function Dashboard({ user }) {
     return () => clearInterval(interval);
   }, [user]);
 
+  useEffect(() => {
+    const handleNav = (e) => {
+      if (e.detail && e.detail.page) {
+        setPage(e.detail.page);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    };
+    window.addEventListener('navigatePage', handleNav);
+    return () => window.removeEventListener('navigatePage', handleNav);
+  }, []);
+
   const navItems = [
     { id: 'loans', label: 'Loan Portfolios', icon: Building2, roles: ['admin', 'agent', 'customer'] },
     { id: 'payments', label: 'Repayments & Ledger', icon: CreditCard, roles: ['admin', 'agent', 'customer'] },
@@ -195,11 +206,11 @@ function Dashboard({ user }) {
         width: '100%',
         boxSizing: 'border-box'
       }}>
-        {page === 'loans' && <Loans user={user} />}
-        {page === 'payments' && <Payments user={user} />}
-        {page === 'kyc' && <KYC user={user} />}
-        {page === 'reports' && user.role === 'admin' && <Reports user={user} />}
-        {page === 'audit' && user.role === 'admin' && <AuditLogs user={user} />}
+        {page === 'loans' && <Loans user={user} onNavigate={setPage} />}
+        {page === 'payments' && <Payments user={user} onNavigate={setPage} />}
+        {page === 'kyc' && <KYC user={user} onNavigate={setPage} />}
+        {page === 'reports' && user.role === 'admin' && <Reports user={user} onNavigate={setPage} />}
+        {page === 'audit' && user.role === 'admin' && <AuditLogs user={user} onNavigate={setPage} />}
       </div>
 
       {/* Notifications Modal */}

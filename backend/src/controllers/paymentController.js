@@ -4,8 +4,16 @@ const { recordAudit } = require('../services/auditService');
 const { asyncHandler, NotFoundError, ValidationError, AuthorizationError } = require('../utils/errorHandler');
 
 exports.getAllPayments = asyncHandler(async (req, res) => {
+  const where = {};
+  if (req.user.role === 'customer') {
+    where['$Loan.customerId$'] = req.user.id;
+  } else if (req.user.role === 'agent') {
+    where['$Loan.agentId$'] = req.user.id;
+  }
+
   const payments = await Payment.findAll({
-    include: [{ model: Loan, attributes: ['id', 'amount', 'status', 'customerId'] }],
+    where,
+    include: [{ model: Loan, attributes: ['id', 'amount', 'status', 'customerId', 'agentId'] }],
     order: [['createdAt', 'DESC']]
   });
 

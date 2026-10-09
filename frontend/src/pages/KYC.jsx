@@ -23,7 +23,7 @@ import {
 } from 'lucide-react';
 import { api } from '../utils/api';
 
-export default function KYC({ user }) {
+export default function KYC({ user, onNavigate }) {
   const [kycData, setKycData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [pendingList, setPendingList] = useState([]);
@@ -493,8 +493,15 @@ export default function KYC({ user }) {
                 </div>
 
                 <div style={{ textAlign: 'center' }}>
-                  <a
-                    href="#/loans"
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (onNavigate) {
+                        onNavigate('loans');
+                      } else {
+                        window.dispatchEvent(new CustomEvent('navigatePage', { detail: { page: 'loans' } }));
+                      }
+                    }}
                     style={{
                       display: 'inline-flex',
                       alignItems: 'center',
@@ -503,14 +510,16 @@ export default function KYC({ user }) {
                       borderRadius: '10px',
                       background: 'linear-gradient(135deg, #0284C7 0%, #0369A1 100%)',
                       color: '#FFFFFF',
+                      border: 'none',
                       fontSize: '0.95rem',
                       fontWeight: 750,
-                      textDecoration: 'none',
-                      boxShadow: '0 4px 15px rgba(2, 132, 199, 0.3)'
+                      cursor: 'pointer',
+                      boxShadow: '0 4px 15px rgba(2, 132, 199, 0.3)',
+                      transition: 'all 0.2s ease'
                     }}
                   >
                     Proceed to Credit Facility Application &rarr;
-                  </a>
+                  </button>
                 </div>
               </div>
             </div>
