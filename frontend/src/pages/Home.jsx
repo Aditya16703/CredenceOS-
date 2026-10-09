@@ -145,7 +145,7 @@ function Home({ onLogin }) {
   return (
     <div style={{ minHeight: '100vh', background: '#F8FAFC', display: 'flex', flexDirection: 'column' }}>
       {/* Top Institutional Header */}
-      <header style={{
+      <header className="home-top-header" style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -185,7 +185,7 @@ function Home({ onLogin }) {
         </div>
 
         {/* Navigation Anchors */}
-        <nav style={{ display: 'flex', alignItems: 'center', gap: '1.75rem' }}>
+        <nav className="home-nav-links" style={{ display: 'flex', alignItems: 'center', gap: '1.75rem' }}>
           <button
             onClick={() => document.getElementById('calculator')?.scrollIntoView({ behavior: 'smooth' })}
             style={{ background: 'none', border: 'none', color: '#94A3B8', fontSize: '0.86rem', fontWeight: 600, cursor: 'pointer', transition: 'color 0.2s', padding: 0 }}
@@ -279,7 +279,7 @@ function Home({ onLogin }) {
       </header>
 
       {/* Main Hero & Auth Split */}
-      <main style={{
+      <main className="home-hero-split" style={{
         flex: 1,
         display: 'flex',
         alignItems: 'center',

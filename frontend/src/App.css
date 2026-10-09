@@ -253,3 +253,71 @@
   color: #64748B;
   border: 1px solid #CBD5E1;
 }
+
+/* ===================================================
+   Mobile & Tablet Responsive Styling for CredenceOS
+   =================================================== */
+
+/* Touch-optimized momentum scrolling for financial tables */
+[style*="overflowX: auto"], 
+[style*="overflow-x: auto"],
+[style*="overflowX: 'auto'"],
+.table-responsive {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+/* Tablets and small laptops (<= 992px) */
+@media (max-width: 992px) {
+  .home-hero-split {
+    flex-direction: column !important;
+    gap: 2.25rem !important;
+    padding: 2rem 1.25rem !important;
+  }
+  .home-nav-links {
+    display: none !important;
+  }
+  .home-top-header {
+    padding: 0.85rem 1.5rem !important;
+  }
+}
+
+/* Standard Mobile Devices (<= 768px) */
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 0.75rem 0.5rem !important;
+  }
+  .dashboard-canvas {
+    padding: 1.25rem 0.75rem !important;
+    border-radius: 12px !important;
+    min-height: auto !important;
+  }
+  .dashboard-nav-bar {
+    padding: 0.65rem 0.75rem !important;
+    border-radius: 12px !important;
+    margin-bottom: 1rem !important;
+  }
+  .dashboard-nav-bar > div {
+    gap: 0.35rem !important;
+  }
+  .dashboard-nav-bar button {
+    padding: 0.5rem 0.85rem !important;
+    font-size: 0.82rem !important;
+  }
+  .container {
+    padding: 1rem !important;
+  }
+}
+
+/* Compact Mobile Phones (<= 480px) */
+@media (max-width: 480px) {
+  .dashboard-canvas {
+    padding: 1rem 0.5rem !important;
+  }
+  .home-top-header {
+    padding: 0.75rem 1rem !important;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+}
+

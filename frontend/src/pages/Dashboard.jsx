@@ -50,9 +50,9 @@ function Dashboard({ user }) {
   ];
 
   return (
-    <div style={{ width: '100%', maxWidth: 1400, margin: '0 auto', padding: '1.5rem 2rem', boxSizing: 'border-box' }}>
+    <div className="dashboard-container" style={{ width: '100%', maxWidth: 1400, margin: '0 auto', padding: '1.5rem 2rem', boxSizing: 'border-box' }}>
       {/* Institutional Top Navigation Bar */}
-      <div style={{
+      <div className="dashboard-nav-bar" style={{
         background: '#FFFFFF',
         borderRadius: '16px',
         border: '1px solid #E2E8F0',
@@ -196,7 +196,7 @@ function Dashboard({ user }) {
       </div>
 
       {/* Content Canvas */}
-      <div style={{
+      <div className="dashboard-canvas" style={{
         background: '#FFFFFF',
         borderRadius: '18px',
         border: '1px solid #E2E8F0',
