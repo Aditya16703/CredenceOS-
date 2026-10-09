@@ -118,7 +118,13 @@ async function seedDatabase() {
     contributingFactors: [
       { factor: 'DTI_HEALTHY', impact: 'POSITIVE', description: 'Conservative DTI under 36%' },
       { factor: 'CREDIT_PRIME', impact: 'POSITIVE', description: 'Prime credit profile (765)' }
-    ]
+    ],
+    bureauReportId: 'CIR-CIBIL-202609018471',
+    bureauProvider: 'CIBIL_TRANSUNION',
+    bureauControlNumber: '202609018471',
+    bureauInquiryDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+    bureauScoreTier: 'PRIME',
+    tamperProofHash: 'a1b2c3d4e5f67890123456789abcdef0123456789abcdef0123456789abcdef0'
   });
 
   // Repayment Schedule

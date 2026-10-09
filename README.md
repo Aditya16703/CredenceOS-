@@ -23,7 +23,8 @@
   <img src="https://img.shields.io/badge/Backend-Node.js_v20+-339933?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node" />
   <img src="https://img.shields.io/badge/Frontend-React_19_+_Vite-61DAFB?style=flat-square&logo=react&logoColor=black" alt="React" />
   <img src="https://img.shields.io/badge/Docker-Multi--Container-2496ED?style=flat-square&logo=docker&logoColor=white" alt="Docker" />
-  <img src="https://img.shields.io/badge/Tests-8%2F8_Passing-brightgreen?style=flat-square&logo=node.js&logoColor=white" alt="Tests" />
+  <img src="https://img.shields.io/badge/Tests-14%2F14_Passing-brightgreen?style=flat-square&logo=node.js&logoColor=white" alt="Tests" />
+  <img src="https://img.shields.io/badge/Credit_Bureau-CIBIL_%2F_Experian_Verified-blue?style=flat-square&logo=shield&logoColor=white" alt="Credit Bureau" />
   <img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square" alt="License" />
 </p>
 
@@ -62,10 +63,11 @@ Test the complete institutional lending and debt recovery lifecycle without manu
 
 Unlike naive CRUD loan demos, CredenceOS incorporates core financial engineering primitives:
 1. **Deterministic State Machine**: Strictly enforces regulatory state lifecycles (`DRAFT` → `SUBMITTED` → `UNDER_REVIEW` → `APPROVED` → `DISBURSED` → `ACTIVE` → `CLOSED` / `OVERDUE`).
-2. **Explainable Underwriting Engine**: Automated multi-factor Debt-to-Income (DTI) computation and credit score risk tiering.
-3. **Reducing-Balance Amortization Engine**: Precision monthly repayment calculation with penny/cent-level final installment reconciliation.
-4. **Cryptographic Payment Idempotency**: Atomic database transactions protected by `Idempotency-Key` headers to eliminate double-debit anomalies.
-5. **Event-Sourced Audit Ledger**: Append-only compliance log capturing actor, role, IP address, and JSON state deltas.
+2. **Authenticated Credit Bureau Gateway**: Pulls KYC-bound Credit Information Reports (CIBIL/Experian), validates 10-char PAN tax format, issues 12-digit Control Numbers, and signs reports with HMAC-SHA256 signatures to prevent client score spoofing.
+3. **Explainable Underwriting Engine**: Automated multi-factor Debt-to-Income (DTI) computation, leverage checks, and transparent positive/neutral/negative risk factors.
+4. **Reducing-Balance Amortization Engine**: Precision monthly repayment calculation with penny/cent-level final installment reconciliation down to exactly `0.00`.
+5. **Cryptographic Payment Idempotency**: Atomic database transactions protected by `Idempotency-Key` headers to eliminate double-debit anomalies.
+6. **Event-Sourced Audit Ledger**: Append-only compliance log capturing actor, role, IP address, and JSON state deltas.
 
 ---
 
@@ -78,6 +80,7 @@ flowchart TD
         AuthM["🔐 1-Click Persona Auth"]
         KYCU["🪪 Masked KYC Portal"]
         LoanU["📊 Amortization & Apply"]
+        CIRU["🛡️ CIR Underwriting Dossier Modal"]
         PayU["💳 Idempotent Payments"]
     end
 
@@ -85,10 +88,11 @@ flowchart TD
         CORS["CORS & Rate Limiter"]
         JWT["JWT Auth & RBAC"]
         Winston["Winston Logger"]
-        Val["Zod/Express Validation"]
+        Val["Validation Middleware"]
     end
 
     subgraph Engines ["Core Financial Engines"]
+        CBG["🏛️ Credit Bureau Gateway\n(CIBIL/Experian, HMAC-SHA256)"]
         UWE["🧠 Rule-Based Underwriting Engine\n(DTI, Risk Tier, Capacity)"]
         AME["📈 Reducing-Balance Amortization\n(EMI, Penny Reconciliation)"]
         SME["⚙️ Finite Loan State Machine\n(Valid Transitions)"]
@@ -103,7 +107,8 @@ flowchart TD
     UI --> CORS
     CORS --> JWT
     JWT --> Val
-    Val --> UWE
+    Val --> CBG
+    CBG --> UWE
     Val --> AME
     Val --> SME
     Val --> IDE
@@ -142,14 +147,25 @@ $$\text{DTI Ratio} = \frac{\text{Existing Monthly Debts} + \text{Proposed EMI}}{
 | $> 50\%$ | $< 650$ | **HIGH RISK** | ⚠️ Flagged for Collateral / Guarantor |
 | $> 70\%$ | Any | **UNACCEPTABLE** | ❌ Hard Rejection |
 
+### 3. Institutional Credit Bureau (CIC) Gateway & Anti-Spoofing Architecture
+
+To meet regulated banking and NBFC standards, the platform strictly disallows client-submitted credit scores:
+* **Zero-Trust Input**: The server discards any client-spoofed `creditScore` in the HTTP body.
+* **KYC-Bound Inquiries**: Credit pulls strictly require a `VERIFIED` KYC profile and validate the borrower's Permanent Account Number (PAN) format against the regulatory specification:
+  $$\text{Regex Pattern: } \texttt{/^[A-Z]\{5\}[0-9]\{4\}[A-Z]\{1\}\$/}$$
+* **Audit Metadata & 12-Digit Control Numbers**: Inquiries return official 12-digit CIC Control Numbers and unique Report IDs (e.g., `CIR-CIBIL-202609018471`).
+* **Cryptographic Tamper-Proofing**: Each credit report is hashed using HMAC-SHA256:
+  $$\text{Signature} = \text{HMAC-SHA256}(\text{ControlNumber} \parallel \text{PAN} \parallel \text{Score} \parallel \text{InquiryTimestamp})$$
+* **Tradeline Reconciliation**: Underwriting reconciles declared monthly debts with bureau-reported monthly obligations and active tradelines.
+
 ---
 
 ## 💻 Tech Stack & Infrastructure
 
 ```
 CredenceOS
-├── 🎨 Frontend          React 19, Vite, Plus Jakarta Sans, CSS Modules, Glassmorphism
-├── ⚙️ Backend           Node.js 20+, Express.js, Sequelize ORM, Winston, Crypto
+├── 🎨 Frontend          React 19, Vite, Plus Jakarta Sans, Lucide Icons, Glassmorphism
+├── ⚙️ Backend           Node.js 20+, Express.js, Sequelize ORM, Winston, Crypto HMAC
 ├── 🗄️ Database          PostgreSQL 16 (Neon Serverless with SSL)
 ├── 🐳 Containers        Docker, Docker Compose, Multi-stage Nginx Build
 ├── 🚀 CI/CD Pipeline    GitHub Actions (Automated Unit Tests & Vite Build)
@@ -198,7 +214,7 @@ docker-compose up --build
 
 ## 🧪 Automated Test Suite
 
-CredenceOS includes comprehensive unit tests verifying the mathematical integrity of the financial calculation engines:
+CredenceOS includes comprehensive unit tests verifying the mathematical integrity of the financial calculation engines, bureau anti-tampering, and state transitions:
 
 ```bash
 cd backend
@@ -215,8 +231,14 @@ ok 5 - Underwriting Engine - High risk profile flagged when DTI is extreme
 ok 6 - Loan State Machine - Valid and invalid transitions
 ok 7 - KYC Compliance - PAN masking protects sensitive identity
 ok 8 - Payment Idempotency - Key caching simulation
-1..8
-# tests 8 | pass 8 | fail 0
+ok 9 - Credit Bureau Gateway - Validates score range (300 to 900)
+ok 10 - Credit Bureau Gateway - Successfully pulls authenticated report for valid KYC PAN
+ok 11 - Credit Bureau Gateway - Rejects malformed PAN format
+ok 12 - Credit Bureau Gateway - Blocks credit inquiry without explicit consumer consent
+ok 13 - Credit Bureau Gateway - Detects tampering in bureau report record
+ok 14 - Credit Bureau Gateway - High risk subprime profile correctly flows into Underwriting
+1..14
+# tests 14 | pass 14 | fail 0
 ```
 
 ---
@@ -229,13 +251,14 @@ CredenceOS-
 ├── backend/
 │   ├── src/
 │   │   ├── controllers/      # auth, loan, payment, kyc, audit controllers
-│   │   ├── models/           # Sequelize ORM schema definitions & relationships
+│   │   ├── models/           # Sequelize ORM schema definitions & UnderwritingRecord
 │   │   ├── routes/           # RESTful API route definitions & middleware
-│   │   ├── services/         # Amortization, underwriting & audit engine logic
+│   │   ├── services/         # Amortization, underwriting, creditBureauService, audit
 │   │   └── server.js         # Express server entry point & error handlers
-│   └── tests/                # Mathematical calculation & state machine tests
+│   └── tests/                # Mathematical calculation, bureau security & state tests
 ├── frontend/
 │   ├── src/
+│   │   ├── components/       # UnderwritingModal, Notifications, etc.
 │   │   ├── pages/            # Home, Dashboard, Loans, Payments, KYC, Reports
 │   │   ├── utils/            # api.js client, session management, token handlers
 │   │   ├── index.css         # Institutional design system tokens & glassmorphism

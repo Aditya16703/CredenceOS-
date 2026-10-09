@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Shield, Landmark, Send, BarChart3, Search, AlertCircle, CheckCircle2 } from 'lucide-react';
 import Agents from './Agents';
+import UnderwritingModal from '../components/UnderwritingModal';
 import { api, handleApiError, handleApiSuccess, handleTokenExpiration } from '../utils/api';
 
 function Loans({ user }) {
@@ -12,6 +13,7 @@ function Loans({ user }) {
   const [form, setForm] = useState({ amount: '', interestRate: '', termMonths: '', monthlyIncome: '', existingDebts: '' });
   const [success, setSuccess] = useState('');
   const [assignAgentId, setAssignAgentId] = useState({});
+  const [selectedUnderwritingLoan, setSelectedUnderwritingLoan] = useState(null);
 
   // Calculate interest rate based on amount and term
   const calculateInterestRate = (amount, term) => {
@@ -101,7 +103,7 @@ function Loans({ user }) {
     setSuccess('');
     
     try {
-      // Convert form data to correct data types
+      // Convert form data to correct data types (creditScore is retrieved server-side from Bureau API)
       const loanData = {
         customerId: user.id,
         amount: parseFloat(form.amount),
@@ -109,12 +111,16 @@ function Loans({ user }) {
         termMonths: parseInt(form.termMonths),
         monthlyIncome: parseFloat(form.monthlyIncome) || 50000,
         existingMonthlyDebt: parseFloat(form.existingDebts) || 0,
-        creditScore: 700,
-        employmentType: 'SALARIED'
+        employmentType: 'SALARIED',
+        bureauConsent: true
       };
       
-      const data = await api.createLoan(loanData);
-      handleApiSuccess('Loan application submitted!', setSuccess);
+      const res = await api.createLoan(loanData);
+      const bureauInfo = res?.data?.bureauVerification;
+      const successMessage = bureauInfo
+        ? `Application submitted! Bureau Verified: ${bureauInfo.provider} (Score: ${bureauInfo.verifiedScore}, Tier: ${bureauInfo.scoreTier})`
+        : 'Loan application submitted!';
+      handleApiSuccess(successMessage, setSuccess);
       setForm({ amount: '', interestRate: '', termMonths: '', monthlyIncome: '', existingDebts: '' });
       
       // Refresh loans list
@@ -808,6 +814,27 @@ function Loans({ user }) {
                   </button>
             </form>
 
+            {/* Bureau Consent & Real-time Underwriting Notice */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              padding: '0.6rem 1rem',
+              background: '#F0FDF4',
+              border: '1px solid #BBF7D0',
+              borderRadius: '8px',
+              color: '#166534',
+              fontSize: '0.82rem',
+              fontWeight: 500,
+              marginBottom: '1rem'
+            }}>
+              <Shield size={16} color="#16A34A" />
+              <span>
+                <strong>Regulated Bureau Pull:</strong> By submitting, you authorize CredenceOS to pull your official Credit Information Report (CIR via CIBIL/Experian). Scores are securely authenticated server-side.
+              </span>
+            </div>
+
                 {/* Error and Success Messages */}
                 {error && (
                   <div style={{ 
@@ -1157,51 +1184,74 @@ function Loans({ user }) {
                       )}
                       </div>
                     </td>
-                    {(user.role === 'admin' || user.role === 'agent') && (
-                      <td style={{ padding: '0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
-                          {/* Approve/Reject buttons for pending loans */}
-                        {loan.status === 'pending' && user.role !== 'agent' && (
-                          <>
-                                  <button 
-                                    className="btn btn-success btn-sm"
-                                onClick={() => handleStatus(loan.id, 'approved')}
-                                style={{
-                                  fontSize: '0.7rem',
-                                  padding: '0.2rem 0.4rem',
-                                  borderRadius: '4px'
-                                }}
-                              >
-                                Approve
-                                  </button>
-                              <button 
-                                className="btn btn-danger btn-sm"
-                                onClick={() => handleStatus(loan.id, 'rejected')}
-                                style={{
-                                  fontSize: '0.7rem',
-                                  padding: '0.2rem 0.4rem',
-                                  borderRadius: '4px'
-                                }}
-                              >
-                                Reject
-                              </button>
-                          </>
+                    {/* Unified Actions Column for all roles */}
+                    <td style={{ padding: '0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', alignItems: 'center' }}>
+                        {/* Bureau CIR & Underwriting Audit Button */}
+                        <button 
+                          onClick={() => setSelectedUnderwritingLoan(loan)}
+                          title="View Institutional Credit Bureau & Underwriting Dossier"
+                          style={{
+                            fontSize: '0.72rem',
+                            padding: '0.2rem 0.5rem',
+                            borderRadius: '6px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            fontWeight: 650,
+                            border: '1px solid #BAE6FD',
+                            color: '#0369A1',
+                            background: '#F0F9FF',
+                            cursor: 'pointer',
+                            whiteSpace: 'nowrap'
+                          }}
+                        >
+                          <Shield size={12} color="#0284C7" />
+                          <span>CIR Audit</span>
+                        </button>
+
+                        {/* Approve/Reject buttons for pending loans */}
+                        {loan.status === 'pending' && user.role !== 'agent' && user.role !== 'customer' && (
+                          <div style={{ display: 'flex', gap: '0.2rem' }}>
+                            <button 
+                              className="btn btn-success btn-sm"
+                              onClick={() => handleStatus(loan.id, 'approved')}
+                              style={{
+                                fontSize: '0.7rem',
+                                padding: '0.15rem 0.4rem',
+                                borderRadius: '4px'
+                              }}
+                            >
+                              Approve
+                            </button>
+                            <button 
+                              className="btn btn-danger btn-sm"
+                              onClick={() => handleStatus(loan.id, 'rejected')}
+                              style={{
+                                fontSize: '0.7rem',
+                                padding: '0.15rem 0.4rem',
+                                borderRadius: '4px'
+                              }}
+                            >
+                              Reject
+                            </button>
+                          </div>
                         )}
-                          
-                          {/* Recovery status update */}
-                          {(user.role === 'admin' || (user.role === 'agent' && loan.agentId === user.id)) && (
-                              <div>
+                        
+                        {/* Recovery status update */}
+                        {(user.role === 'admin' || (user.role === 'agent' && loan.agentId === user.id)) && (
+                          <div>
                             {editingRecovery[loan.id] ? (
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
                                 <select 
-                                    className="form-control form-control-sm" 
+                                  className="form-control form-control-sm" 
                                   value={selectedRecovery[loan.id] || ''}
                                   onChange={e => handleRecoverySelect(loan.id, e.target.value)}
-                                    style={{
-                                      fontSize: '0.7rem',
-                                      padding: '0.2rem 0.4rem',
-                                      borderRadius: '4px'
-                                    }}
+                                  style={{
+                                    fontSize: '0.7rem',
+                                    padding: '0.2rem 0.4rem',
+                                    borderRadius: '4px'
+                                  }}
                                 >
                                   <option value="">Select Status</option>
                                   <option value="pending">Pending</option>
@@ -1212,11 +1262,11 @@ function Loans({ user }) {
                                   <button 
                                     className="btn btn-success btn-sm"
                                     onClick={() => handleRecoverySave(loan.id)}
-                                      style={{
-                                        fontSize: '0.7rem',
-                                        padding: '0.2rem 0.4rem',
-                                        borderRadius: '4px'
-                                      }}
+                                    style={{
+                                      fontSize: '0.7rem',
+                                      padding: '0.2rem 0.4rem',
+                                      borderRadius: '4px'
+                                    }}
                                   >
                                     Save
                                   </button>
@@ -1226,11 +1276,11 @@ function Loans({ user }) {
                               <button 
                                 className="btn btn-primary btn-sm"
                                 onClick={() => handleRecoveryEdit(loan.id)}
-                                  style={{
-                                    fontSize: '0.7rem',
-                                    padding: '0.2rem 0.4rem',
-                                    borderRadius: '4px'
-                                  }}
+                                style={{
+                                  fontSize: '0.7rem',
+                                  padding: '0.15rem 0.4rem',
+                                  borderRadius: '4px'
+                                }}
                               >
                                 Edit
                               </button>
@@ -1240,36 +1290,20 @@ function Loans({ user }) {
                         
                         {/* Delete button for rejected loans */}
                         {loan.status === 'rejected' && (
-                                  <button 
+                          <button 
                             className="btn btn-danger btn-sm"
                             onClick={() => handleDeleteLoan(loan.id)}
                             style={{
                               fontSize: '0.7rem',
-                              padding: '0.2rem 0.4rem',
+                              padding: '0.15rem 0.4rem',
                               borderRadius: '4px'
                             }}
                           >
                             Delete
-                                  </button>
-                                )}
-                              </div>
-                      </td>
-                    )}
-                    {user.role === 'customer' && loan.status === 'rejected' && (
-                      <td style={{ padding: '0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
-                              <button 
-                          className="btn btn-danger btn-sm"
-                          onClick={() => handleDeleteLoan(loan.id)}
-                          style={{
-                            fontSize: '0.7rem',
-                            padding: '0.2rem 0.4rem',
-                            borderRadius: '4px'
-                          }}
-                        >
-                          Delete
-                              </button>
-                      </td>
-                    )}
+                          </button>
+                        )}
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -1291,6 +1325,13 @@ function Loans({ user }) {
           </div>
         </>
       )}
+
+      {/* Underwriting & Bureau Audit Dossier Modal */}
+      <UnderwritingModal
+        loan={selectedUnderwritingLoan}
+        isOpen={!!selectedUnderwritingLoan}
+        onClose={() => setSelectedUnderwritingLoan(null)}
+      />
     </div>
   );
 }

@@ -9,6 +9,7 @@ const {
 } = require('../models');
 const { calculateEMI, generateAmortizationSchedule } = require('../services/amortizationService');
 const { evaluateUnderwriting } = require('../services/underwritingService');
+const { pullCreditReport } = require('../services/creditBureauService');
 const { recordAudit } = require('../services/auditService');
 const { 
   asyncHandler, 
@@ -88,8 +89,8 @@ exports.createLoan = asyncHandler(async (req, res) => {
     termMonths, 
     monthlyIncome = 50000, 
     existingMonthlyDebt = 0, 
-    creditScore = 700, 
-    employmentType = 'SALARIED' 
+    employmentType = 'SALARIED',
+    bureauConsent = true 
   } = req.body;
 
   const customer = await Customer.findByPk(customerId);
@@ -102,6 +103,16 @@ exports.createLoan = asyncHandler(async (req, res) => {
   if (!kyc || kyc.status !== 'VERIFIED') {
     throw new ValidationError('Customer must have a VERIFIED KYC before applying for credit');
   }
+
+  // Institutional CIC Credit Bureau Pull (CIBIL / Experian)
+  // Scores are authenticated against national bureau registries using KYC PAN and identity
+  const bureauReport = await pullCreditReport({
+    panNumber: kyc.panNumber,
+    fullName: customer.name,
+    phone: customer.phone,
+    dateOfBirth: kyc.dateOfBirth,
+    consent: bureauConsent
+  });
 
   const p = parseFloat(amount);
   const rate = parseFloat(interestRate);
@@ -117,20 +128,25 @@ exports.createLoan = asyncHandler(async (req, res) => {
 
   const emi = calculateEMI(p, rate, tenure);
 
-  // Run Underwriting Rule Engine
-  const activeLoans = await Loan.count({
+  // Active Tradelines Reconciliation: Max of internal platform active loans and external bureau tradelines
+  const activeInternalLoans = await Loan.count({
     where: { customerId, status: ['ACTIVE', 'OVERDUE', 'DISBURSED'] }
   });
+  const totalActiveTradelines = Math.max(activeInternalLoans, bureauReport.activeTradelines);
 
+  // Effective Monthly Debt: Borrower declaration reconciled with bureau verified obligations
+  const effectiveMonthlyDebt = Math.max(parseFloat(existingMonthlyDebt) || 0, bureauReport.reportedMonthlyDebt || 0);
+
+  // Run Underwriting Rule Engine with verified Bureau Score
   const underwriting = evaluateUnderwriting({
     monthlyIncome,
-    existingMonthlyDebt,
+    existingMonthlyDebt: effectiveMonthlyDebt,
     requestedAmount: p,
     interestRate: rate,
     termMonths: tenure,
-    creditScore,
+    creditScore: bureauReport.creditScore,
     employmentType,
-    activeLoansCount: activeLoans
+    activeLoansCount: totalActiveTradelines
   });
 
   // DB Transaction for atomic creation
@@ -149,14 +165,20 @@ exports.createLoan = asyncHandler(async (req, res) => {
     const underwritingRecord = await UnderwritingRecord.create({
       loanId: loan.id,
       monthlyIncome,
-      existingMonthlyDebt,
+      existingMonthlyDebt: effectiveMonthlyDebt,
       dtiPercent: underwriting.metrics.dtiPercent,
       creditScore: underwriting.metrics.creditScore,
       employmentType,
       riskScore: underwriting.riskScore,
       riskCategory: underwriting.riskCategory,
       recommendation: underwriting.recommendation,
-      contributingFactors: underwriting.contributingFactors
+      contributingFactors: underwriting.contributingFactors,
+      bureauReportId: bureauReport.bureauReportId,
+      bureauProvider: bureauReport.bureauProvider,
+      bureauControlNumber: bureauReport.controlNumber,
+      bureauInquiryDate: bureauReport.inquiryDate,
+      bureauScoreTier: bureauReport.scoreTier,
+      tamperProofHash: bureauReport.tamperProofHash
     }, { transaction: t });
 
     // Generate tentative repayment schedule preview
@@ -175,7 +197,7 @@ exports.createLoan = asyncHandler(async (req, res) => {
 
     await RepaymentSchedule.bulkCreate(scheduleRecords, { transaction: t });
 
-    return { loan, underwritingRecord };
+    return { loan, underwritingRecord, bureauReport };
   });
 
   await recordAudit({
@@ -188,17 +210,28 @@ exports.createLoan = asyncHandler(async (req, res) => {
       amount: p,
       tenure,
       riskCategory: underwriting.riskCategory,
-      monthlyEMI: emi
+      monthlyEMI: emi,
+      bureauReportId: bureauReport.bureauReportId,
+      bureauScore: bureauReport.creditScore
     },
     req
   });
 
   res.status(201).json({
     success: true,
-    message: 'Loan application submitted and underwriting analysis generated',
+    message: 'Loan application submitted and authenticated bureau underwriting analysis generated',
     data: {
       loan: result.loan,
-      underwriting: result.underwritingRecord
+      underwriting: result.underwritingRecord,
+      bureauVerification: {
+        provider: bureauReport.bureauProvider,
+        reportId: bureauReport.bureauReportId,
+        controlNumber: bureauReport.controlNumber,
+        verifiedScore: bureauReport.creditScore,
+        scoreTier: bureauReport.scoreTier,
+        verifiedTradelines: totalActiveTradelines,
+        inquiryTimestamp: bureauReport.inquiryDate
+      }
     }
   });
 });

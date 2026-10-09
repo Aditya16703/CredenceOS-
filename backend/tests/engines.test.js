@@ -107,3 +107,104 @@ test('Payment Idempotency - Key caching simulation', () => {
   assert.strictEqual(duplicateCall._replayed, true);
   assert.strictEqual(duplicateCall.txId, firstCall.txId, 'Duplicate request must return original transaction ID');
 });
+
+// 6. Institutional Credit Bureau (CIBIL/Experian) Gateway Tests
+const { 
+  pullCreditReport, 
+  validateBureauScore, 
+  verifyReportIntegrity, 
+  getScoreTier 
+} = require('../src/services/creditBureauService');
+
+test('Credit Bureau Gateway - Validates score range (300 to 900)', () => {
+  assert.strictEqual(validateBureauScore(750), true);
+  assert.strictEqual(validateBureauScore(300), true);
+  assert.strictEqual(validateBureauScore(900), true);
+  assert.strictEqual(validateBureauScore(-1), true); // NTC
+  assert.strictEqual(validateBureauScore(200), false);
+  assert.strictEqual(validateBureauScore(950), false);
+  assert.strictEqual(validateBureauScore('invalid'), false);
+});
+
+test('Credit Bureau Gateway - Successfully pulls authenticated report for valid KYC PAN', async () => {
+  const report = await pullCreditReport({
+    panNumber: 'ABCDE1234F',
+    fullName: 'Aditya Sharma',
+    phone: '+91 91234 56789',
+    dateOfBirth: '1995-08-14',
+    consent: true
+  });
+
+  assert.strictEqual(report.success, true);
+  assert.strictEqual(report.bureauProvider, 'CIBIL_TRANSUNION');
+  assert.strictEqual(report.creditScore, 765);
+  assert.strictEqual(report.scoreTier, 'PRIME');
+  assert.strictEqual(report.panNumber, 'ABCDE1234F');
+  assert.ok(report.controlNumber.length >= 10, 'Must have a standard Bureau Control Number');
+  assert.ok(report.bureauReportId.startsWith('CIR-CIBIL-'));
+  assert.ok(verifyReportIntegrity(report), 'Bureau report cryptographic hash must be valid');
+});
+
+test('Credit Bureau Gateway - Rejects malformed PAN format', async () => {
+  await assert.rejects(
+    async () => {
+      await pullCreditReport({
+        panNumber: 'INVALID_PAN',
+        consent: true
+      });
+    },
+    /Invalid PAN format/
+  );
+});
+
+test('Credit Bureau Gateway - Blocks credit inquiry without explicit consumer consent', async () => {
+  await assert.rejects(
+    async () => {
+      await pullCreditReport({
+        panNumber: 'ABCDE1234F',
+        consent: false
+      });
+    },
+    /consumer credit pull consent/i
+  );
+});
+
+test('Credit Bureau Gateway - Detects tampering in bureau report record', async () => {
+  const report = await pullCreditReport({
+    panNumber: 'ABCDE1234F',
+    consent: true
+  });
+
+  // Legitimate report passes
+  assert.strictEqual(verifyReportIntegrity(report), true);
+
+  // Altered report fails cryptographic verification
+  const forgedReport = { ...report, creditScore: 890 };
+  assert.strictEqual(verifyReportIntegrity(forgedReport), false);
+});
+
+test('Credit Bureau Gateway - High risk subprime profile correctly flows into Underwriting', async () => {
+  const report = await pullCreditReport({
+    panNumber: 'SUBPR1234X',
+    consent: true
+  });
+
+  assert.strictEqual(report.creditScore, 580);
+  assert.strictEqual(report.scoreTier, 'SUBPRIME');
+
+  // Feed authenticated bureau report into underwriting
+  const result = evaluateUnderwriting({
+    monthlyIncome: 35000,
+    existingMonthlyDebt: report.reportedMonthlyDebt,
+    requestedAmount: 250000,
+    interestRate: 15,
+    termMonths: 24,
+    creditScore: report.creditScore,
+    activeLoansCount: report.activeTradelines
+  });
+
+  assert.strictEqual(result.riskCategory, 'HIGH');
+  assert.strictEqual(result.recommendation, 'REJECT_OR_REFER');
+  assert.ok(result.contributingFactors.some(f => f.factor === 'CREDIT_SUBPRIME'));
+});
+

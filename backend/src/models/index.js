@@ -167,6 +167,12 @@ const UnderwritingRecord = sequelize.define('UnderwritingRecord', {
   riskCategory: { type: DataTypes.ENUM('LOW', 'MEDIUM', 'HIGH'), allowNull: false },
   recommendation: { type: DataTypes.STRING, allowNull: false },
   contributingFactors: { type: DataTypes.JSONB, allowNull: true },
+  bureauReportId: { type: DataTypes.STRING, allowNull: true },
+  bureauProvider: { type: DataTypes.STRING, allowNull: true, defaultValue: 'CIBIL_TRANSUNION' },
+  bureauControlNumber: { type: DataTypes.STRING, allowNull: true },
+  bureauInquiryDate: { type: DataTypes.DATE, allowNull: true },
+  bureauScoreTier: { type: DataTypes.STRING, allowNull: true },
+  tamperProofHash: { type: DataTypes.STRING, allowNull: true },
   assessorId: { type: DataTypes.INTEGER, allowNull: true },
   assessorNotes: { type: DataTypes.TEXT, allowNull: true }
 }, { timestamps: true });
