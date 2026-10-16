@@ -305,7 +305,7 @@ function Payments({ user }) {
                 <Landmark size={24} color="#38BDF8" />
               </div>
               <div>
-                <h2 style={{ margin: 0, fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.03em' }}>
+                <h2 style={{ margin: 0, fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.03em', color: '#FFFFFF' }}>
                   Treasury Clearing & Repayments Desk
                 </h2>
                 <p style={{ margin: '3px 0 0 0', color: '#94A3B8', fontSize: '0.92rem' }}>
@@ -371,7 +371,7 @@ function Payments({ user }) {
               <div style={{ fontSize: '1.45rem', fontWeight: 800, color: '#10B981', letterSpacing: '-0.02em' }}>
                 ₹{kpis.totalRepaid.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </div>
-              <div style={{ fontSize: '0.72rem', color: '#64748B', marginTop: '2px' }}>
+              <div style={{ fontSize: '0.72rem', color: '#94A3B8', marginTop: '2px' }}>
                 Reconciled across {kpis.txnCount} transactions
               </div>
             </div>
@@ -391,7 +391,7 @@ function Payments({ user }) {
               <div style={{ fontSize: '1.45rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.02em' }}>
                 {kpis.activeCount} <span style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 500 }}>Facilities</span>
               </div>
-              <div style={{ fontSize: '0.72rem', color: '#64748B', marginTop: '2px' }}>
+              <div style={{ fontSize: '0.72rem', color: '#94A3B8', marginTop: '2px' }}>
                 ₹{kpis.totalPrincipal.toLocaleString('en-IN')} approved exposure
               </div>
             </div>
@@ -1133,7 +1133,7 @@ function Payments({ user }) {
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Landmark size={20} color="#38BDF8" />
-                <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700 }}>
+                <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: '#FFFFFF' }}>
                   Official Repayment Voucher
                 </h4>
               </div>

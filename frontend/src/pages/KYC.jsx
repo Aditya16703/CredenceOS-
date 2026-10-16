@@ -174,7 +174,7 @@ export default function KYC({ user, onNavigate }) {
                 <ShieldCheck size={26} color="#38BDF8" />
               </div>
               <div>
-                <h2 style={{ margin: 0, fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.03em' }}>
+                <h2 style={{ margin: 0, fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.03em', color: '#FFFFFF' }}>
                   Regulatory Identity & Compliance Desk
                 </h2>
                 <p style={{ margin: '3px 0 0 0', color: '#94A3B8', fontSize: '0.92rem' }}>
@@ -355,7 +355,7 @@ export default function KYC({ user, onNavigate }) {
                   </div>
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <h3 style={{ margin: 0, fontSize: '1.45rem', fontWeight: 800 }}>
+                      <h3 style={{ margin: 0, fontSize: '1.45rem', fontWeight: 800, color: '#FFFFFF' }}>
                         Customer Profile Fully Verified
                       </h3>
                       <span style={{
@@ -413,7 +413,7 @@ export default function KYC({ user, onNavigate }) {
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', paddingBottom: '1rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <Landmark size={22} color="#38BDF8" />
-                      <span style={{ fontSize: '1rem', fontWeight: 800, letterSpacing: '0.05em' }}>
+                      <span style={{ fontSize: '1rem', fontWeight: 800, letterSpacing: '0.05em', color: '#FFFFFF' }}>
                         CREDENCE NATIONAL COMPLIANCE PASS
                       </span>
                     </div>
@@ -485,7 +485,7 @@ export default function KYC({ user, onNavigate }) {
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     fontSize: '0.72rem',
-                    color: '#64748B'
+                    color: '#94A3B8'
                   }}>
                     <span>Compliant with Prevention of Money Laundering Act (PMLA 2002)</span>
                     <span style={{ color: '#10B981', fontWeight: 700 }}>• Tamper Seal Valid</span>

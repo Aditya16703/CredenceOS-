@@ -519,7 +519,7 @@ function Loans({ user }) {
             padding: '1.75rem', 
             textAlign: 'center'
           }}>
-            <h3 style={{ margin: '0 0 0.35rem 0', fontWeight: 700, fontSize: '1.4rem', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+            <h3 style={{ margin: '0 0 0.35rem 0', fontWeight: 700, fontSize: '1.4rem', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', color: '#FFFFFF' }}>
               <Shield size={22} color="#38BDF8" /> Portfolio Recovery Desk
             </h3>
             <p style={{ margin: 0, color: '#94A3B8', fontSize: '0.9rem' }}>
@@ -843,7 +843,7 @@ function Loans({ user }) {
                 padding: '1.75rem', 
                 textAlign: 'center'
               }}>
-                <h3 style={{ margin: '0 0 0.35rem 0', fontWeight: 700, fontSize: '1.4rem', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                <h3 style={{ margin: '0 0 0.35rem 0', fontWeight: 700, fontSize: '1.4rem', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', color: '#FFFFFF' }}>
                   <Landmark size={22} color="#38BDF8" /> Credit Facility Application
                 </h3>
                 <p style={{ margin: 0, color: '#94A3B8', fontSize: '0.9rem' }}>
@@ -1138,7 +1138,7 @@ function Loans({ user }) {
           padding: '1.75rem', 
           textAlign: 'center'
         }}>
-          <h3 style={{ margin: '0 0 0.35rem 0', fontWeight: 700, fontSize: '1.4rem', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+          <h3 style={{ margin: '0 0 0.35rem 0', fontWeight: 700, fontSize: '1.4rem', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', color: '#FFFFFF' }}>
             <BarChart3 size={22} color="#38BDF8" /> Active Credit Registry & Underwriting Status
           </h3>
           <p style={{ margin: 0, color: '#94A3B8', fontSize: '0.9rem' }}>
@@ -1598,7 +1598,7 @@ function Loans({ user }) {
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <Landmark size={22} color="#38BDF8" />
                 <div>
-                  <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700 }}>RBI Account Aggregator</h4>
+                  <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700, color: '#FFFFFF' }}>RBI Account Aggregator</h4>
                   <p style={{ margin: 0, fontSize: '0.72rem', color: '#94A3B8' }}>ReBIT 2.0 Digital Consent Pipeline</p>
                 </div>
               </div>

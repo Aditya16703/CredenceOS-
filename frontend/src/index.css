@@ -93,10 +93,33 @@ body {
 /* Typography elements */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-main);
-  color: var(--text-primary);
+  color: inherit; /* Inherits light text on dark backgrounds and dark text on light backgrounds */
   font-weight: 700;
   letter-spacing: -0.025em;
   margin-top: 0;
+}
+
+/* Explicit high-contrast rules for dark surface containers & banners */
+[style*="#0B132B"],
+[style*="#060D1E"],
+[style*="#0F172A"],
+[style*="#1E293B"],
+[style*="#111827"],
+[style*="#1E3A8A"],
+[style*="#064E3B"],
+.glass-dark {
+  color: #FFFFFF;
+}
+
+[style*="#0B132B"] h1, [style*="#0B132B"] h2, [style*="#0B132B"] h3, [style*="#0B132B"] h4, [style*="#0B132B"] h5, [style*="#0B132B"] h6,
+[style*="#060D1E"] h1, [style*="#060D1E"] h2, [style*="#060D1E"] h3, [style*="#060D1E"] h4, [style*="#060D1E"] h5, [style*="#060D1E"] h6,
+[style*="#0F172A"] h1, [style*="#0F172A"] h2, [style*="#0F172A"] h3, [style*="#0F172A"] h4, [style*="#0F172A"] h5, [style*="#0F172A"] h6,
+[style*="#1E293B"] h1, [style*="#1E293B"] h2, [style*="#1E293B"] h3, [style*="#1E293B"] h4, [style*="#1E293B"] h5, [style*="#1E293B"] h6,
+[style*="#111827"] h1, [style*="#111827"] h2, [style*="#111827"] h3, [style*="#111827"] h4, [style*="#111827"] h5, [style*="#111827"] h6,
+[style*="#1E3A8A"] h1, [style*="#1E3A8A"] h2, [style*="#1E3A8A"] h3, [style*="#1E3A8A"] h4, [style*="#1E3A8A"] h5, [style*="#1E3A8A"] h6,
+[style*="#064E3B"] h1, [style*="#064E3B"] h2, [style*="#064E3B"] h3, [style*="#064E3B"] h4, [style*="#064E3B"] h5, [style*="#064E3B"] h6,
+.glass-dark h1, .glass-dark h2, .glass-dark h3, .glass-dark h4, .glass-dark h5, .glass-dark h6 {
+  color: #FFFFFF !important;
 }
 
 /* Glassmorphism Surface Utilities */
@@ -112,6 +135,7 @@ h1, h2, h3, h4, h5, h6 {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #FFFFFF;
 }
 
 /* Micro-animations */

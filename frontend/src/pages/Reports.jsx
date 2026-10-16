@@ -119,28 +119,28 @@ function Reports({ user }) {
       {/* Summary Cards */}
       {recoverySummary && (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
-          <div style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
-            <h4 style={{ margin: 0, fontSize: '0.9rem', opacity: 0.9 }}>Total Loans</h4>
-            <h2 style={{ margin: '0.5rem 0', fontSize: '2rem', fontWeight: 700 }}>{recoverySummary.totalLoans}</h2>
-            <p style={{ margin: 0, fontSize: '0.9rem', opacity: 0.8 }}>Approved loans in system</p>
+          <div style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: '#FFFFFF', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+            <h4 style={{ margin: 0, fontSize: '0.9rem', color: '#FFFFFF', opacity: 0.95 }}>Total Loans</h4>
+            <h2 style={{ margin: '0.5rem 0', fontSize: '2rem', fontWeight: 700, color: '#FFFFFF' }}>{recoverySummary.totalLoans}</h2>
+            <p style={{ margin: 0, fontSize: '0.9rem', color: '#FFFFFF', opacity: 0.85 }}>Approved loans in system</p>
           </div>
           
-          <div style={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', color: 'white', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
-            <h4 style={{ margin: 0, fontSize: '0.9rem', opacity: 0.9 }}>Recovered Loans</h4>
-            <h2 style={{ margin: '0.5rem 0', fontSize: '2rem', fontWeight: 700 }}>{recoverySummary.recoveredLoans}</h2>
-            <p style={{ margin: 0, fontSize: '0.9rem', opacity: 0.8 }}>Successfully recovered</p>
+          <div style={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', color: '#FFFFFF', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+            <h4 style={{ margin: 0, fontSize: '0.9rem', color: '#FFFFFF', opacity: 0.95 }}>Recovered Loans</h4>
+            <h2 style={{ margin: '0.5rem 0', fontSize: '2rem', fontWeight: 700, color: '#FFFFFF' }}>{recoverySummary.recoveredLoans}</h2>
+            <p style={{ margin: 0, fontSize: '0.9rem', color: '#FFFFFF', opacity: 0.85 }}>Successfully recovered</p>
           </div>
           
-          <div style={{ background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', color: 'white', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
-            <h4 style={{ margin: 0, fontSize: '0.9rem', opacity: 0.9 }}>Outstanding Loans</h4>
-            <h2 style={{ margin: '0.5rem 0', fontSize: '2rem', fontWeight: 700 }}>{recoverySummary.outstandingLoans}</h2>
-            <p style={{ margin: 0, fontSize: '0.9rem', opacity: 0.8 }}>Pending recovery</p>
+          <div style={{ background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', color: '#FFFFFF', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+            <h4 style={{ margin: 0, fontSize: '0.9rem', color: '#FFFFFF', opacity: 0.95 }}>Outstanding Loans</h4>
+            <h2 style={{ margin: '0.5rem 0', fontSize: '2rem', fontWeight: 700, color: '#FFFFFF' }}>{recoverySummary.outstandingLoans}</h2>
+            <p style={{ margin: 0, fontSize: '0.9rem', color: '#FFFFFF', opacity: 0.85 }}>Pending recovery</p>
           </div>
           
-          <div style={{ background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)', color: 'white', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
-            <h4 style={{ margin: 0, fontSize: '0.9rem', opacity: 0.9 }}>Recovery Rate</h4>
-            <h2 style={{ margin: '0.5rem 0', fontSize: '2rem', fontWeight: 700 }}>{recoverySummary.recoveryRate}</h2>
-            <p style={{ margin: 0, fontSize: '0.9rem', opacity: 0.8 }}>Success percentage</p>
+          <div style={{ background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)', color: '#FFFFFF', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+            <h4 style={{ margin: 0, fontSize: '0.9rem', color: '#FFFFFF', opacity: 0.95 }}>Recovery Rate</h4>
+            <h2 style={{ margin: '0.5rem 0', fontSize: '2rem', fontWeight: 700, color: '#FFFFFF' }}>{recoverySummary.recoveryRate}</h2>
+            <p style={{ margin: 0, fontSize: '0.9rem', color: '#FFFFFF', opacity: 0.85 }}>Success percentage</p>
           </div>
         </div>
       )}
