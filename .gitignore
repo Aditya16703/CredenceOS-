@@ -28,3 +28,11 @@ Thumbs.db
 PROJECT_CHAT_HISTORY.md
 *.chat_history.md
 .chat_history/
+
+# Local Architecture, Workflow & API Specs (Kept locally only)
+ARCHITECTURE.md
+BUSINESS_WORKFLOW.md
+DEPLOYMENT.md
+ERROR_HANDLING.md
+*.postman_collection.json
+*.postman_environment.json
