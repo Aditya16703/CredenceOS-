@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Shield, Landmark, Send, BarChart3, Search, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Shield, Landmark, Send, BarChart3, Search, AlertCircle, CheckCircle2, Building, Check, ArrowRight, ShieldCheck, RefreshCw } from 'lucide-react';
 import Agents from './Agents';
 import UnderwritingModal from '../components/UnderwritingModal';
 import { api, handleApiError, handleApiSuccess, handleTokenExpiration } from '../utils/api';
@@ -14,6 +14,16 @@ function Loans({ user }) {
   const [success, setSuccess] = useState('');
   const [assignAgentId, setAssignAgentId] = useState({});
   const [selectedUnderwritingLoan, setSelectedUnderwritingLoan] = useState(null);
+
+  // RBI Account Aggregator state
+  const [aaVerified, setAaVerified] = useState(null);
+  const [aaModalOpen, setAaModalOpen] = useState(false);
+  const [aaBanks, setAaBanks] = useState([]);
+  const [selectedBankId, setSelectedBankId] = useState('FIP-HDFC-01');
+  const [aaConsentHandle, setAaConsentHandle] = useState('');
+  const [aaOtp, setAaOtp] = useState('1234');
+  const [aaLoading, setAaLoading] = useState(false);
+  const [aaStep, setAaStep] = useState('SELECT'); // 'SELECT' | 'OTP' | 'SUCCESS'
 
   // Calculate interest rate based on amount and term
   const calculateInterestRate = (amount, term) => {
@@ -97,6 +107,55 @@ function Loans({ user }) {
   }, [loans]);
 
   // Customer loan application
+  const handleOpenAAModal = async () => {
+    setAaModalOpen(true);
+    setAaStep('SELECT');
+    try {
+      const res = await api.getAABanks();
+      setAaBanks(res.data?.banks || []);
+    } catch (e) {
+      console.error('Failed to load AA banks:', e);
+    }
+  };
+
+  const handleInitiateAAConsent = async () => {
+    setAaLoading(true);
+    setError('');
+    try {
+      const res = await api.initiateAAConsent({
+        bankId: selectedBankId,
+        declaredIncome: form.monthlyIncome || 50000
+      });
+      setAaConsentHandle(res.consentHandle);
+      setAaStep('OTP');
+    } catch (err) {
+      handleApiError(err, setError);
+    } finally {
+      setAaLoading(false);
+    }
+  };
+
+  const handleVerifyAAOTP = async () => {
+    setAaLoading(true);
+    setError('');
+    try {
+      const res = await api.verifyAAConsent({
+        consentHandle: aaConsentHandle,
+        otp: aaOtp
+      });
+      setAaVerified(res);
+      setForm(f => ({ ...f, monthlyIncome: res.verifiedSalary.toString() }));
+      setAaStep('SUCCESS');
+      setTimeout(() => {
+        setAaModalOpen(false);
+      }, 1200);
+    } catch (err) {
+      handleApiError(err, setError);
+    } finally {
+      setAaLoading(false);
+    }
+  };
+
   const handleApply = async e => {
     e.preventDefault();
     setError(''); 
@@ -112,16 +171,22 @@ function Loans({ user }) {
         monthlyIncome: parseFloat(form.monthlyIncome) || 50000,
         existingMonthlyDebt: parseFloat(form.existingDebts) || 0,
         employmentType: 'SALARIED',
-        bureauConsent: true
+        bureauConsent: true,
+        aaData: aaVerified
       };
       
       const res = await api.createLoan(loanData);
       const bureauInfo = res?.data?.bureauVerification;
-      const successMessage = bureauInfo
-        ? `Application submitted! Bureau Verified: ${bureauInfo.provider} (Score: ${bureauInfo.verifiedScore}, Tier: ${bureauInfo.scoreTier})`
-        : 'Loan application submitted!';
+      let successMessage = 'Loan application submitted!';
+      if (bureauInfo) {
+        successMessage = `Application submitted! Bureau Verified: ${bureauInfo.provider} (Score: ${bureauInfo.verifiedScore}, Tier: ${bureauInfo.scoreTier})`;
+      }
+      if (aaVerified) {
+        successMessage += ` | RBI AA Verified: ₹${Number(aaVerified.verifiedSalary).toLocaleString('en-IN')}/mo`;
+      }
       handleApiSuccess(successMessage, setSuccess);
       setForm({ amount: '', interestRate: '', termMonths: '', monthlyIncome: '', existingDebts: '' });
+      setAaVerified(null);
       
       // Refresh loans list
       const loansData = await api.getLoansByCustomer(user.id);
@@ -788,6 +853,91 @@ function Loans({ user }) {
 
               {/* Form Content */}
               <div style={{ padding: '2rem' }}>
+                {/* RBI Account Aggregator Cashflow Integration Banner */}
+                {aaVerified ? (
+                  <div style={{
+                    background: '#F0FDF4',
+                    border: '1px solid #BBF7D0',
+                    borderRadius: '12px',
+                    padding: '1rem 1.25rem',
+                    marginBottom: '1.5rem',
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '12px'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div style={{ background: '#DCFCE7', borderRadius: '50%', width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <ShieldCheck size={22} color="#16A34A" />
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '0.88rem', fontWeight: 750, color: '#166534', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <span>Bank Account Verified via RBI Account Aggregator</span>
+                          <span style={{ fontSize: '0.72rem', background: '#DCFCE7', padding: '2px 6px', borderRadius: '4px', border: '1px solid #86EFAC' }}>{aaVerified.bankName}</span>
+                        </div>
+                        <div style={{ fontSize: '0.78rem', color: '#475569', marginTop: '2px' }}>
+                          Employer: <strong>{aaVerified.employerName}</strong> &bull; Verified Salary: <strong>₹{Number(aaVerified.verifiedSalary).toLocaleString('en-IN')}/mo</strong> &bull; AMB: <strong>₹{Number(aaVerified.averageMonthlyBalance).toLocaleString('en-IN')}</strong>
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setAaVerified(null)}
+                      style={{ background: 'none', border: 'none', color: '#64748B', fontSize: '0.78rem', cursor: 'pointer', textDecoration: 'underline' }}
+                    >
+                      Disconnect Bank
+                    </button>
+                  </div>
+                ) : (
+                  <div style={{
+                    background: '#EFF6FF',
+                    border: '1px solid #BFDBFE',
+                    borderRadius: '12px',
+                    padding: '1rem 1.25rem',
+                    marginBottom: '1.5rem',
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '12px'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div style={{ background: '#DBEAFE', borderRadius: '50%', width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Building size={20} color="#2563EB" />
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '0.88rem', fontWeight: 750, color: '#1E40AF' }}>
+                          ⚡ Instant Bank Verification via RBI Account Aggregator (AA)
+                        </div>
+                        <div style={{ fontSize: '0.78rem', color: '#475569', marginTop: '2px' }}>
+                          Connect your salary bank account (HDFC, SBI, ICICI, etc.) for instant digital cashflow underwriting.
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleOpenAAModal}
+                      style={{
+                        padding: '0.5rem 1rem',
+                        background: '#2563EB',
+                        color: '#FFFFFF',
+                        border: 'none',
+                        borderRadius: '8px',
+                        fontSize: '0.82rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        boxShadow: '0 2px 6px rgba(37, 99, 235, 0.25)'
+                      }}
+                    >
+                      <Landmark size={14} /> Connect Bank Account
+                    </button>
+                  </div>
+                )}
+
                 <form onSubmit={handleApply} style={{ 
                   display: 'flex', 
                   flexWrap: 'wrap', 
@@ -1409,6 +1559,228 @@ function Loans({ user }) {
         </div>
           </div>
         </>
+      )}
+
+      {/* RBI Account Aggregator Consent Modal */}
+      {aaModalOpen && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(15, 23, 42, 0.7)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1200,
+          backdropFilter: 'blur(5px)',
+          padding: '1rem'
+        }} onClick={() => setAaModalOpen(false)}>
+          <div style={{
+            background: '#FFFFFF',
+            borderRadius: '16px',
+            maxWidth: '520px',
+            width: '100%',
+            overflow: 'hidden',
+            boxShadow: '0 25px 60px rgba(0,0,0,0.3)',
+            border: '1px solid #E2E8F0'
+          }} onClick={e => e.stopPropagation()}>
+            {/* Header */}
+            <div style={{
+              background: 'linear-gradient(135deg, #0F172A 0%, #1E3A8A 100%)',
+              color: '#FFFFFF',
+              padding: '1.25rem 1.5rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <Landmark size={22} color="#38BDF8" />
+                <div>
+                  <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700 }}>RBI Account Aggregator</h4>
+                  <p style={{ margin: 0, fontSize: '0.72rem', color: '#94A3B8' }}>ReBIT 2.0 Digital Consent Pipeline</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setAaModalOpen(false)}
+                style={{ background: 'none', border: 'none', color: '#94A3B8', fontSize: '1.2rem', cursor: 'pointer', padding: 0 }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div style={{ padding: '1.5rem' }}>
+              {aaStep === 'SELECT' && (
+                <div>
+                  <p style={{ margin: '0 0 1rem 0', fontSize: '0.85rem', color: '#475569', lineHeight: 1.5 }}>
+                    Select your primary salary bank account. CredenceOS will request 6 months of digitally signed cashflow data via the RBI-regulated Account Aggregator framework.
+                  </p>
+
+                  <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, color: '#334155', textTransform: 'uppercase', marginBottom: '0.4rem' }}>
+                    Select Financial Institution (FIP)
+                  </label>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px', marginBottom: '1.25rem' }}>
+                    {(aaBanks.length > 0 ? aaBanks : [
+                      { id: 'FIP-HDFC-01', name: 'HDFC Bank Ltd', logo: '🏦' },
+                      { id: 'FIP-SBI-02', name: 'State Bank of India', logo: '🏛️' },
+                      { id: 'FIP-ICICI-03', name: 'ICICI Bank Ltd', logo: '💳' },
+                      { id: 'FIP-AXIS-04', name: 'Axis Bank Ltd', logo: '🏢' },
+                      { id: 'FIP-KOTAK-05', name: 'Kotak Mahindra Bank', logo: '🏧' },
+                      { id: 'FIP-PNB-06', name: 'Punjab National Bank', logo: '🏦' }
+                    ]).map(bank => (
+                      <button
+                        key={bank.id}
+                        type="button"
+                        onClick={() => setSelectedBankId(bank.id)}
+                        style={{
+                          padding: '0.75rem',
+                          borderRadius: '8px',
+                          border: selectedBankId === bank.id ? '2px solid #2563EB' : '1px solid #E2E8F0',
+                          background: selectedBankId === bank.id ? '#EFF6FF' : '#FFFFFF',
+                          textAlign: 'left',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          fontSize: '0.82rem',
+                          fontWeight: selectedBankId === bank.id ? 700 : 500,
+                          color: selectedBankId === bank.id ? '#1D4ED8' : '#1E293B'
+                        }}
+                      >
+                        <span>{bank.logo}</span>
+                        <span>{bank.name}</span>
+                      </button>
+                    ))}
+                  </div>
+
+                  <div style={{
+                    padding: '0.75rem',
+                    background: '#F8FAFC',
+                    border: '1px solid #E2E8F0',
+                    borderRadius: '8px',
+                    fontSize: '0.75rem',
+                    color: '#64748B',
+                    marginBottom: '1.25rem'
+                  }}>
+                    🔒 <strong>Regulatory Consent:</strong> Data is fetched read-only via encrypted channels. CredenceOS cannot initiate debits without separate e-Mandate authorization.
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleInitiateAAConsent}
+                    disabled={aaLoading}
+                    style={{
+                      width: '100%',
+                      padding: '0.85rem',
+                      background: '#2563EB',
+                      color: '#FFFFFF',
+                      border: 'none',
+                      borderRadius: '8px',
+                      fontWeight: 700,
+                      fontSize: '0.9rem',
+                      cursor: aaLoading ? 'not-allowed' : 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px'
+                    }}
+                  >
+                    {aaLoading ? 'Dispatching Consent Request...' : (
+                      <>
+                        <span>Send Consent Request</span>
+                        <ArrowRight size={16} />
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
+
+              {aaStep === 'OTP' && (
+                <div>
+                  <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
+                    <div style={{ width: 48, height: 48, borderRadius: '50%', background: '#EFF6FF', color: '#2563EB', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 0.5rem auto' }}>
+                      <ShieldCheck size={24} />
+                    </div>
+                    <h5 style={{ margin: '0 0 0.25rem 0', fontWeight: 700, color: '#0F172A' }}>Authorize Account Aggregator Consent</h5>
+                    <p style={{ margin: 0, fontSize: '0.8rem', color: '#64748B' }}>
+                      An OTP has been dispatched to your bank-registered mobile.<br />
+                      <span style={{ color: '#2563EB', fontWeight: 600 }}>Demo verification code: 1234</span>
+                    </p>
+                  </div>
+
+                  <div style={{ marginBottom: '1.25rem' }}>
+                    <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, color: '#334155', textTransform: 'uppercase', marginBottom: '0.4rem', textAlign: 'center' }}>
+                      Enter 4-Digit ReBIT Approval Code
+                    </label>
+                    <input
+                      type="text"
+                      maxLength={6}
+                      value={aaOtp}
+                      onChange={e => setAaOtp(e.target.value)}
+                      placeholder="1234"
+                      autoFocus
+                      style={{
+                        width: '100%',
+                        padding: '0.75rem',
+                        border: '2px solid #3B82F6',
+                        borderRadius: '8px',
+                        fontSize: '1.4rem',
+                        fontWeight: 800,
+                        textAlign: 'center',
+                        letterSpacing: '0.3em',
+                        fontFamily: 'monospace',
+                        background: '#F8FAFC',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleVerifyAAOTP}
+                    disabled={aaLoading || !aaOtp}
+                    style={{
+                      width: '100%',
+                      padding: '0.85rem',
+                      background: '#16A34A',
+                      color: '#FFFFFF',
+                      border: 'none',
+                      borderRadius: '8px',
+                      fontWeight: 700,
+                      fontSize: '0.9rem',
+                      cursor: (aaLoading || !aaOtp) ? 'not-allowed' : 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px'
+                    }}
+                  >
+                    {aaLoading ? 'Verifying & Analyzing Statements...' : (
+                      <>
+                        <Check size={18} />
+                        <span>Authorize &amp; Fetch Statement</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
+
+              {aaStep === 'SUCCESS' && (
+                <div style={{ textAlign: 'center', padding: '1rem 0' }}>
+                  <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#DCFCE7', color: '#16A34A', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 0.75rem auto' }}>
+                    <CheckCircle2 size={32} />
+                  </div>
+                  <h4 style={{ margin: '0 0 0.25rem 0', fontWeight: 800, color: '#166534' }}>Bank Cashflow Verified!</h4>
+                  <p style={{ margin: 0, fontSize: '0.82rem', color: '#475569' }}>
+                    Salary and bank statements confirmed via RBI Account Aggregator. Updating application...
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Underwriting & Bureau Audit Dossier Modal */}

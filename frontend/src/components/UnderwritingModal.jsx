@@ -280,6 +280,74 @@ function UnderwritingModal({ loan, isOpen, onClose }) {
 
           </div>
 
+          {/* RBI Account Aggregator Cashflow Verification Section */}
+          {uw?.aaVerifiedSalary ? (
+            <div style={{
+              background: '#F0FDF4',
+              border: '1px solid #BBF7D0',
+              borderRadius: '12px',
+              padding: '1.25rem'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+                <h5 style={{ margin: 0, fontSize: '0.92rem', fontWeight: 700, color: '#166534', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <ShieldCheck size={18} color="#16A34A" /> RBI Account Aggregator (AA) Cashflow Audit
+                </h5>
+                <span style={{
+                  fontSize: '0.72rem',
+                  fontWeight: 750,
+                  padding: '0.2rem 0.55rem',
+                  borderRadius: '6px',
+                  background: uw.aaVerificationStatus === 'MISMATCH_FLAGGED' ? '#FEE2E2' : '#DCFCE7',
+                  color: uw.aaVerificationStatus === 'MISMATCH_FLAGGED' ? '#B91C1C' : '#15803D',
+                  border: `1px solid ${uw.aaVerificationStatus === 'MISMATCH_FLAGGED' ? '#FCA5A5' : '#86EFAC'}`
+                }}>
+                  {uw.aaVerificationStatus === 'MISMATCH_FLAGGED' ? 'INCOME MISMATCH' : 'BANK VERIFIED'}
+                </span>
+              </div>
+              
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '10px', fontSize: '0.8rem', color: '#334155' }}>
+                <div>
+                  <div style={{ color: '#64748B', fontSize: '0.72rem' }}>Verified Monthly Salary</div>
+                  <strong style={{ fontSize: '1rem', color: '#0F172A' }}>₹{Number(uw.aaVerifiedSalary).toLocaleString('en-IN')}</strong>
+                </div>
+                <div>
+                  <div style={{ color: '#64748B', fontSize: '0.72rem' }}>Verified Employer</div>
+                  <strong style={{ color: '#0F172A' }}>{uw.aaEmployerName || 'Direct ACH Deposit'}</strong>
+                </div>
+                <div>
+                  <div style={{ color: '#64748B', fontSize: '0.72rem' }}>Avg Monthly Balance (AMB)</div>
+                  <strong style={{ color: '#0F172A' }}>₹{Number(uw.aaAverageBalance || 0).toLocaleString('en-IN')}</strong>
+                </div>
+                <div>
+                  <div style={{ color: '#64748B', fontSize: '0.72rem' }}>ECS / NACH Bounces (6mo)</div>
+                  <strong style={{ color: (uw.aaBouncedDebits || 0) > 0 ? '#DC2626' : '#16A34A' }}>
+                    {uw.aaBouncedDebits || 0} {(uw.aaBouncedDebits || 0) > 0 ? '⚠️' : '✅ Clean'}
+                  </strong>
+                </div>
+              </div>
+              {uw.aaAuditHash && (
+                <div style={{ marginTop: '0.75rem', paddingTop: '0.5rem', borderTop: '1px solid #DCFCE7', fontSize: '0.7rem', color: '#64748B', fontFamily: 'monospace' }}>
+                  ReBIT FIU Digital Audit Hash: {uw.aaAuditHash}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div style={{
+              background: '#F8FAFC',
+              border: '1px dashed #CBD5E1',
+              borderRadius: '10px',
+              padding: '0.85rem 1rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              fontSize: '0.8rem',
+              color: '#64748B'
+            }}>
+              <span><strong>Account Aggregator:</strong> Not connected by borrower. Income verified via manual document inspection.</span>
+              <span style={{ fontSize: '0.72rem', background: '#E2E8F0', padding: '2px 6px', borderRadius: '4px' }}>MANUAL DOCS</span>
+            </div>
+          )}
+
           {/* Explainable Contributing Factors */}
           <div style={{
             background: '#FFFFFF',

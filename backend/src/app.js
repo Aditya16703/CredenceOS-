@@ -363,6 +363,7 @@ const reportRoutes = require('./routes/report');
 const notificationRoutes = require('./routes/notification');
 const kycRoutes = require('./routes/kyc');
 const auditRoutes = require('./routes/audit');
+const accountAggregatorRoutes = require('./routes/accountAggregator');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/customers', customerRoutes);
@@ -373,6 +374,7 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/kyc', kycRoutes);
 app.use('/api/audit-logs', auditRoutes);
+app.use('/api/account-aggregator', accountAggregatorRoutes);
 
 // 404 Handler - must be after all routes
 app.use(notFoundHandler);

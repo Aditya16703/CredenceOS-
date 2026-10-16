@@ -75,6 +75,25 @@ export const api = {
     });
   },
 
+  // RBI Account Aggregator (AA) Endpoints
+  async getAABanks() {
+    return this.request('/api/account-aggregator/banks');
+  },
+
+  async initiateAAConsent(payload) {
+    return this.request('/api/account-aggregator/consent/initiate', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async verifyAAConsent(payload) {
+    return this.request('/api/account-aggregator/consent/verify', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
+
   // Customer endpoints
   async getCustomers() {
     return this.request('/api/customers');

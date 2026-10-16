@@ -217,3 +217,66 @@ test('Email Verification - Generates and dispatches 6-digit OTP code', async () 
   assert.ok(result.messageId, 'Email messageId should be generated');
 });
 
+// 8. RBI Account Aggregator (AA) Tests
+const { 
+  initiateConsent, 
+  verifyConsentAndFetchStatement, 
+  getSupportedBanks 
+} = require('../src/services/accountAggregatorService');
+
+test('Account Aggregator - Registry lists valid RBI-registered FIP banks', () => {
+  const banks = getSupportedBanks();
+  assert.ok(Array.isArray(banks));
+  assert.ok(banks.length >= 5);
+  assert.ok(banks.some(b => b.code === 'HDFC'));
+  assert.ok(banks.some(b => b.code === 'SBIN'));
+});
+
+test('Account Aggregator - Initiates ReBIT consent and returns valid consent handle', async () => {
+  const result = await initiateConsent({
+    customerId: 1,
+    mobile: '9876543210',
+    bankId: 'FIP-HDFC-01',
+    panNumber: 'ABCDE1234F',
+    declaredIncome: 95000
+  });
+
+  assert.strictEqual(result.success, true);
+  assert.ok(result.consentHandle.startsWith('AA-REQ-'));
+  assert.strictEqual(result.bankName, 'HDFC Bank Ltd');
+});
+
+test('Account Aggregator - Verifies OTP and retrieves authenticated cashflows', async () => {
+  const consent = await initiateConsent({
+    customerId: 1,
+    mobile: '9876543210',
+    bankId: 'FIP-HDFC-01',
+    panNumber: 'ABCDE1234F',
+    declaredIncome: 95000
+  });
+
+  const statement = await verifyConsentAndFetchStatement({
+    consentHandle: consent.consentHandle,
+    otp: '1234'
+  });
+
+  assert.strictEqual(statement.success, true);
+  assert.strictEqual(statement.verificationStatus, 'VERIFIED');
+  assert.strictEqual(statement.verifiedSalary, 95000);
+  assert.strictEqual(statement.statementMonthsCount, 6);
+  assert.ok(statement.tamperProofAuditHash, 'Should have SHA256 audit signature');
+
+  // Feed into Underwriting
+  const uwResult = evaluateUnderwriting({
+    monthlyIncome: 95000,
+    requestedAmount: 200000,
+    termMonths: 12,
+    creditScore: 765,
+    aaData: statement
+  });
+
+  assert.strictEqual(uwResult.riskCategory, 'LOW');
+  assert.ok(uwResult.contributingFactors.some(f => f.factor === 'AA_SALARY_VERIFIED'));
+});
+
+

@@ -14,7 +14,8 @@ function evaluateUnderwriting({
   termMonths,
   creditScore = 650,
   employmentType = 'SALARIED', // SALARIED, SELF_EMPLOYED, BUSINESS
-  activeLoansCount = 0
+  activeLoansCount = 0,
+  aaData = null
 }) {
   const income = parseFloat(monthlyIncome);
   const existingDebt = parseFloat(existingMonthlyDebt) || 0;
@@ -61,6 +62,48 @@ function evaluateUnderwriting({
   if (activeLoansCount > 3) {
     riskScore -= 15;
     factors.push({ factor: 'OVER_LEVERAGED', impact: 'NEGATIVE', description: `${activeLoansCount} active credit facilities detected` });
+  }
+
+  // Factor 4: RBI Account Aggregator Cashflow Verification
+  if (aaData && aaData.verifiedSalary) {
+    const verifiedSalary = parseFloat(aaData.verifiedSalary);
+    const amb = parseFloat(aaData.averageMonthlyBalance || 0);
+    const bounces = parseInt(aaData.bouncedDebitsCount || 0, 10);
+
+    // Check discrepancy between declared income and verified bank credits
+    if (income > verifiedSalary * 1.2) {
+      riskScore -= 30;
+      factors.push({
+        factor: 'AA_INCOME_MISMATCH',
+        impact: 'NEGATIVE',
+        description: `Declared income exceeds bank verified salary credits by > 20%`
+      });
+    } else {
+      riskScore += 10;
+      factors.push({
+        factor: 'AA_SALARY_VERIFIED',
+        impact: 'POSITIVE',
+        description: `Salary verified directly via RBI Account Aggregator (${aaData.employerName || 'Employer'})`
+      });
+    }
+
+    if (bounces > 0) {
+      riskScore -= Math.min(30, bounces * 10);
+      factors.push({
+        factor: 'AA_BOUNCED_DEBITS',
+        impact: 'NEGATIVE',
+        description: `${bounces} ECS/NACH return/bounce charges detected in bank statements`
+      });
+    }
+
+    if (amb >= projectedEmi * 1.5) {
+      riskScore += 5;
+      factors.push({
+        factor: 'AA_HEALTHY_BUFFER',
+        impact: 'POSITIVE',
+        description: `Average bank balance provides healthy 1.5x EMI coverage buffer`
+      });
+    }
   }
 
   // Risk Classification

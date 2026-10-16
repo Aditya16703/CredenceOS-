@@ -90,7 +90,8 @@ exports.createLoan = asyncHandler(async (req, res) => {
     monthlyIncome = 50000, 
     existingMonthlyDebt = 0, 
     employmentType = 'SALARIED',
-    bureauConsent = true 
+    bureauConsent = true,
+    aaData = null
   } = req.body;
 
   const customer = await Customer.findByPk(customerId);
@@ -137,7 +138,7 @@ exports.createLoan = asyncHandler(async (req, res) => {
   // Effective Monthly Debt: Borrower declaration reconciled with bureau verified obligations
   const effectiveMonthlyDebt = Math.max(parseFloat(existingMonthlyDebt) || 0, bureauReport.reportedMonthlyDebt || 0);
 
-  // Run Underwriting Rule Engine with verified Bureau Score
+  // Run Underwriting Rule Engine with verified Bureau Score and Account Aggregator Cashflow
   const underwriting = evaluateUnderwriting({
     monthlyIncome,
     existingMonthlyDebt: effectiveMonthlyDebt,
@@ -146,7 +147,8 @@ exports.createLoan = asyncHandler(async (req, res) => {
     termMonths: tenure,
     creditScore: bureauReport.creditScore,
     employmentType,
-    activeLoansCount: totalActiveTradelines
+    activeLoansCount: totalActiveTradelines,
+    aaData
   });
 
   // DB Transaction for atomic creation
@@ -178,7 +180,14 @@ exports.createLoan = asyncHandler(async (req, res) => {
       bureauControlNumber: bureauReport.controlNumber,
       bureauInquiryDate: bureauReport.inquiryDate,
       bureauScoreTier: bureauReport.scoreTier,
-      tamperProofHash: bureauReport.tamperProofHash
+      tamperProofHash: bureauReport.tamperProofHash,
+      aaVerifiedSalary: aaData?.verifiedSalary || null,
+      aaAverageBalance: aaData?.averageMonthlyBalance || null,
+      aaEmployerName: aaData?.employerName || null,
+      aaBouncedDebits: aaData?.bouncedDebitsCount || 0,
+      aaConsentId: aaData?.consentId || null,
+      aaVerificationStatus: aaData?.verificationStatus || 'NOT_LINKED',
+      aaAuditHash: aaData?.tamperProofAuditHash || null
     }, { transaction: t });
 
     // Generate tentative repayment schedule preview

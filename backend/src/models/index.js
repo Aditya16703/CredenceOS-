@@ -176,6 +176,13 @@ const UnderwritingRecord = sequelize.define('UnderwritingRecord', {
   bureauInquiryDate: { type: DataTypes.DATE, allowNull: true },
   bureauScoreTier: { type: DataTypes.STRING, allowNull: true },
   tamperProofHash: { type: DataTypes.STRING, allowNull: true },
+  aaVerifiedSalary: { type: DataTypes.DECIMAL(12, 2), allowNull: true },
+  aaAverageBalance: { type: DataTypes.DECIMAL(12, 2), allowNull: true },
+  aaEmployerName: { type: DataTypes.STRING, allowNull: true },
+  aaBouncedDebits: { type: DataTypes.INTEGER, defaultValue: 0 },
+  aaConsentId: { type: DataTypes.STRING, allowNull: true },
+  aaVerificationStatus: { type: DataTypes.STRING, defaultValue: 'NOT_LINKED' },
+  aaAuditHash: { type: DataTypes.STRING, allowNull: true },
   assessorId: { type: DataTypes.INTEGER, allowNull: true },
   assessorNotes: { type: DataTypes.TEXT, allowNull: true }
 }, { timestamps: true });
