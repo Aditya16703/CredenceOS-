@@ -23,8 +23,10 @@
   <img src="https://img.shields.io/badge/Backend-Node.js_v20+-339933?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node" />
   <img src="https://img.shields.io/badge/Frontend-React_19_+_Vite-61DAFB?style=flat-square&logo=react&logoColor=black" alt="React" />
   <img src="https://img.shields.io/badge/Docker-Multi--Container-2496ED?style=flat-square&logo=docker&logoColor=white" alt="Docker" />
-  <img src="https://img.shields.io/badge/Tests-14%2F14_Passing-brightgreen?style=flat-square&logo=node.js&logoColor=white" alt="Tests" />
+  <img src="https://img.shields.io/badge/Tests-18%2F18_Passing-brightgreen?style=flat-square&logo=node.js&logoColor=white" alt="Tests" />
+  <img src="https://img.shields.io/badge/Account_Aggregator-ReBIT_2.0_Standard-blueviolet?style=flat-square&logo=shield&logoColor=white" alt="Account Aggregator" />
   <img src="https://img.shields.io/badge/Credit_Bureau-CIBIL_%2F_Experian_Verified-blue?style=flat-square&logo=shield&logoColor=white" alt="Credit Bureau" />
+  <img src="https://img.shields.io/badge/Email_Auth-6--Digit_OTP_Verified-2563EB?style=flat-square&logo=gmail&logoColor=white" alt="Email Auth" />
   <img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square" alt="License" />
 </p>
 
@@ -45,13 +47,15 @@ Experience the live institutional lending platform across our production environ
 
 ## ⚡ 1-Click Evaluator Personas (Live Testing)
 
-Test the complete institutional lending and debt recovery lifecycle without manual registration:
+Test the complete institutional lending, cashflow underwriting, and debt recovery lifecycle:
 
 | Persona | Role | Credentials | Capabilities |
 | :--- | :--- | :--- | :--- |
-| 👑 **Executive Admin** | `admin` | `admin@example.com` / `admin123` | Full credit portfolio analytics, loan approval/rejection, agent assignment, and audit ledger |
-| 🛡️ **Recovery Officer** | `agent` | `agent@example.com` / `agent123` | Delinquent borrower worklists, debt recovery status tracking, and collections queue |
-| 👤 **Retail Borrower** | `customer` | `customer@example.com` / `customer123` | Regulatory KYC onboarding, credit application, amortization schedule inspection, and payments |
+| 👑 **Executive Admin** | `admin` | `admin@example.com` / `admin123` | Full credit portfolio analytics, global risk policy, and compliance audit trail |
+| 🔍 **Senior Loan Officer** | `loan_officer` | `officer@example.com` / `agent123` | KYC inspection queue, RBI Account Aggregator cashflow audits, loan approvals |
+| 🛡️ **Recovery Officer** | `agent` | `agent@example.com` / `agent123` | Delinquent borrower worklists, field recovery tracking, and overdue recovery status |
+| 🟢 **Prime Borrower** | `customer` | `customer@example.com` / `customer123` | Verified KYC, active loan (₹2,00,000), reducing EMI schedules, UPI payments |
+| 🔴 **Overdue Borrower** | `customer` | `rohan.deshmukh@example.com` / `customer123` | Subprime profile, overdue delinquency, field visit scheduled |
 
 > 💡 *Tip: On the [Live Portal](https://credence-os.vercel.app), click any of the **"⚡ 1-Click Evaluator Login"** buttons to auto-authenticate instantly.*
 
@@ -91,12 +95,14 @@ flowchart TD
         Val["Validation Middleware"]
     end
 
-    subgraph Engines ["Core Financial Engines"]
+    subgraph Engines ["Core Financial & Verification Engines"]
         CBG["🏛️ Credit Bureau Gateway\n(CIBIL/Experian, HMAC-SHA256)"]
+        AAE["⚡ RBI Account Aggregator\n(ReBIT 2.0, Cashflows, AMB)"]
         UWE["🧠 Rule-Based Underwriting Engine\n(DTI, Risk Tier, Capacity)"]
         AME["📈 Reducing-Balance Amortization\n(EMI, Penny Reconciliation)"]
         SME["⚙️ Finite Loan State Machine\n(Valid Transitions)"]
         IDE["🔒 Idempotency Guard\n(Double-Debit Prevention)"]
+        EMS["📧 Email Verification Service\n(6-Digit OTP, Zero-Cost SMTP)"]
     end
 
     subgraph DataTier ["Persistence Tier (Neon PostgreSQL + SSL)"]
@@ -108,10 +114,13 @@ flowchart TD
     CORS --> JWT
     JWT --> Val
     Val --> CBG
+    Val --> AAE
     CBG --> UWE
+    AAE --> UWE
     Val --> AME
     Val --> SME
     Val --> IDE
+    Val --> EMS
     Engines --> DB
     Engines --> AL
 ```
@@ -158,6 +167,25 @@ To meet regulated banking and NBFC standards, the platform strictly disallows cl
   $$\text{Signature} = \text{HMAC-SHA256}(\text{ControlNumber} \parallel \text{PAN} \parallel \text{Score} \parallel \text{InquiryTimestamp})$$
 * **Tradeline Reconciliation**: Underwriting reconciles declared monthly debts with bureau-reported monthly obligations and active tradelines.
 
+### 4. ⚡ RBI Account Aggregator (AA) Framework & Cashflow Verification (ReBIT 2.0 Standard)
+
+CredenceOS integrates the official **Reserve Bank of India (RBI) / ReBIT 2.0 Account Aggregator standard** for automated bank cashflow underwriting:
+* **FIP Bank Registry**: Connects with major institutional Financial Information Providers (**HDFC, State Bank of India, ICICI, Axis, Kotak, PNB**).
+* **Digital Consent Lifecycle**: Enforces borrower consent management (`initiateConsent` returning ReBIT `consentHandle` $\rightarrow$ OTP approval $\rightarrow$ active `consentId`).
+* **6-Month Automated Bank Cashflow Analysis**:
+  * **Verified Salary Credits**: Scans transaction history, extracts corporate salary credits and employer name (e.g., *Tata Consultancy Services, Infosys*), eliminating PDF salary slip fraud.
+  * **Average Monthly Balance (AMB)**: Computes true account liquidity buffer.
+  * **Bounced Transaction Detection**: Identifies ECS / NACH return debits (critical early warning of borrower distress).
+  * **HMAC-SHA256 Digital Signature**: Generates an append-only digital signature (`tamperProofAuditHash`) ensuring financial statement integrity.
+* **Underwriting Discrepancy Penalty**: The underwriting engine cross-checks user-declared income against bank-verified salary. If declared income exceeds banking credits by $> 20\%$, the system flags an `AA_INCOME_MISMATCH` and triggers a 30-point risk penalty.
+
+### 5. 🔐 Zero-Cost Transactional Email Verification (6-Digit OTP Flow)
+
+To ensure verified account ownership without requiring expensive third-party SMS/email subscriptions:
+* **Zero-Cost Architecture**: Built on `nodemailer` to support free standard SMTP (such as a **free Gmail App Password**, Brevo free tier, or custom SMTP) with automatic [Ethereal Email](https://ethereal.email) test inboxes and terminal fallback logging for zero-friction development.
+* **Cryptographic 6-Digit OTP**: Generates random 6-digit codes (`crypto.randomInt(100000, 999999)`) with a strict 10-minute time-to-live.
+* **2-Step Onboarding Experience**: Borrowers register identity details and are transitioned to an interactive verification card with a 60-second "Resend Code" countdown timer and auto-login upon confirmation.
+
 ---
 
 ## 💻 Tech Stack & Infrastructure
@@ -165,7 +193,7 @@ To meet regulated banking and NBFC standards, the platform strictly disallows cl
 ```
 CredenceOS
 ├── 🎨 Frontend          React 19, Vite, Plus Jakarta Sans, Lucide Icons, Glassmorphism
-├── ⚙️ Backend           Node.js 20+, Express.js, Sequelize ORM, Winston, Crypto HMAC
+├── ⚙️ Backend           Node.js 20+, Express.js, Sequelize ORM, Winston, Crypto HMAC, Nodemailer
 ├── 🗄️ Database          PostgreSQL 16 (Neon Serverless with SSL)
 ├── 🐳 Containers        Docker, Docker Compose, Multi-stage Nginx Build
 ├── 🚀 CI/CD Pipeline    GitHub Actions (Automated Unit Tests & Vite Build)
@@ -214,7 +242,7 @@ docker-compose up --build
 
 ## 🧪 Automated Test Suite
 
-CredenceOS includes comprehensive unit tests verifying the mathematical integrity of the financial calculation engines, bureau anti-tampering, and state transitions:
+CredenceOS includes comprehensive unit tests verifying the mathematical integrity of the financial calculation engines, bureau anti-tampering, state transitions, RBI Account Aggregator flow, and email OTP verification:
 
 ```bash
 cd backend
@@ -237,8 +265,12 @@ ok 11 - Credit Bureau Gateway - Rejects malformed PAN format
 ok 12 - Credit Bureau Gateway - Blocks credit inquiry without explicit consumer consent
 ok 13 - Credit Bureau Gateway - Detects tampering in bureau report record
 ok 14 - Credit Bureau Gateway - High risk subprime profile correctly flows into Underwriting
-1..14
-# tests 14 | pass 14 | fail 0
+ok 15 - Email Verification - Generates and dispatches 6-digit OTP code
+ok 16 - Account Aggregator - Registry lists valid RBI-registered FIP banks
+ok 17 - Account Aggregator - Initiates ReBIT consent and returns valid consent handle
+ok 18 - Account Aggregator - Verifies OTP and retrieves authenticated cashflows
+1..18
+# tests 18 | pass 18 | fail 0
 ```
 
 ---
@@ -250,16 +282,16 @@ CredenceOS-
 ├── .github/workflows/         # Automated GitHub Actions CI/CD pipeline
 ├── backend/
 │   ├── src/
-│   │   ├── controllers/      # auth, loan, payment, kyc, audit controllers
+│   │   ├── controllers/      # auth, loan, payment, kyc, audit, accountAggregator
 │   │   ├── models/           # Sequelize ORM schema definitions & UnderwritingRecord
-│   │   ├── routes/           # RESTful API route definitions & middleware
-│   │   ├── services/         # Amortization, underwriting, creditBureauService, audit
+│   │   ├── routes/           # RESTful API route definitions (auth, loan, kyc, audit, accountAggregator)
+│   │   ├── services/         # Amortization, underwriting, creditBureauService, accountAggregatorService, mailService
 │   │   └── server.js         # Express server entry point & error handlers
-│   └── tests/                # Mathematical calculation, bureau security & state tests
+│   └── tests/                # Mathematical calculation, bureau security, AA & OTP tests
 ├── frontend/
 │   ├── src/
-│   │   ├── components/       # UnderwritingModal, Notifications, etc.
-│   │   ├── pages/            # Home, Dashboard, Loans, Payments, KYC, Reports
+│   │   ├── components/       # UnderwritingModal, Account Aggregator consent modal, Notifications
+│   │   ├── pages/            # Home, Dashboard, Loans (with AA widget), Payments, KYC, Register (OTP flow)
 │   │   ├── utils/            # api.js client, session management, token handlers
 │   │   ├── index.css         # Institutional design system tokens & glassmorphism
 │   │   └── App.jsx           # Authenticated root router
