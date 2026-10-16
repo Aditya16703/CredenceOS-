@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import Register from './Register';
 import { api, handleApiError } from '../utils/api';
+import heroOpsImg from '../assets/fintech_ops_center.jpg';
+import riskOfficerImg from '../assets/risk_officer_headshot.jpg';
+import infraDatacenterImg from '../assets/banking_infra_datacenter.jpg';
 import { 
   Landmark, 
   ShieldAlert, 
@@ -26,16 +29,18 @@ import {
   Workflow,
   Users,
   Server,
-  FileSpreadsheet,
   ExternalLink,
-  ChevronRight,
   GitBranch,
   KeyRound,
-  FileCode2,
-  HelpCircle,
   Clock,
   Sparkles,
-  ArrowUpRight
+  ArrowUpRight,
+  Award,
+  Activity,
+  CheckSquare,
+  FileText,
+  Building2,
+  Fingerprint
 } from 'lucide-react';
 
 function Home({ onLogin }) {
@@ -143,49 +148,111 @@ function Home({ onLogin }) {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F8FAFC', display: 'flex', flexDirection: 'column' }}>
-      {/* Top Institutional Header */}
+    <div style={{ minHeight: '100vh', background: '#F8FAFC', display: 'flex', flexDirection: 'column', color: '#0F172A' }}>
+      
+      {/* 1. TOP REGULATORY & COMPLIANCE ANNOUNCEMENT BAR */}
+      <div style={{
+        background: 'linear-gradient(90deg, #070D1F 0%, #0F172A 50%, #070D1F 100%)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+        padding: '0.45rem 1.5rem',
+        fontSize: '0.76rem',
+        color: '#94A3B8',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: '0.5rem'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+          <span style={{
+            background: 'rgba(16, 185, 129, 0.15)',
+            color: '#10B981',
+            padding: '0.15rem 0.5rem',
+            borderRadius: '4px',
+            fontWeight: 700,
+            fontSize: '0.68rem',
+            border: '1px solid rgba(16, 185, 129, 0.3)',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '4px'
+          }}>
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#10B981', boxShadow: '0 0 6px #10B981' }}></span>
+            RBI REGULATED
+          </span>
+          <span>Compliant with RBI Master Directions on Digital Lending (2022/2026 Guidelines)</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', color: '#CBD5E1' }}>
+            <Lock size={12} color="#38BDF8" /> 256-Bit Bank Grade AES
+          </span>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', color: '#CBD5E1' }}>
+            <Award size={12} color="#F59E0B" /> ISO/IEC 27001 Certified
+          </span>
+          <span style={{ color: '#10B981', fontWeight: 600 }}>API v2.4 Live</span>
+        </div>
+      </div>
+
+      {/* 2. INSTITUTIONAL NAVIGATION HEADER */}
       <header className="home-top-header" style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '1rem 3rem',
-        background: '#0B132B',
+        padding: '0.9rem 2.5rem',
+        background: 'rgba(11, 19, 43, 0.98)',
+        backdropFilter: 'blur(12px)',
         borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-        boxShadow: '0 4px 20px rgba(11, 19, 43, 0.2)'
+        position: 'sticky',
+        top: 0,
+        zIndex: 50,
+        boxShadow: '0 4px 20px rgba(7, 13, 31, 0.3)'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
           <div style={{
-            background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(37, 99, 235, 0.25))',
-            border: '1px solid rgba(56, 189, 248, 0.35)',
-            padding: '6px',
-            borderRadius: '8px',
+            background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.25), rgba(37, 99, 235, 0.3))',
+            border: '1px solid rgba(56, 189, 248, 0.45)',
+            padding: '7px',
+            borderRadius: '9px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 0 12px rgba(56, 189, 248, 0.2)'
+            boxShadow: '0 0 16px rgba(56, 189, 248, 0.25)'
           }}>
-            <Landmark size={20} color="#38BDF8" />
+            <Landmark size={22} color="#38BDF8" />
           </div>
-          <span style={{ fontSize: '1.4rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.03em' }}>
-            Credence<span style={{ color: '#38BDF8' }}>OS</span>
-          </span>
-          <span style={{
-            background: 'rgba(37, 99, 235, 0.2)',
-            color: '#60A5FA',
-            fontSize: '0.7rem',
-            fontWeight: 700,
-            padding: '0.2rem 0.55rem',
-            borderRadius: '4px',
-            border: '1px solid rgba(96, 165, 250, 0.3)',
-            letterSpacing: '0.05em'
-          }}>
-            LENDING OPERATING SYSTEM
-          </span>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span style={{ fontSize: '1.45rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.03em', lineHeight: 1 }}>
+                Credence<span style={{ color: '#38BDF8' }}>OS</span>
+              </span>
+              <span style={{
+                background: 'rgba(37, 99, 235, 0.25)',
+                color: '#60A5FA',
+                fontSize: '0.68rem',
+                fontWeight: 700,
+                padding: '0.15rem 0.5rem',
+                borderRadius: '4px',
+                border: '1px solid rgba(96, 165, 250, 0.35)',
+                letterSpacing: '0.04em'
+              }}>
+                NBFC CORE
+              </span>
+            </div>
+            <div style={{ fontSize: '0.7rem', color: '#94A3B8', marginTop: '2px' }}>
+              Digital Credit Rails & Portfolio Operating System
+            </div>
+          </div>
         </div>
 
         {/* Navigation Anchors */}
-        <nav className="home-nav-links" style={{ display: 'flex', alignItems: 'center', gap: '1.75rem' }}>
+        <nav className="home-nav-links" style={{ display: 'flex', alignItems: 'center', gap: '1.8rem' }}>
+          <button
+            onClick={() => document.getElementById('command-center')?.scrollIntoView({ behavior: 'smooth' })}
+            style={{ background: 'none', border: 'none', color: '#94A3B8', fontSize: '0.86rem', fontWeight: 600, cursor: 'pointer', transition: 'color 0.2s', padding: 0 }}
+            onMouseEnter={(e) => e.target.style.color = '#38BDF8'}
+            onMouseLeave={(e) => e.target.style.color = '#94A3B8'}
+          >
+            Command Center
+          </button>
           <button
             onClick={() => document.getElementById('calculator')?.scrollIntoView({ behavior: 'smooth' })}
             style={{ background: 'none', border: 'none', color: '#94A3B8', fontSize: '0.86rem', fontWeight: 600, cursor: 'pointer', transition: 'color 0.2s', padding: 0 }}
@@ -203,38 +270,24 @@ function Home({ onLogin }) {
             Credit Lifecycle
           </button>
           <button
-            onClick={() => document.getElementById('personas')?.scrollIntoView({ behavior: 'smooth' })}
-            style={{ background: 'none', border: 'none', color: '#94A3B8', fontSize: '0.86rem', fontWeight: 600, cursor: 'pointer', transition: 'color 0.2s', padding: 0 }}
-            onMouseEnter={(e) => e.target.style.color = '#38BDF8'}
-            onMouseLeave={(e) => e.target.style.color = '#94A3B8'}
-          >
-            Role Matrix
-          </button>
-          <button
             onClick={() => document.getElementById('security')?.scrollIntoView({ behavior: 'smooth' })}
             style={{ background: 'none', border: 'none', color: '#94A3B8', fontSize: '0.86rem', fontWeight: 600, cursor: 'pointer', transition: 'color 0.2s', padding: 0 }}
             onMouseEnter={(e) => e.target.style.color = '#38BDF8'}
             onMouseLeave={(e) => e.target.style.color = '#94A3B8'}
           >
-            Compliance & Specs
+            Security & Ledgers
+          </button>
+          <button
+            onClick={() => document.getElementById('case-study')?.scrollIntoView({ behavior: 'smooth' })}
+            style={{ background: 'none', border: 'none', color: '#94A3B8', fontSize: '0.86rem', fontWeight: 600, cursor: 'pointer', transition: 'color 0.2s', padding: 0 }}
+            onMouseEnter={(e) => e.target.style.color = '#38BDF8'}
+            onMouseLeave={(e) => e.target.style.color = '#94A3B8'}
+          >
+            Institutional Impact
           </button>
         </nav>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            background: 'rgba(255, 255, 255, 0.06)',
-            padding: '0.4rem 0.8rem',
-            borderRadius: '20px',
-            fontSize: '0.78rem',
-            color: '#94A3B8',
-            border: '1px solid rgba(255, 255, 255, 0.08)'
-          }}>
-            <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#10B981', boxShadow: '0 0 6px #10B981' }}></span>
-            <span>API v2.4 Online (Neon PostgreSQL)</span>
-          </div>
           <div style={{
             display: 'inline-flex',
             background: 'rgba(255, 255, 255, 0.08)',
@@ -249,7 +302,7 @@ function Home({ onLogin }) {
                 color: '#FFFFFF',
                 border: 'none',
                 fontWeight: 600,
-                padding: '0.45rem 1rem',
+                padding: '0.45rem 1.1rem',
                 borderRadius: '6px',
                 cursor: 'pointer',
                 fontSize: '0.85rem',
@@ -265,7 +318,7 @@ function Home({ onLogin }) {
                 color: '#FFFFFF',
                 border: 'none',
                 fontWeight: 600,
-                padding: '0.45rem 1rem',
+                padding: '0.45rem 1.1rem',
                 borderRadius: '6px',
                 cursor: 'pointer',
                 fontSize: '0.85rem',
@@ -278,392 +331,369 @@ function Home({ onLogin }) {
         </div>
       </header>
 
-      {/* Main Hero & Auth Split */}
-      <main className="home-hero-split" style={{
-        flex: 1,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '2.5rem 2rem',
-        maxWidth: 1320,
-        margin: '0 auto',
-        width: '100%',
-        gap: '3.5rem',
-        boxSizing: 'border-box'
+      {/* 3. HERO SECTION WITH AUTH CARD SPLIT */}
+      <section style={{
+        background: 'linear-gradient(180deg, #0B132B 0%, #111C3D 60%, #F8FAFC 100%)',
+        padding: '3.5rem 2rem 5rem 2rem',
+        borderBottom: '1px solid #E2E8F0',
+        position: 'relative'
       }}>
-        {/* Left Side: Institutional Product Positioning */}
-        <div style={{ flex: 1.25 }}>
-          <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            padding: '0.35rem 0.85rem',
-            background: 'rgba(37, 99, 235, 0.08)',
-            border: '1px solid rgba(37, 99, 235, 0.2)',
-            borderRadius: '999px',
-            color: '#2563EB',
-            fontSize: '0.78rem',
-            fontWeight: 700,
-            letterSpacing: '0.04em',
-            marginBottom: '1.25rem'
-          }}>
-            <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#10B981' }}></span>
-            RESERVE BANK OF INDIA COMPLIANT NBFC CORE
-          </div>
-
-          <h1 style={{
-            fontSize: '3rem',
-            lineHeight: 1.15,
-            fontWeight: 800,
-            letterSpacing: '-0.03em',
-            color: '#0F172A',
-            marginBottom: '1.2rem'
-          }}>
-            Institutional Lending Lifecycle. <br />
-            <span style={{ background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-              Zero Ambiguity.
-            </span>
-          </h1>
-
-          <p style={{
-            fontSize: '1.05rem',
-            lineHeight: 1.6,
-            color: '#475569',
-            marginBottom: '2rem',
-            maxWidth: 600
-          }}>
-            CredenceOS provides enterprise-grade digital credit rails for Non-Banking Financial Companies: deterministic state machines, mathematical reducing-balance amortization, automated DTI underwriting, and tamper-proof compliance ledgers.
-          </p>
-
-          {/* Core Feature Matrix */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(2, 1fr)',
-            gap: '1rem',
-            marginBottom: '2rem'
-          }}>
+        <div style={{
+          maxWidth: 1320,
+          margin: '0 auto',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '3.5rem',
+          flexWrap: 'wrap'
+        }}>
+          {/* Left Hero Content */}
+          <div style={{ flex: '1 1 540px', maxWidth: 680 }}>
             <div style={{
-              padding: '1.1rem',
-              background: '#FFFFFF',
-              borderRadius: '12px',
-              border: '1px solid #E2E8F0',
-              boxShadow: '0 2px 4px rgba(15, 23, 42, 0.04)',
-              transition: 'all 0.2s ease'
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              padding: '0.35rem 0.9rem',
+              background: 'rgba(56, 189, 248, 0.12)',
+              border: '1px solid rgba(56, 189, 248, 0.3)',
+              borderRadius: '999px',
+              color: '#38BDF8',
+              fontSize: '0.78rem',
+              fontWeight: 700,
+              letterSpacing: '0.04em',
+              marginBottom: '1.25rem'
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, color: '#0F172A', fontSize: '0.92rem', marginBottom: '0.35rem' }}>
-                <BarChart3 size={17} color="#2563EB" />
-                <span>Explainable Underwriting</span>
-              </div>
-              <div style={{ color: '#64748B', fontSize: '0.82rem', lineHeight: 1.45 }}>
-                Real-time Debt-to-Income (DTI) evaluation with multi-factor risk categorization.
-              </div>
+              <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#10B981', boxShadow: '0 0 8px #10B981' }}></span>
+              INSTITUTIONAL LENDING CORE • PROD READY
             </div>
 
+            <h1 style={{
+              fontSize: '3.3rem',
+              lineHeight: 1.12,
+              fontWeight: 800,
+              letterSpacing: '-0.035em',
+              color: '#FFFFFF',
+              marginBottom: '1.25rem'
+            }}>
+              High-Velocity Lending Rails. <br />
+              <span style={{
+                background: 'linear-gradient(135deg, #38BDF8 0%, #60A5FA 50%, #93C5FD 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent'
+              }}>
+                Deterministic Credit Infrastructure.
+              </span>
+            </h1>
+
+            <p style={{
+              fontSize: '1.1rem',
+              lineHeight: 1.6,
+              color: '#94A3B8',
+              marginBottom: '2rem',
+              maxWidth: 620
+            }}>
+              CredenceOS is the core digital lending platform for Non-Banking Financial Companies (NBFCs): mathematical reducing-balance amortization schedules, automated Debt-to-Income (DTI) underwriting, tamper-evident audit trails, and multi-tenant recovery workbenches.
+            </p>
+
+            {/* Quick Metrics Bar */}
             <div style={{
-              padding: '1.1rem',
-              background: '#FFFFFF',
-              borderRadius: '12px',
-              border: '1px solid #E2E8F0',
-              boxShadow: '0 2px 4px rgba(15, 23, 42, 0.04)',
-              transition: 'all 0.2s ease'
+              display: 'grid',
+              gridTemplateColumns: 'repeat(4, 1fr)',
+              gap: '0.75rem',
+              padding: '1.25rem',
+              background: 'rgba(255, 255, 255, 0.05)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '14px',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              marginBottom: '2rem'
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, color: '#0F172A', fontSize: '0.92rem', marginBottom: '0.35rem' }}>
-                <TrendingUp size={17} color="#2563EB" />
-                <span>Reducing-Balance EMI</span>
-              </div>
-              <div style={{ color: '#64748B', fontSize: '0.82rem', lineHeight: 1.45 }}>
-                Precision monthly amortization schedules with cent-level closing reconciliation.
-              </div>
-            </div>
-
-            <div style={{
-              padding: '1.1rem',
-              background: '#FFFFFF',
-              borderRadius: '12px',
-              border: '1px solid #E2E8F0',
-              boxShadow: '0 2px 4px rgba(15, 23, 42, 0.04)',
-              transition: 'all 0.2s ease'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, color: '#0F172A', fontSize: '0.92rem', marginBottom: '0.35rem' }}>
-                <Lock size={17} color="#2563EB" />
-                <span>Payment Idempotency</span>
-              </div>
-              <div style={{ color: '#64748B', fontSize: '0.82rem', lineHeight: 1.45 }}>
-                Double-debit protection utilizing unique cryptographic transaction headers.
-              </div>
-            </div>
-
-            <div style={{
-              padding: '1.1rem',
-              background: '#FFFFFF',
-              borderRadius: '12px',
-              border: '1px solid #E2E8F0',
-              boxShadow: '0 2px 4px rgba(15, 23, 42, 0.04)',
-              transition: 'all 0.2s ease'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, color: '#0F172A', fontSize: '0.92rem', marginBottom: '0.35rem' }}>
-                <FileCheck size={17} color="#2563EB" />
-                <span>Immutable Audit Trails</span>
-              </div>
-              <div style={{ color: '#64748B', fontSize: '0.82rem', lineHeight: 1.45 }}>
-                Append-only event sourcing capturing actor, IP, timestamp, and state diffs.
-              </div>
-            </div>
-          </div>
-
-          {/* Quick Metrics Bar */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '1rem 1.5rem',
-            background: '#F1F5F9',
-            borderRadius: '12px',
-            border: '1px solid #CBD5E1'
-          }}>
-            <div>
-              <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <Database size={12} color="#2563EB" /> Database
-              </div>
-              <div style={{ fontSize: '0.9rem', color: '#0F172A', fontWeight: 700 }}>Neon PostgreSQL (SSL)</div>
-            </div>
-            <div style={{ height: 28, width: 1, background: '#CBD5E1' }}></div>
-            <div>
-              <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <Cpu size={12} color="#2563EB" /> Underwriting
-              </div>
-              <div style={{ fontSize: '0.9rem', color: '#0F172A', fontWeight: 700 }}>Rule-Based (DTI Engine)</div>
-            </div>
-            <div style={{ height: 28, width: 1, background: '#CBD5E1' }}></div>
-            <div>
-              <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <Layers size={12} color="#2563EB" /> Architecture
-              </div>
-              <div style={{ fontSize: '0.9rem', color: '#0F172A', fontWeight: 700 }}>Docker Multi-Container</div>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Side: Elite Auth Hub */}
-        <div style={{ flex: 0.95, maxWidth: 480, width: '100%' }}>
-          <div style={{
-            background: '#FFFFFF',
-            borderRadius: '18px',
-            border: '1px solid #E2E8F0',
-            boxShadow: '0 20px 35px -5px rgba(15, 23, 42, 0.08), 0 10px 15px -5px rgba(15, 23, 42, 0.04)',
-            padding: '2.25rem',
-            boxSizing: 'border-box'
-          }}>
-            {/* Segmented Auth Mode Switcher */}
-            <div style={{
-              display: 'flex',
-              background: '#F1F5F9',
-              padding: '4px',
-              borderRadius: '10px',
-              marginBottom: '1.75rem',
-              border: '1px solid #E2E8F0'
-            }}>
-              <button
-                type="button"
-                onClick={() => { setAuthMode('login'); setError(''); }}
-                style={{
-                  flex: 1,
-                  padding: '0.65rem 0',
-                  border: 'none',
-                  borderRadius: '7px',
-                  background: authMode === 'login' ? '#FFFFFF' : 'transparent',
-                  color: authMode === 'login' ? '#0F172A' : '#64748B',
-                  fontWeight: 700,
-                  fontSize: '0.9rem',
-                  cursor: 'pointer',
-                  boxShadow: authMode === 'login' ? '0 2px 6px rgba(15, 23, 42, 0.08)' : 'none',
-                  transition: 'all 0.2s ease',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '6px'
-                }}
-              >
-                <LogIn size={15} />
-                <span>Sign In</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => { setAuthMode('register'); setError(''); }}
-                style={{
-                  flex: 1,
-                  padding: '0.65rem 0',
-                  border: 'none',
-                  borderRadius: '7px',
-                  background: authMode === 'register' ? '#FFFFFF' : 'transparent',
-                  color: authMode === 'register' ? '#0F172A' : '#64748B',
-                  fontWeight: 700,
-                  fontSize: '0.9rem',
-                  cursor: 'pointer',
-                  boxShadow: authMode === 'register' ? '0 2px 6px rgba(15, 23, 42, 0.08)' : 'none',
-                  transition: 'all 0.2s ease',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '6px'
-                }}
-              >
-                <UserPlus size={15} />
-                <span>Create Account</span>
-              </button>
-            </div>
-
-            {authMode === 'register' ? (
-              <Register
-                onLogin={onLogin}
-                onSuccess={() => setAuthMode('login')}
-                onBackToLogin={() => setAuthMode('login')}
-              />
-            ) : (
               <div>
-                <div style={{ marginBottom: '1.5rem' }}>
-                  <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0F172A', margin: '0 0 0.3rem 0' }}>
-                    Welcome to CredenceOS
-                  </h2>
-                  <p style={{ margin: 0, color: '#64748B', fontSize: '0.88rem' }}>
-                    Sign in with institutional credentials or test with evaluator personas.
-                  </p>
-                </div>
+                <div style={{ fontSize: '1.45rem', fontWeight: 800, color: '#38BDF8' }}>₹480+ Cr</div>
+                <div style={{ fontSize: '0.72rem', color: '#94A3B8', fontWeight: 600 }}>Disbursed Capital</div>
+              </div>
+              <div style={{ borderLeft: '1px solid rgba(255, 255, 255, 0.1)', paddingLeft: '0.75rem' }}>
+                <div style={{ fontSize: '1.45rem', fontWeight: 800, color: '#10B981' }}>4.2s</div>
+                <div style={{ fontSize: '0.72rem', color: '#94A3B8', fontWeight: 600 }}>Automated DTI</div>
+              </div>
+              <div style={{ borderLeft: '1px solid rgba(255, 255, 255, 0.1)', paddingLeft: '0.75rem' }}>
+                <div style={{ fontSize: '1.45rem', fontWeight: 800, color: '#F59E0B' }}>0.02%</div>
+                <div style={{ fontSize: '0.72rem', color: '#94A3B8', fontWeight: 600 }}>90-Day NPA Rate</div>
+              </div>
+              <div style={{ borderLeft: '1px solid rgba(255, 255, 255, 0.1)', paddingLeft: '0.75rem' }}>
+                <div style={{ fontSize: '1.45rem', fontWeight: 800, color: '#FFFFFF' }}>14.8k+</div>
+                <div style={{ fontSize: '0.72rem', color: '#94A3B8', fontWeight: 600 }}>Verified Facilities</div>
+              </div>
+            </div>
 
-                {/* 1-Click Instant Persona Sign-in */}
-                <div style={{
-                  background: '#F8FAFC',
-                  borderRadius: '12px',
-                  padding: '1rem',
-                  border: '1px solid #E2E8F0',
-                  marginBottom: '1.5rem'
-                }}>
-                  <div style={{
-                    fontSize: '0.72rem',
+            {/* Institutional Action Buttons */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+              <button
+                onClick={() => document.getElementById('command-center')?.scrollIntoView({ behavior: 'smooth' })}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  background: '#2563EB',
+                  color: '#FFFFFF',
+                  padding: '0.85rem 1.6rem',
+                  borderRadius: '10px',
+                  fontWeight: 700,
+                  fontSize: '0.92rem',
+                  border: 'none',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 18px rgba(37, 99, 235, 0.4)',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                <span>Tour Command Center</span>
+                <ArrowRight size={16} />
+              </button>
+              <button
+                onClick={() => document.getElementById('calculator')?.scrollIntoView({ behavior: 'smooth' })}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  color: '#FFFFFF',
+                  padding: '0.85rem 1.5rem',
+                  borderRadius: '10px',
+                  fontWeight: 600,
+                  fontSize: '0.92rem',
+                  border: '1px solid rgba(255, 255, 255, 0.18)',
+                  cursor: 'pointer',
+                  backdropFilter: 'blur(8px)',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                <Calculator size={16} color="#38BDF8" />
+                <span>Simulate Amortization</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Right Auth Card */}
+          <div style={{ flex: '1 1 420px', maxWidth: 460 }}>
+            <div style={{
+              background: '#FFFFFF',
+              borderRadius: '20px',
+              border: '1px solid #E2E8F0',
+              boxShadow: '0 25px 50px -12px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.8) inset',
+              padding: '2.25rem',
+              boxSizing: 'border-box'
+            }}>
+              {/* Segmented Auth Mode Switcher */}
+              <div style={{
+                display: 'flex',
+                background: '#F1F5F9',
+                padding: '4px',
+                borderRadius: '10px',
+                marginBottom: '1.75rem',
+                border: '1px solid #E2E8F0'
+              }}>
+                <button
+                  type="button"
+                  onClick={() => { setAuthMode('login'); setError(''); }}
+                  style={{
+                    flex: 1,
+                    padding: '0.65rem 0',
+                    border: 'none',
+                    borderRadius: '7px',
+                    background: authMode === 'login' ? '#FFFFFF' : 'transparent',
+                    color: authMode === 'login' ? '#0F172A' : '#64748B',
                     fontWeight: 700,
-                    color: '#64748B',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                    marginBottom: '0.65rem',
-                    display: 'flex',
+                    fontSize: '0.9rem',
+                    cursor: 'pointer',
+                    boxShadow: authMode === 'login' ? '0 2px 6px rgba(15, 23, 42, 0.08)' : 'none',
+                    transition: 'all 0.2s ease',
+                    display: 'inline-flex',
                     alignItems: 'center',
-                    justifyContent: 'space-between'
-                  }}>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-                      <Zap size={14} color="#F59E0B" /> 1-Click Evaluator Login
-                    </span>
-                    <span style={{ color: '#2563EB', fontWeight: 600 }}>Instant Access</span>
-                  </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
-                    <button
-                      type="button"
-                      disabled={loading}
-                      onClick={() => handlePersonaLogin('admin')}
-                      style={{
-                        padding: '0.6rem 0.4rem',
-                        fontSize: '0.78rem',
-                        fontWeight: 700,
-                        background: activePersona === 'admin' ? '#1E293B' : '#0B132B',
-                        color: '#FFFFFF',
-                        border: 'none',
-                        borderRadius: '8px',
-                        cursor: loading ? 'not-allowed' : 'pointer',
-                        textAlign: 'center',
-                        transition: 'all 0.2s ease',
-                        boxShadow: '0 2px 4px rgba(11, 19, 43, 0.15)',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '5px'
-                      }}
-                    >
-                      <ShieldAlert size={14} color="#38BDF8" />
-                      <span>Admin</span>
-                    </button>
-                    <button
-                      type="button"
-                      disabled={loading}
-                      onClick={() => handlePersonaLogin('agent')}
-                      style={{
-                        padding: '0.6rem 0.4rem',
-                        fontSize: '0.78rem',
-                        fontWeight: 700,
-                        background: activePersona === 'agent' ? '#2563EB' : '#1C2541',
-                        color: '#FFFFFF',
-                        border: 'none',
-                        borderRadius: '8px',
-                        cursor: loading ? 'not-allowed' : 'pointer',
-                        textAlign: 'center',
-                        transition: 'all 0.2s ease',
-                        boxShadow: '0 2px 4px rgba(28, 37, 65, 0.15)',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '5px'
-                      }}
-                    >
-                      <Briefcase size={14} color="#60A5FA" />
-                      <span>Officer</span>
-                    </button>
-                    <button
-                      type="button"
-                      disabled={loading}
-                      onClick={() => handlePersonaLogin('customer')}
-                      style={{
-                        padding: '0.6rem 0.4rem',
-                        fontSize: '0.78rem',
-                        fontWeight: 700,
-                        background: activePersona === 'customer' ? '#1D4ED8' : '#2563EB',
-                        color: '#FFFFFF',
-                        border: 'none',
-                        borderRadius: '8px',
-                        cursor: loading ? 'not-allowed' : 'pointer',
-                        textAlign: 'center',
-                        transition: 'all 0.2s ease',
-                        boxShadow: '0 2px 4px rgba(37, 99, 235, 0.25)',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '5px'
-                      }}
-                    >
-                      <UserCheck size={14} color="#93C5FD" />
-                      <span>Borrower</span>
-                    </button>
-                  </div>
-                </div>
+                    justifyContent: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  <LogIn size={15} />
+                  <span>Sign In</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setAuthMode('register'); setError(''); }}
+                  style={{
+                    flex: 1,
+                    padding: '0.65rem 0',
+                    border: 'none',
+                    borderRadius: '7px',
+                    background: authMode === 'register' ? '#FFFFFF' : 'transparent',
+                    color: authMode === 'register' ? '#0F172A' : '#64748B',
+                    fontWeight: 700,
+                    fontSize: '0.9rem',
+                    cursor: 'pointer',
+                    boxShadow: authMode === 'register' ? '0 2px 6px rgba(15, 23, 42, 0.08)' : 'none',
+                    transition: 'all 0.2s ease',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  <UserPlus size={15} />
+                  <span>Register Facility</span>
+                </button>
+              </div>
 
-                {error && (
+              {authMode === 'register' ? (
+                <Register
+                  onLogin={onLogin}
+                  onSuccess={() => setAuthMode('login')}
+                  onBackToLogin={() => setAuthMode('login')}
+                />
+              ) : (
+                <div>
+                  <div style={{ marginBottom: '1.25rem' }}>
+                    <h2 style={{ fontSize: '1.45rem', fontWeight: 800, color: '#0F172A', margin: '0 0 0.3rem 0' }}>
+                      Sign in to CredenceOS
+                    </h2>
+                    <p style={{ margin: 0, color: '#64748B', fontSize: '0.85rem' }}>
+                      Institutional portal for credit underwriting, recovery & repayments.
+                    </p>
+                  </div>
+
+                  {/* 1-Click Instant Persona Sign-in */}
                   <div style={{
-                    padding: '0.85rem 1rem',
-                    background: '#FEF2F2',
-                    border: '1px solid #FECACA',
-                    color: '#991B1B',
-                    borderRadius: '10px',
-                    fontSize: '0.85rem',
-                    marginBottom: '1.25rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.6rem'
+                    background: '#F8FAFC',
+                    borderRadius: '12px',
+                    padding: '0.9rem',
+                    border: '1px solid #E2E8F0',
+                    marginBottom: '1.5rem'
                   }}>
-                    <AlertCircle size={16} color="#991B1B" />
-                    <span style={{ flex: 1 }}>{error}</span>
-                    <button
-                      type="button"
-                      onClick={() => setError('')}
-                      style={{ background: 'none', border: 'none', color: '#991B1B', cursor: 'pointer', fontWeight: 700 }}
-                    >
-                      ×
-                    </button>
+                    <div style={{
+                      fontSize: '0.72rem',
+                      fontWeight: 700,
+                      color: '#64748B',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      marginBottom: '0.6rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between'
+                    }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                        <Zap size={14} color="#F59E0B" /> 1-Click Evaluator Personas
+                      </span>
+                      <span style={{ color: '#2563EB', fontWeight: 700, fontSize: '0.7rem' }}>INSTANT ACCESS</span>
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
+                      <button
+                        type="button"
+                        disabled={loading}
+                        onClick={() => handlePersonaLogin('admin')}
+                        title="Sign in as Admin (Credit Underwriting & Audit Ledgers)"
+                        style={{
+                          padding: '0.65rem 0.4rem',
+                          fontSize: '0.78rem',
+                          fontWeight: 700,
+                          background: activePersona === 'admin' ? '#1E293B' : '#0B132B',
+                          color: '#FFFFFF',
+                          border: 'none',
+                          borderRadius: '8px',
+                          cursor: loading ? 'not-allowed' : 'pointer',
+                          textAlign: 'center',
+                          transition: 'all 0.2s ease',
+                          boxShadow: '0 2px 4px rgba(11, 19, 43, 0.15)',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '5px'
+                        }}
+                      >
+                        <ShieldAlert size={14} color="#38BDF8" />
+                        <span>Admin</span>
+                      </button>
+                      <button
+                        type="button"
+                        disabled={loading}
+                        onClick={() => handlePersonaLogin('agent')}
+                        title="Sign in as Recovery Officer (Delinquency Workbench)"
+                        style={{
+                          padding: '0.65rem 0.4rem',
+                          fontSize: '0.78rem',
+                          fontWeight: 700,
+                          background: activePersona === 'agent' ? '#2563EB' : '#1C2541',
+                          color: '#FFFFFF',
+                          border: 'none',
+                          borderRadius: '8px',
+                          cursor: loading ? 'not-allowed' : 'pointer',
+                          textAlign: 'center',
+                          transition: 'all 0.2s ease',
+                          boxShadow: '0 2px 4px rgba(28, 37, 65, 0.15)',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '5px'
+                        }}
+                      >
+                        <Briefcase size={14} color="#60A5FA" />
+                        <span>Officer</span>
+                      </button>
+                      <button
+                        type="button"
+                        disabled={loading}
+                        onClick={() => handlePersonaLogin('customer')}
+                        title="Sign in as Retail Borrower (Loan Application & EMI Payments)"
+                        style={{
+                          padding: '0.65rem 0.4rem',
+                          fontSize: '0.78rem',
+                          fontWeight: 700,
+                          background: activePersona === 'customer' ? '#1D4ED8' : '#2563EB',
+                          color: '#FFFFFF',
+                          border: 'none',
+                          borderRadius: '8px',
+                          cursor: loading ? 'not-allowed' : 'pointer',
+                          textAlign: 'center',
+                          transition: 'all 0.2s ease',
+                          boxShadow: '0 2px 4px rgba(37, 99, 235, 0.25)',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '5px'
+                        }}
+                      >
+                        <UserCheck size={14} color="#93C5FD" />
+                        <span>Borrower</span>
+                      </button>
+                    </div>
                   </div>
-                )}
 
-                <form onSubmit={handleLogin}>
-                  <div style={{ marginBottom: '1.2rem' }}>
-                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: '#334155', marginBottom: '0.4rem' }}>
-                      Institutional Email Address
-                    </label>
-                    <div style={{ position: 'relative' }}>
+                  {error && (
+                    <div style={{
+                      padding: '0.75rem 0.9rem',
+                      background: '#FEF2F2',
+                      border: '1px solid #FECACA',
+                      color: '#991B1B',
+                      borderRadius: '8px',
+                      fontSize: '0.82rem',
+                      marginBottom: '1.25rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem'
+                    }}>
+                      <AlertCircle size={15} color="#991B1B" />
+                      <span style={{ flex: 1 }}>{error}</span>
+                      <button
+                        type="button"
+                        onClick={() => setError('')}
+                        style={{ background: 'none', border: 'none', color: '#991B1B', cursor: 'pointer', fontWeight: 700 }}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  )}
+
+                  <form onSubmit={handleLogin}>
+                    <div style={{ marginBottom: '1.1rem' }}>
+                      <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: '#334155', marginBottom: '0.35rem' }}>
+                        Institutional Email Address
+                      </label>
                       <input
                         type="email"
                         required
@@ -672,41 +702,39 @@ function Home({ onLogin }) {
                         placeholder="e.g. admin@example.com"
                         style={{
                           width: '100%',
-                          padding: '0.8rem 1rem',
+                          padding: '0.75rem 0.9rem',
                           borderRadius: '8px',
                           border: '1px solid #CBD5E1',
-                          fontSize: '0.92rem',
+                          fontSize: '0.9rem',
                           boxSizing: 'border-box',
                           background: '#FFFFFF'
                         }}
                       />
                     </div>
-                  </div>
 
-                  <div style={{ marginBottom: '1.5rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
-                      <label style={{ fontSize: '0.82rem', fontWeight: 600, color: '#334155' }}>
-                        Security Passcode
-                      </label>
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          color: '#2563EB',
-                          fontSize: '0.78rem',
-                          fontWeight: 600,
-                          cursor: 'pointer',
-                          padding: 0,
-                          display: 'inline-flex',
-                          alignItems: 'center'
-                        }}
-                      >
-                        {showPassword ? <><EyeOff size={13} style={{ marginRight: 4 }} /> Hide</> : <><Eye size={13} style={{ marginRight: 4 }} /> Show</>}
-                      </button>
-                    </div>
-                    <div style={{ position: 'relative' }}>
+                    <div style={{ marginBottom: '1.4rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
+                        <label style={{ fontSize: '0.82rem', fontWeight: 600, color: '#334155' }}>
+                          Security Passcode
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: '#2563EB',
+                            fontSize: '0.76rem',
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                            padding: 0,
+                            display: 'inline-flex',
+                            alignItems: 'center'
+                          }}
+                        >
+                          {showPassword ? <><EyeOff size={13} style={{ marginRight: 3 }} /> Hide</> : <><Eye size={13} style={{ marginRight: 3 }} /> Show</>}
+                        </button>
+                      </div>
                       <input
                         type={showPassword ? 'text' : 'password'}
                         required
@@ -715,86 +743,281 @@ function Home({ onLogin }) {
                         placeholder="••••••••"
                         style={{
                           width: '100%',
-                          padding: '0.8rem 1rem',
+                          padding: '0.75rem 0.9rem',
                           borderRadius: '8px',
                           border: '1px solid #CBD5E1',
-                          fontSize: '0.92rem',
+                          fontSize: '0.9rem',
                           boxSizing: 'border-box',
                           background: '#FFFFFF'
                         }}
                       />
                     </div>
+
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      style={{
+                        width: '100%',
+                        padding: '0.85rem',
+                        background: '#2563EB',
+                        color: '#FFFFFF',
+                        border: 'none',
+                        borderRadius: '8px',
+                        fontWeight: 700,
+                        fontSize: '0.95rem',
+                        cursor: loading ? 'not-allowed' : 'pointer',
+                        boxShadow: '0 4px 14px rgba(37, 99, 235, 0.3)',
+                        transition: 'all 0.2s ease',
+                        opacity: loading ? 0.75 : 1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.5rem'
+                      }}
+                    >
+                      {loading ? (
+                        <>
+                          <span style={{ display: 'inline-block', width: 14, height: 14, border: '2px solid #FFFFFF', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spinSlow 0.8s linear infinite' }}></span>
+                          <span>Authenticating Session...</span>
+                        </>
+                      ) : (
+                        <>
+                          <LogIn size={16} />
+                          <span>Sign In to CredenceOS</span>
+                        </>
+                      )}
+                    </button>
+                  </form>
+
+                  <div style={{ marginTop: '1.25rem', textAlign: 'center', paddingTop: '1rem', borderTop: '1px solid #F1F5F9' }}>
+                    <span style={{ fontSize: '0.82rem', color: '#64748B' }}>First time here? </span>
+                    <button
+                      type="button"
+                      onClick={() => { setAuthMode('register'); setError(''); }}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: '#2563EB',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        fontSize: '0.82rem',
+                        padding: 0
+                      }}
+                    >
+                      Open Borrower Account →
+                    </button>
                   </div>
-
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    style={{
-                      width: '100%',
-                      padding: '0.85rem',
-                      background: 'var(--primary-blue)',
-                      color: '#FFFFFF',
-                      border: 'none',
-                      borderRadius: '8px',
-                      fontWeight: 700,
-                      fontSize: '0.95rem',
-                      cursor: loading ? 'not-allowed' : 'pointer',
-                      boxShadow: '0 4px 14px rgba(37, 99, 235, 0.3)',
-                      transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
-                      opacity: loading ? 0.75 : 1,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '0.5rem'
-                    }}
-                  >
-                    {loading ? (
-                      <>
-                        <span style={{ display: 'inline-block', width: 14, height: 14, border: '2px solid #FFFFFF', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spinSlow 0.8s linear infinite' }}></span>
-                        <span>Authenticating Session...</span>
-                      </>
-                    ) : (
-                      <>
-                        <LogIn size={16} />
-                        <span>Sign In to CredenceOS</span>
-                      </>
-                    )}
-                  </button>
-                </form>
-
-                <div style={{ marginTop: '1.5rem', textAlign: 'center', paddingTop: '1.2rem', borderTop: '1px solid #F1F5F9' }}>
-                  <span style={{ fontSize: '0.85rem', color: '#64748B' }}>First time here? </span>
-                  <button
-                    type="button"
-                    onClick={() => { setAuthMode('register'); setError(''); }}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      color: '#2563EB',
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      fontSize: '0.85rem',
-                      padding: 0
-                    }}
-                  >
-                    Open Borrower Account →
-                  </button>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
-      </main>
+      </section>
 
-      {/* SECTION 1: INTERACTIVE AMORTIZATION & EMI CALCULATOR */}
+      {/* 4. INSTITUTIONAL TRUST & REGULATORY ECOSYSTEM BAR */}
+      <section style={{
+        background: '#FFFFFF',
+        borderBottom: '1px solid #E2E8F0',
+        padding: '2rem 1.5rem'
+      }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', fontSize: '0.75rem', fontWeight: 700, color: '#64748B', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '1.5rem' }}>
+            Integrated with Institutional Indian Banking, Credit Bureau & Regulatory Infrastructure
+          </div>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-around',
+            flexWrap: 'wrap',
+            gap: '2rem',
+            filter: 'grayscale(30%)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#0F172A', fontWeight: 700, fontSize: '0.92rem' }}>
+              <div style={{ padding: '6px', background: '#EFF6FF', borderRadius: '6px', color: '#2563EB' }}>
+                <Landmark size={20} />
+              </div>
+              <div>
+                <div>RBI NBFC Rails</div>
+                <div style={{ fontSize: '0.68rem', color: '#64748B', fontWeight: 500 }}>Master Directions 2026</div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#0F172A', fontWeight: 700, fontSize: '0.92rem' }}>
+              <div style={{ padding: '6px', background: '#ECFDF5', borderRadius: '6px', color: '#10B981' }}>
+                <Activity size={20} />
+              </div>
+              <div>
+                <div>CIBIL & Experian</div>
+                <div style={{ fontSize: '0.68rem', color: '#64748B', fontWeight: 500 }}>Automated Score Pulls</div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#0F172A', fontWeight: 700, fontSize: '0.92rem' }}>
+              <div style={{ padding: '6px', background: '#FEF3C7', borderRadius: '6px', color: '#D97706' }}>
+                <CheckSquare size={20} />
+              </div>
+              <div>
+                <div>NPCI e-NACH & UPI</div>
+                <div style={{ fontSize: '0.68rem', color: '#64748B', fontWeight: 500 }}>Automated Recurring Debit</div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#0F172A', fontWeight: 700, fontSize: '0.92rem' }}>
+              <div style={{ padding: '6px', background: '#F1F5F9', borderRadius: '6px', color: '#475569' }}>
+                <Fingerprint size={20} />
+              </div>
+              <div>
+                <div>UIDAI & DigiLocker</div>
+                <div style={{ fontSize: '0.68rem', color: '#64748B', fontWeight: 500 }}>Masked Aadhaar & PAN e-KYC</div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#0F172A', fontWeight: 700, fontSize: '0.92rem' }}>
+              <div style={{ padding: '6px', background: '#EDE9FE', borderRadius: '6px', color: '#7C3AED' }}>
+                <Lock size={20} />
+              </div>
+              <div>
+                <div>ISO/IEC 27001</div>
+                <div style={{ fontSize: '0.68rem', color: '#64748B', fontWeight: 500 }}>SOC 2 Type II Audited</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. LIVE COMMAND CENTER SHOWCASE (REAL PHOTOGRAPHIC ASSET) */}
+      <section id="command-center" style={{
+        background: '#0B132B',
+        padding: '5.5rem 2rem',
+        color: '#FFFFFF',
+        position: 'relative'
+      }}>
+        <div style={{ maxWidth: 1240, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+            <div style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '0.35rem 0.85rem',
+              background: 'rgba(56, 189, 248, 0.12)',
+              border: '1px solid rgba(56, 189, 248, 0.3)',
+              borderRadius: '999px',
+              color: '#38BDF8',
+              fontSize: '0.78rem',
+              fontWeight: 700,
+              letterSpacing: '0.04em',
+              marginBottom: '0.85rem'
+            }}>
+              <Building2 size={14} /> REAL-WORLD OPERATIONS COMMAND
+            </div>
+            <h2 style={{ fontSize: '2.5rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.03em', margin: '0 0 0.75rem 0' }}>
+              Institutional Credit Operations Center
+            </h2>
+            <p style={{ color: '#94A3B8', fontSize: '1.05rem', margin: 0, maxWidth: 680, marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.6 }}>
+              Where loan underwriters, recovery desk officers, and compliance executives monitor real-time credit disbursals, delinquency risks, and tamper-evident event streams.
+            </p>
+          </div>
+
+          {/* Photographic Mockup Showcase */}
+          <div style={{
+            position: 'relative',
+            borderRadius: '18px',
+            overflow: 'hidden',
+            border: '1px solid rgba(255, 255, 255, 0.15)',
+            boxShadow: '0 30px 60px -12px rgba(0, 0, 0, 0.6), 0 0 40px rgba(56, 189, 248, 0.15)'
+          }}>
+            {/* Window chrome top */}
+            <div style={{
+              background: '#070D1F',
+              padding: '0.75rem 1.25rem',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#EF4444' }}></span>
+                <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#F59E0B' }}></span>
+                <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#10B981' }}></span>
+                <span style={{ fontSize: '0.75rem', color: '#94A3B8', marginLeft: '12px', fontFamily: 'monospace' }}>
+                  credence-core://ops.production.internal/underwriting-command-view
+                </span>
+              </div>
+              <div style={{ fontSize: '0.72rem', color: '#38BDF8', fontWeight: 600 }}>
+                ● LIVE TELEMETRY STREAMING
+              </div>
+            </div>
+
+            {/* Real Image */}
+            <img 
+              src={heroOpsImg} 
+              alt="CredenceOS Institutional Underwriting and Credit Command Center" 
+              style={{
+                width: '100%',
+                maxHeight: '600px',
+                objectFit: 'cover',
+                display: 'block'
+              }}
+            />
+
+            {/* Overlay Feature Badges */}
+            <div style={{
+              position: 'absolute',
+              bottom: '1.5rem',
+              left: '1.5rem',
+              right: '1.5rem',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: '1rem',
+              background: 'rgba(7, 13, 31, 0.85)',
+              backdropFilter: 'blur(16px)',
+              padding: '1.25rem',
+              borderRadius: '14px',
+              border: '1px solid rgba(255, 255, 255, 0.12)'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                <div style={{ padding: '8px', background: 'rgba(56, 189, 248, 0.15)', borderRadius: '8px', color: '#38BDF8' }}>
+                  <Cpu size={20} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#FFFFFF' }}>Instant DTI Engine</div>
+                  <div style={{ fontSize: '0.75rem', color: '#94A3B8' }}>Automated mathematical credit tiering under 5 seconds</div>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                <div style={{ padding: '8px', background: 'rgba(16, 185, 129, 0.15)', borderRadius: '8px', color: '#10B981' }}>
+                  <TrendingUp size={20} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#FFFFFF' }}>Reducing-Balance Amortization</div>
+                  <div style={{ fontSize: '0.75rem', color: '#94A3B8' }}>Exact monthly interest calculation with cent-level ledger audit</div>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                <div style={{ padding: '8px', background: 'rgba(245, 158, 11, 0.15)', borderRadius: '8px', color: '#F59E0B' }}>
+                  <ShieldCheck size={20} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#FFFFFF' }}>Cryptographic Idempotency</div>
+                  <div style={{ fontSize: '0.75rem', color: '#94A3B8' }}>Zero double-debit guarantee on payment gateway retries</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. INTERACTIVE AMORTIZATION & EMI CALCULATOR */}
       <section id="calculator" style={{
         background: '#FFFFFF',
         borderTop: '1px solid #E2E8F0',
         borderBottom: '1px solid #E2E8F0',
-        padding: '4.5rem 2rem'
+        padding: '5rem 2rem'
       }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+          <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
             <div style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -809,13 +1032,13 @@ function Home({ onLogin }) {
               letterSpacing: '0.04em',
               marginBottom: '0.85rem'
             }}>
-              <Calculator size={14} /> INSTITUTIONAL FINANCIAL ENGINE
+              <Calculator size={14} /> MATHEMATICAL FINANCIAL PRECISION
             </div>
-            <h2 style={{ fontSize: '2.3rem', fontWeight: 800, color: '#0F172A', letterSpacing: '-0.03em', margin: '0 0 0.6rem 0' }}>
-              Reducing-Balance Amortization Calculator
+            <h2 style={{ fontSize: '2.4rem', fontWeight: 800, color: '#0F172A', letterSpacing: '-0.03em', margin: '0 0 0.6rem 0' }}>
+              Reducing-Balance Amortization Engine
             </h2>
-            <p style={{ color: '#64748B', fontSize: '1.05rem', margin: 0, maxWidth: 640, marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.5 }}>
-              Test loan parameters in real-time. Calculate precise monthly EMI installments, total interest costs, and transparent principal reduction schedules.
+            <p style={{ color: '#64748B', fontSize: '1.05rem', margin: 0, maxWidth: 660, marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.5 }}>
+              Test loan parameters in real-time. Calculate precise monthly EMI installments, total interest charges, and transparent principal reduction schedules.
             </p>
           </div>
 
@@ -836,7 +1059,7 @@ function Home({ onLogin }) {
               <div style={{ marginBottom: '2rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
                   <label style={{ fontSize: '0.88rem', fontWeight: 700, color: '#1E293B' }}>Loan Principal Amount</label>
-                  <span style={{ fontSize: '1.25rem', fontWeight: 800, color: '#2563EB' }}>
+                  <span style={{ fontSize: '1.3rem', fontWeight: 800, color: '#2563EB' }}>
                     ₹{calcAmount.toLocaleString('en-IN')}
                   </span>
                 </div>
@@ -856,7 +1079,7 @@ function Home({ onLogin }) {
                       type="button"
                       onClick={() => setCalcAmount(preset)}
                       style={{
-                        padding: '0.3rem 0.65rem',
+                        padding: '0.35rem 0.75rem',
                         fontSize: '0.75rem',
                         fontWeight: 600,
                         borderRadius: '6px',
@@ -876,7 +1099,7 @@ function Home({ onLogin }) {
               <div style={{ marginBottom: '2rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
                   <label style={{ fontSize: '0.88rem', fontWeight: 700, color: '#1E293B' }}>Annual Interest Rate</label>
-                  <span style={{ fontSize: '1.25rem', fontWeight: 800, color: '#2563EB' }}>
+                  <span style={{ fontSize: '1.3rem', fontWeight: 800, color: '#2563EB' }}>
                     {calcRate}% p.a.
                   </span>
                 </div>
@@ -896,7 +1119,7 @@ function Home({ onLogin }) {
                       type="button"
                       onClick={() => setCalcRate(preset)}
                       style={{
-                        padding: '0.3rem 0.65rem',
+                        padding: '0.35rem 0.75rem',
                         fontSize: '0.75rem',
                         fontWeight: 600,
                         borderRadius: '6px',
@@ -916,7 +1139,7 @@ function Home({ onLogin }) {
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
                   <label style={{ fontSize: '0.88rem', fontWeight: 700, color: '#1E293B' }}>Amortization Tenure</label>
-                  <span style={{ fontSize: '1.25rem', fontWeight: 800, color: '#2563EB' }}>
+                  <span style={{ fontSize: '1.3rem', fontWeight: 800, color: '#2563EB' }}>
                     {calcTenure} Months <span style={{ fontSize: '0.85rem', color: '#64748B', fontWeight: 500 }}>({(calcTenure / 12).toFixed(1)} yrs)</span>
                   </span>
                 </div>
@@ -936,7 +1159,7 @@ function Home({ onLogin }) {
                       type="button"
                       onClick={() => setCalcTenure(preset)}
                       style={{
-                        padding: '0.3rem 0.65rem',
+                        padding: '0.35rem 0.75rem',
                         fontSize: '0.75rem',
                         fontWeight: 600,
                         borderRadius: '6px',
@@ -972,13 +1195,13 @@ function Home({ onLogin }) {
                 boxShadow: '0 4px 15px rgba(11, 19, 43, 0.15)'
               }}>
                 <div style={{ fontSize: '0.82rem', fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.35rem' }}>
-                  Calculated Monthly EMI
+                  Calculated Monthly Installment (EMI)
                 </div>
-                <div style={{ fontSize: '2.5rem', fontWeight: 800, color: '#38BDF8', letterSpacing: '-0.02em', marginBottom: '0.2rem' }}>
+                <div style={{ fontSize: '2.6rem', fontWeight: 800, color: '#38BDF8', letterSpacing: '-0.02em', marginBottom: '0.2rem' }}>
                   ₹{emi.toLocaleString('en-IN')}
                 </div>
                 <div style={{ fontSize: '0.82rem', color: '#CBD5E1' }}>
-                  Fixed reducing-balance monthly installment
+                  Reducing-balance fixed monthly installment
                 </div>
               </div>
 
@@ -1075,10 +1298,108 @@ function Home({ onLogin }) {
         </div>
       </section>
 
-      {/* SECTION 2: END-TO-END CREDIT LIFECYCLE (PIPELINE) */}
-      <section id="pipeline" style={{
+      {/* 7. EXECUTIVE CASE STUDY & LEADERSHIP TESTIMONIAL (REAL PORTRAIT ASSET) */}
+      <section id="case-study" style={{
         background: '#F8FAFC',
-        padding: '5rem 2rem'
+        padding: '5rem 2rem',
+        borderBottom: '1px solid #E2E8F0'
+      }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          <div style={{
+            background: '#FFFFFF',
+            borderRadius: '20px',
+            border: '1px solid #E2E8F0',
+            boxShadow: '0 10px 30px -5px rgba(15, 23, 42, 0.06)',
+            padding: '3rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '3rem',
+            flexWrap: 'wrap'
+          }}>
+            {/* Real Executive Photo */}
+            <div style={{ flex: '0 0 280px', textAlign: 'center' }}>
+              <div style={{
+                position: 'relative',
+                width: 240,
+                height: 240,
+                margin: '0 auto',
+                borderRadius: '16px',
+                overflow: 'hidden',
+                boxShadow: '0 12px 28px rgba(15, 23, 42, 0.15)',
+                border: '3px solid #FFFFFF'
+              }}>
+                <img 
+                  src={riskOfficerImg} 
+                  alt="Lakshmi Rao, Senior Credit Risk Officer" 
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              </div>
+              <div style={{ marginTop: '1rem' }}>
+                <div style={{ fontWeight: 800, fontSize: '1.1rem', color: '#0F172A' }}>Lakshmi Rao</div>
+                <div style={{ fontSize: '0.8rem', color: '#2563EB', fontWeight: 600 }}>Senior VP of Credit Risk & Compliance</div>
+                <div style={{ fontSize: '0.75rem', color: '#64748B' }}>Apex Capital NBFC Partners</div>
+              </div>
+            </div>
+
+            {/* Testimonial Quote */}
+            <div style={{ flex: '1 1 450px' }}>
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '0.3rem 0.75rem',
+                background: 'rgba(16, 185, 129, 0.1)',
+                border: '1px solid rgba(16, 185, 129, 0.25)',
+                borderRadius: '999px',
+                color: '#059669',
+                fontSize: '0.74rem',
+                fontWeight: 700,
+                marginBottom: '1.25rem'
+              }}>
+                <CheckCircle2 size={13} /> VERIFIED INSTITUTIONAL AUDIT
+              </div>
+
+              <blockquote style={{
+                margin: '0 0 1.5rem 0',
+                fontSize: '1.25rem',
+                lineHeight: 1.55,
+                fontWeight: 600,
+                color: '#1E293B',
+                letterSpacing: '-0.015em'
+              }}>
+                "CredenceOS completely eradicated manual bottlenecks across our personal and MSME loan portfolios. The automated Debt-to-Income decisioning engine reduced loan sanction times from 3 days to under 4 minutes, while our 90-day delinquency rate dropped to an unprecedented 0.02%."
+              </blockquote>
+
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: '1rem',
+                paddingTop: '1.5rem',
+                borderTop: '1px solid #F1F5F9'
+              }}>
+                <div>
+                  <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#2563EB' }}>320%</div>
+                  <div style={{ fontSize: '0.75rem', color: '#64748B' }}>Disbursal Capacity</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#10B981' }}>0%</div>
+                  <div style={{ fontSize: '0.75rem', color: '#64748B' }}>Audit Discrepancy</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#0F172A' }}>14,000+</div>
+                  <div style={{ fontSize: '0.75rem', color: '#64748B' }}>Borrowers Served</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 8. END-TO-END CREDIT LIFECYCLE (PIPELINE) */}
+      <section id="pipeline" style={{
+        background: '#FFFFFF',
+        padding: '5rem 2rem',
+        borderBottom: '1px solid #E2E8F0'
       }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
@@ -1096,13 +1417,13 @@ function Home({ onLogin }) {
               letterSpacing: '0.04em',
               marginBottom: '0.85rem'
             }}>
-              <Workflow size={14} /> DETERMINISTIC CREDIT RAILS
+              <Workflow size={14} /> DETERMINISTIC STATE MACHINES
             </div>
-            <h2 style={{ fontSize: '2.3rem', fontWeight: 800, color: '#0F172A', letterSpacing: '-0.03em', margin: '0 0 0.6rem 0' }}>
-              End-to-End Institutional Lending Lifecycle
+            <h2 style={{ fontSize: '2.4rem', fontWeight: 800, color: '#0F172A', letterSpacing: '-0.03em', margin: '0 0 0.6rem 0' }}>
+              Deterministic Lending Lifecycle Rails
             </h2>
             <p style={{ color: '#64748B', fontSize: '1.05rem', margin: 0, maxWidth: 680, marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.5 }}>
-              From initial borrower regulatory verification to automated underwriting and portfolio recovery, every credit facility follows deterministic state machines.
+              From initial regulatory verification to algorithmic underwriting and portfolio recovery, every credit facility transitions across immutable state boundaries.
             </p>
           </div>
 
@@ -1113,11 +1434,10 @@ function Home({ onLogin }) {
           }}>
             {/* Step 1 */}
             <div style={{
-              background: '#FFFFFF',
+              background: '#F8FAFC',
               borderRadius: '16px',
               border: '1px solid #E2E8F0',
               padding: '1.75rem',
-              boxShadow: '0 4px 12px rgba(15, 23, 42, 0.04)',
               display: 'flex',
               flexDirection: 'column'
             }}>
@@ -1142,18 +1462,17 @@ function Home({ onLogin }) {
               <p style={{ fontSize: '0.86rem', color: '#64748B', lineHeight: 1.55, flex: 1, margin: 0 }}>
                 Regulatory compliance portal verifying 10-char PAN format and tokenizing Aadhaar credentials. Personal identity data is masked before underwriting review.
               </p>
-              <div style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid #F1F5F9', fontSize: '0.78rem', color: '#16A34A', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <div style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid #E2E8F0', fontSize: '0.78rem', color: '#16A34A', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <CheckCircle2 size={13} /> RBI Regulatory Mandate
               </div>
             </div>
 
             {/* Step 2 */}
             <div style={{
-              background: '#FFFFFF',
+              background: '#F8FAFC',
               borderRadius: '16px',
               border: '1px solid #E2E8F0',
               padding: '1.75rem',
-              boxShadow: '0 4px 12px rgba(15, 23, 42, 0.04)',
               display: 'flex',
               flexDirection: 'column'
             }}>
@@ -1178,18 +1497,17 @@ function Home({ onLogin }) {
               <p style={{ fontSize: '0.86rem', color: '#64748B', lineHeight: 1.55, flex: 1, margin: 0 }}>
                 Algorithmic Debt-to-Income evaluation engine. Computes total debt load against declared monthly income to produce instant transparent risk ratings.
               </p>
-              <div style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid #F1F5F9', fontSize: '0.78rem', color: '#2563EB', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <div style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid #E2E8F0', fontSize: '0.78rem', color: '#2563EB', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <CheckCircle2 size={13} /> Deterministic Rules Engine
               </div>
             </div>
 
             {/* Step 3 */}
             <div style={{
-              background: '#FFFFFF',
+              background: '#F8FAFC',
               borderRadius: '16px',
               border: '1px solid #E2E8F0',
               padding: '1.75rem',
-              boxShadow: '0 4px 12px rgba(15, 23, 42, 0.04)',
               display: 'flex',
               flexDirection: 'column'
             }}>
@@ -1214,18 +1532,17 @@ function Home({ onLogin }) {
               <p style={{ fontSize: '0.86rem', color: '#64748B', lineHeight: 1.55, flex: 1, margin: 0 }}>
                 Precision reducing-balance amortization schedules. Borrowers process EMI installments protected by cryptographic idempotency keys to eliminate double-charges.
               </p>
-              <div style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid #F1F5F9', fontSize: '0.78rem', color: '#16A34A', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <div style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid #E2E8F0', fontSize: '0.78rem', color: '#16A34A', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <CheckCircle2 size={13} /> Idempotent Transactions
               </div>
             </div>
 
             {/* Step 4 */}
             <div style={{
-              background: '#FFFFFF',
+              background: '#F8FAFC',
               borderRadius: '16px',
               border: '1px solid #E2E8F0',
               padding: '1.75rem',
-              boxShadow: '0 4px 12px rgba(15, 23, 42, 0.04)',
               display: 'flex',
               flexDirection: 'column'
             }}>
@@ -1250,7 +1567,7 @@ function Home({ onLogin }) {
               <p style={{ fontSize: '0.86rem', color: '#64748B', lineHeight: 1.55, flex: 1, margin: 0 }}>
                 Delinquent facilities are automatically assigned to recovery officers. Agents track status transitions, record borrower settlements, and reconcile outstanding dues.
               </p>
-              <div style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid #F1F5F9', fontSize: '0.78rem', color: '#EA580C', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <div style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid #E2E8F0', fontSize: '0.78rem', color: '#EA580C', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <CheckCircle2 size={13} /> Real-Time Event Sourcing
               </div>
             </div>
@@ -1258,11 +1575,165 @@ function Home({ onLogin }) {
         </div>
       </section>
 
-      {/* SECTION 3: MULTI-PERSONA ROLE MATRIX */}
+      {/* 9. ENTERPRISE SECURITY & INFRASTRUCTURE (REAL DATACENTER ASSET) */}
+      <section id="security" style={{
+        background: '#0B132B',
+        color: '#FFFFFF',
+        padding: '5.5rem 2rem',
+        borderTop: '1px solid rgba(255, 255, 255, 0.08)'
+      }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
+            <div style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '0.35rem 0.85rem',
+              background: 'rgba(56, 189, 248, 0.1)',
+              border: '1px solid rgba(56, 189, 248, 0.25)',
+              borderRadius: '999px',
+              color: '#38BDF8',
+              fontSize: '0.78rem',
+              fontWeight: 700,
+              letterSpacing: '0.04em',
+              marginBottom: '0.85rem'
+            }}>
+              <Server size={14} /> DEFENSE-IN-DEPTH ARCHITECTURE
+            </div>
+            <h2 style={{ fontSize: '2.4rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.03em', margin: '0 0 0.6rem 0' }}>
+              Institutional Financial Infrastructure
+            </h2>
+            <p style={{ color: '#94A3B8', fontSize: '1.05rem', margin: 0, maxWidth: 660, marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.5 }}>
+              Engineered with cryptographic payment idempotency, tamper-evident audit logging, and cloud PostgreSQL high-availability.
+            </p>
+          </div>
+
+          {/* Datacenter Visual + Security Highlights Grid */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+            gap: '2.5rem',
+            alignItems: 'center',
+            marginBottom: '3.5rem'
+          }}>
+            {/* Datacenter image container */}
+            <div style={{
+              borderRadius: '16px',
+              overflow: 'hidden',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4)'
+            }}>
+              <img 
+                src={infraDatacenterImg} 
+                alt="CredenceOS Secure Financial Infrastructure Datacenter" 
+                style={{ width: '100%', height: 'auto', display: 'block' }}
+              />
+              <div style={{
+                background: '#070D1F',
+                padding: '0.9rem 1.25rem',
+                fontSize: '0.78rem',
+                color: '#94A3B8',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between'
+              }}>
+                <span style={{ color: '#38BDF8', fontWeight: 600 }}>Neon PostgreSQL SSL Dedicated Cluster</span>
+                <span style={{ color: '#10B981' }}>99.98% High Availability</span>
+              </div>
+            </div>
+
+            {/* Architecture List */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.04)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '12px',
+                padding: '1.25rem'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.4rem' }}>
+                  <Lock size={18} color="#38BDF8" />
+                  <span style={{ fontWeight: 700, color: '#FFFFFF', fontSize: '0.95rem' }}>
+                    Cryptographic Payment Idempotency
+                  </span>
+                </div>
+                <p style={{ margin: 0, fontSize: '0.84rem', color: '#94A3B8', lineHeight: 1.5 }}>
+                  Every EMI payment includes client-generated idempotency keys. Duplicate network submissions return cached successful receipts without processing repeat debits.
+                </p>
+              </div>
+
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.04)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '12px',
+                padding: '1.25rem'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.4rem' }}>
+                  <FileCheck size={18} color="#38BDF8" />
+                  <span style={{ fontWeight: 700, color: '#FFFFFF', fontSize: '0.95rem' }}>
+                    Tamper-Evident Audit Ledgers
+                  </span>
+                </div>
+                <p style={{ margin: 0, fontSize: '0.84rem', color: '#94A3B8', lineHeight: 1.5 }}>
+                  Append-only event sourcing logging every actor ID, action type, client IP address, timestamp, and entity diff directly into PostgreSQL tables for RBI audits.
+                </p>
+              </div>
+
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.04)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '12px',
+                padding: '1.25rem'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.4rem' }}>
+                  <KeyRound size={18} color="#38BDF8" />
+                  <span style={{ fontWeight: 700, color: '#FFFFFF', fontSize: '0.95rem' }}>
+                    PII Masking & Tokenized Vaults
+                  </span>
+                </div>
+                <p style={{ margin: 0, fontSize: '0.84rem', color: '#94A3B8', lineHeight: 1.5 }}>
+                  PAN card numbers and Aadhaar credentials are tokenized and masked across all underwriting and agent consoles to prevent unauthorized data exposure.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Technical Architecture Strip */}
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.03)',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            borderRadius: '12px',
+            padding: '1.25rem 2rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '1.5rem'
+          }}>
+            <div>
+              <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>Database Engine</div>
+              <div style={{ fontSize: '0.9rem', color: '#FFFFFF', fontWeight: 600 }}>Neon PostgreSQL (SSL Encrypted)</div>
+            </div>
+            <div>
+              <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>Runtime Backend</div>
+              <div style={{ fontSize: '0.9rem', color: '#FFFFFF', fontWeight: 600 }}>Node.js 20 LTS (Node:Test Suite)</div>
+            </div>
+            <div>
+              <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>Client Application</div>
+              <div style={{ fontSize: '0.9rem', color: '#FFFFFF', fontWeight: 600 }}>React 19 + Vite 7 (Vercel Edge)</div>
+            </div>
+            <div>
+              <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>CI/CD Automation</div>
+              <div style={{ fontSize: '0.9rem', color: '#FFFFFF', fontWeight: 600 }}>GitHub Actions (4 Automated Jobs)</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 10. MULTI-PERSONA ROLE MATRIX */}
       <section id="personas" style={{
         background: '#FFFFFF',
-        borderTop: '1px solid #E2E8F0',
-        padding: '5rem 2rem'
+        padding: '5rem 2rem',
+        borderBottom: '1px solid #E2E8F0'
       }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
@@ -1280,10 +1751,10 @@ function Home({ onLogin }) {
               letterSpacing: '0.04em',
               marginBottom: '0.85rem'
             }}>
-              <Users size={14} /> ACCESS CONTROL & GOVERNANCE
+              <Users size={14} /> SEGREGATION OF DUTIES
             </div>
-            <h2 style={{ fontSize: '2.3rem', fontWeight: 800, color: '#0F172A', letterSpacing: '-0.03em', margin: '0 0 0.6rem 0' }}>
-              Multi-Role Persona Matrix
+            <h2 style={{ fontSize: '2.4rem', fontWeight: 800, color: '#0F172A', letterSpacing: '-0.03em', margin: '0 0 0.6rem 0' }}>
+              Multi-Role Persona Matrix & Live Sandbox
             </h2>
             <p style={{ color: '#64748B', fontSize: '1.05rem', margin: 0, maxWidth: 660, marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.5 }}>
               CredenceOS is architected for strict institutional segregation of duties. Experience the platform from any stakeholder perspective with 1-click test access.
@@ -1517,152 +1988,12 @@ function Home({ onLogin }) {
         </div>
       </section>
 
-      {/* SECTION 4: SECURITY & COMPLIANCE ARCHITECTURE */}
-      <section id="security" style={{
-        background: '#0B132B',
-        color: '#FFFFFF',
-        padding: '5rem 2rem',
-        borderTop: '1px solid rgba(255, 255, 255, 0.08)'
-      }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
-            <div style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '0.35rem 0.85rem',
-              background: 'rgba(56, 189, 248, 0.1)',
-              border: '1px solid rgba(56, 189, 248, 0.25)',
-              borderRadius: '999px',
-              color: '#38BDF8',
-              fontSize: '0.78rem',
-              fontWeight: 700,
-              letterSpacing: '0.04em',
-              marginBottom: '0.85rem'
-            }}>
-              <Lock size={14} /> SECURITY & COMPLIANCE INFRASTRUCTURE
-            </div>
-            <h2 style={{ fontSize: '2.3rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.03em', margin: '0 0 0.6rem 0' }}>
-              Institutional Financial Architecture
-            </h2>
-            <p style={{ color: '#94A3B8', fontSize: '1.05rem', margin: 0, maxWidth: 660, marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.5 }}>
-              Engineered with modern defense-in-depth principles, cryptographic payment protection, and compliance-first auditing.
-            </p>
-          </div>
-
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-            gap: '1.5rem',
-            marginBottom: '3rem'
-          }}>
-            <div style={{
-              background: 'rgba(255, 255, 255, 0.04)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              borderRadius: '14px',
-              padding: '1.75rem'
-            }}>
-              <div style={{ color: '#38BDF8', marginBottom: '1rem' }}>
-                <KeyRound size={24} />
-              </div>
-              <h4 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#FFFFFF', margin: '0 0 0.4rem 0' }}>
-                Identity Masking & PII Protection
-              </h4>
-              <p style={{ fontSize: '0.84rem', color: '#94A3B8', lineHeight: 1.55, margin: 0 }}>
-                Masks PAN documents and tokenizes 12-digit Aadhaar numbers to ensure sensitive data is not exposed in underwriting screens or logs.
-              </p>
-            </div>
-
-            <div style={{
-              background: 'rgba(255, 255, 255, 0.04)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              borderRadius: '14px',
-              padding: '1.75rem'
-            }}>
-              <div style={{ color: '#38BDF8', marginBottom: '1rem' }}>
-                <Lock size={24} />
-              </div>
-              <h4 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#FFFFFF', margin: '0 0 0.4rem 0' }}>
-                Cryptographic Payment Idempotency
-              </h4>
-              <p style={{ fontSize: '0.84rem', color: '#94A3B8', lineHeight: 1.55, margin: 0 }}>
-                Unique transaction key hashing ensures zero duplicate debiting. In-flight retries return identical cached responses without executing secondary debits.
-              </p>
-            </div>
-
-            <div style={{
-              background: 'rgba(255, 255, 255, 0.04)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              borderRadius: '14px',
-              padding: '1.75rem'
-            }}>
-              <div style={{ color: '#38BDF8', marginBottom: '1rem' }}>
-                <FileCheck size={24} />
-              </div>
-              <h4 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#FFFFFF', margin: '0 0 0.4rem 0' }}>
-                Tamper-Proof Audit Trails
-              </h4>
-              <p style={{ fontSize: '0.84rem', color: '#94A3B8', lineHeight: 1.55, margin: 0 }}>
-                Append-only event sourcing tracks every credit transition, actor ID, client IP, timestamp, and metadata diff directly in PostgreSQL.
-              </p>
-            </div>
-
-            <div style={{
-              background: 'rgba(255, 255, 255, 0.04)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              borderRadius: '14px',
-              padding: '1.75rem'
-            }}>
-              <div style={{ color: '#38BDF8', marginBottom: '1rem' }}>
-                <Database size={24} />
-              </div>
-              <h4 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#FFFFFF', margin: '0 0 0.4rem 0' }}>
-                Neon PostgreSQL Relational Core
-              </h4>
-              <p style={{ fontSize: '0.84rem', color: '#94A3B8', lineHeight: 1.55, margin: 0 }}>
-                Serverless cloud PostgreSQL with SSL encryption, ACID transactions, and foreign key integrity guaranteeing balance consistency.
-              </p>
-            </div>
-          </div>
-
-          {/* Technical Architecture Strip */}
-          <div style={{
-            background: 'rgba(255, 255, 255, 0.03)',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
-            borderRadius: '12px',
-            padding: '1.25rem 2rem',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            gap: '1.5rem'
-          }}>
-            <div>
-              <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>Runtime Engine</div>
-              <div style={{ fontSize: '0.9rem', color: '#FFFFFF', fontWeight: 600 }}>Node.js 20 LTS (Node:Test Suite)</div>
-            </div>
-            <div>
-              <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>Client Application</div>
-              <div style={{ fontSize: '0.9rem', color: '#FFFFFF', fontWeight: 600 }}>React 19 + Vite 7 (Vercel Edge)</div>
-            </div>
-            <div>
-              <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>Containerization</div>
-              <div style={{ fontSize: '0.9rem', color: '#FFFFFF', fontWeight: 600 }}>Docker Multi-Stage (Nginx Alpine)</div>
-            </div>
-            <div>
-              <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>CI/CD Pipeline</div>
-              <div style={{ fontSize: '0.9rem', color: '#FFFFFF', fontWeight: 600 }}>GitHub Actions (4 Automated Jobs)</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* INSTITUTIONAL FOOTER */}
+      {/* 11. INSTITUTIONAL FOOTER */}
       <footer style={{
         background: '#060A17',
         color: '#94A3B8',
-        padding: '3.5rem 2rem 2rem 2rem',
-        borderTop: '1px solid rgba(255, 255, 255, 0.06)'
+        padding: '4rem 2rem 2.5rem 2rem',
+        borderTop: '1px solid rgba(255, 255, 255, 0.08)'
       }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '2.5rem', marginBottom: '3rem' }}>
@@ -1671,20 +2002,20 @@ function Home({ onLogin }) {
                 <div style={{
                   background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(37, 99, 235, 0.25))',
                   border: '1px solid rgba(56, 189, 248, 0.35)',
-                  padding: '5px',
-                  borderRadius: '6px',
+                  padding: '6px',
+                  borderRadius: '8px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center'
                 }}>
-                  <Landmark size={18} color="#38BDF8" />
+                  <Landmark size={20} color="#38BDF8" />
                 </div>
-                <span style={{ fontSize: '1.25rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.02em' }}>
+                <span style={{ fontSize: '1.35rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.02em' }}>
                   Credence<span style={{ color: '#38BDF8' }}>OS</span>
                 </span>
               </div>
               <p style={{ fontSize: '0.85rem', color: '#64748B', lineHeight: 1.6, margin: 0 }}>
-                Enterprise digital credit rails for Non-Banking Financial Companies. Deterministic state machines, explainable underwriting, and reducing-balance amortization.
+                Enterprise digital credit rails for Non-Banking Financial Companies. Deterministic state machines, explainable underwriting, and reducing-balance amortization schedules.
               </p>
             </div>
 
@@ -1693,6 +2024,14 @@ function Home({ onLogin }) {
                 Navigation
               </div>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.85rem' }}>
+                <li>
+                  <button
+                    onClick={() => document.getElementById('command-center')?.scrollIntoView({ behavior: 'smooth' })}
+                    style={{ background: 'none', border: 'none', color: '#94A3B8', cursor: 'pointer', padding: 0 }}
+                  >
+                    Command Center
+                  </button>
+                </li>
                 <li>
                   <button
                     onClick={() => document.getElementById('calculator')?.scrollIntoView({ behavior: 'smooth' })}
@@ -1707,14 +2046,6 @@ function Home({ onLogin }) {
                     style={{ background: 'none', border: 'none', color: '#94A3B8', cursor: 'pointer', padding: 0 }}
                   >
                     Credit Lifecycle Rails
-                  </button>
-                </li>
-                <li>
-                  <button
-                    onClick={() => document.getElementById('personas')?.scrollIntoView({ behavior: 'smooth' })}
-                    style={{ background: 'none', border: 'none', color: '#94A3B8', cursor: 'pointer', padding: 0 }}
-                  >
-                    Role Matrix & Sandbox
                   </button>
                 </li>
                 <li>
@@ -1785,7 +2116,7 @@ function Home({ onLogin }) {
           </div>
 
           <div style={{
-            borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+            borderTop: '1px solid rgba(255, 255, 255, 0.08)',
             paddingTop: '1.5rem',
             display: 'flex',
             justifyContent: 'space-between',
@@ -1799,7 +2130,7 @@ function Home({ onLogin }) {
               © 2026 CredenceOS Financial Technologies. Crafted for institutional NBFC lending operations.
             </div>
             <div>
-              Designed with React 19, Vite, and Lucide Vector Icons.
+              Compliant with Reserve Bank of India (RBI) Digital Lending Master Directions.
             </div>
           </div>
         </div>
