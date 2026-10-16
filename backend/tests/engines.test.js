@@ -208,3 +208,12 @@ test('Credit Bureau Gateway - High risk subprime profile correctly flows into Un
   assert.ok(result.contributingFactors.some(f => f.factor === 'CREDIT_SUBPRIME'));
 });
 
+// 7. Email Verification & OTP Service Tests
+const { sendVerificationOTP } = require('../src/services/mailService');
+
+test('Email Verification - Generates and dispatches 6-digit OTP code', async () => {
+  const result = await sendVerificationOTP('test.borrower@example.com', '482915', 'Aditya Singh');
+  assert.strictEqual(result.success, true);
+  assert.ok(result.messageId, 'Email messageId should be generated');
+});
+

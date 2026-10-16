@@ -1,12 +1,14 @@
+const crypto = require('crypto');
 const User = require('../models/User');
 const Customer = require('../models/Customer');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { sendVerificationOTP } = require('../services/mailService');
 const { 
   asyncHandler, 
   ValidationError, 
   NotFoundError, 
-  AuthenticationError,
+  AuthenticationError, 
   ConflictError 
 } = require('../utils/errorHandler');
 
@@ -28,12 +30,19 @@ exports.register = asyncHandler(async (req, res) => {
   // Hash password
   const hashedPassword = await bcrypt.hash(password, 12);
 
-  // Create user
+  // Generate 6-digit OTP and 10-minute expiry
+  const otp = crypto.randomInt(100000, 999999).toString();
+  const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
+
+  // Create user with unverified email state and OTP token
   const user = await User.create({ 
     name, 
     email, 
     password: hashedPassword, 
-    role 
+    role,
+    isEmailVerified: false,
+    emailVerificationToken: otp,
+    emailVerificationExpires: otpExpires
   });
 
   // Create associated records based on role
@@ -64,7 +73,12 @@ exports.register = asyncHandler(async (req, res) => {
     throw error;
   }
 
-  // Generate JWT token
+  // Dispatch OTP email (asynchronous / non-blocking)
+  sendVerificationOTP(email, otp, name).catch(err => {
+    console.error('Background OTP send error:', err);
+  });
+
+  // Generate provisional JWT token
   const token = jwt.sign(
     { id: user.id, role: user.role }, 
     process.env.JWT_SECRET, 
@@ -73,15 +87,17 @@ exports.register = asyncHandler(async (req, res) => {
 
   res.status(201).json({
     success: true,
-    message: 'User registered successfully',
+    message: 'User registered successfully. A 6-digit verification code has been dispatched to your email.',
     data: {
       user: { 
         id: user.id, 
         name: user.name, 
         email: user.email, 
-        role: user.role 
+        role: user.role,
+        isEmailVerified: false
       },
-      token
+      token,
+      emailVerificationRequired: true
     }
   });
 });
@@ -116,10 +132,113 @@ exports.login = asyncHandler(async (req, res) => {
         id: user.id, 
         name: user.name, 
         email: user.email, 
-        role: user.role 
+        role: user.role,
+        isEmailVerified: Boolean(user.isEmailVerified)
       },
       token
     }
+  });
+});
+
+// Verify 6-digit Email OTP
+exports.verifyEmailOTP = asyncHandler(async (req, res) => {
+  const { email, otp } = req.body;
+
+  if (!email || !otp) {
+    throw new ValidationError('Email address and 6-digit verification code are required');
+  }
+
+  const user = await User.findOne({ where: { email: email.trim().toLowerCase() } });
+  if (!user) {
+    throw new NotFoundError('No account found with this email address');
+  }
+
+  if (user.isEmailVerified) {
+    return res.json({
+      success: true,
+      message: 'Email address is already verified',
+      data: {
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          isEmailVerified: true
+        }
+      }
+    });
+  }
+
+  if (!user.emailVerificationToken || user.emailVerificationToken !== otp.toString().trim()) {
+    throw new ValidationError('Invalid verification code. Please check your email and try again.');
+  }
+
+  if (new Date() > new Date(user.emailVerificationExpires)) {
+    throw new ValidationError('Verification code has expired. Please click Resend Code to receive a fresh OTP.');
+  }
+
+  // Mark verified and clear temporary token
+  await user.update({
+    isEmailVerified: true,
+    emailVerificationToken: null,
+    emailVerificationExpires: null
+  });
+
+  const token = jwt.sign(
+    { id: user.id, role: user.role }, 
+    process.env.JWT_SECRET, 
+    { expiresIn: '24h' }
+  );
+
+  res.json({
+    success: true,
+    message: 'Email verified successfully!',
+    data: {
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        isEmailVerified: true
+      },
+      token
+    }
+  });
+});
+
+// Resend 6-digit Email OTP
+exports.resendEmailOTP = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    throw new ValidationError('Email address is required');
+  }
+
+  const user = await User.findOne({ where: { email: email.trim().toLowerCase() } });
+  if (!user) {
+    throw new NotFoundError('No account found with this email address');
+  }
+
+  if (user.isEmailVerified) {
+    return res.json({
+      success: true,
+      message: 'This email is already verified. You can log in directly.'
+    });
+  }
+
+  const otp = crypto.randomInt(100000, 999999).toString();
+  const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
+
+  await user.update({
+    emailVerificationToken: otp,
+    emailVerificationExpires: otpExpires
+  });
+
+  await sendVerificationOTP(user.email, otp, user.name);
+
+  res.json({
+    success: true,
+    message: 'A fresh 6-digit verification code has been dispatched to your email.'
   });
 });
 

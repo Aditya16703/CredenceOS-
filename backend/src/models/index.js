@@ -56,6 +56,9 @@ const User = sequelize.define('User', {
     type: DataTypes.ENUM('admin', 'agent', 'customer', 'loan_officer', 'collection_agent'), 
     allowNull: false 
   },
+  isEmailVerified: { type: DataTypes.BOOLEAN, defaultValue: false },
+  emailVerificationToken: { type: DataTypes.STRING, allowNull: true },
+  emailVerificationExpires: { type: DataTypes.DATE, allowNull: true },
 }, { timestamps: true });
 
 const Customer = sequelize.define('Customer', {

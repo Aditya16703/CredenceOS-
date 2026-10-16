@@ -34,21 +34,24 @@ async function seedDatabase() {
     name: 'Vikramaditya Sharma',
     email: 'admin@example.com',
     password: hashedPassword,
-    role: 'admin'
+    role: 'admin',
+    isEmailVerified: true
   });
 
   const agentUser = await User.create({
     name: 'Rajesh Kulkarni',
     email: 'agent@example.com',
     password: agentPassword,
-    role: 'agent'
+    role: 'agent',
+    isEmailVerified: true
   });
 
   const customerUser = await User.create({
     name: 'Ananya Verma',
     email: 'customer@example.com',
     password: customerPassword,
-    role: 'customer'
+    role: 'customer',
+    isEmailVerified: true
   });
 
   // 2. Associate Profiles

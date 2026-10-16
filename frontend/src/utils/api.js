@@ -61,6 +61,20 @@ export const api = {
     });
   },
 
+  async verifyEmailOTP(payload) {
+    return this.request('/api/auth/verify-otp', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async resendEmailOTP(payload) {
+    return this.request('/api/auth/resend-otp', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
+
   // Customer endpoints
   async getCustomers() {
     return this.request('/api/customers');
