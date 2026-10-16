@@ -42,9 +42,12 @@ function Reports({ user }) {
     try {
       // Load comprehensive recovery report
       const reportData = await api.getRecoveryReport();
-      setRecoverySummary(reportData.data.summary);
-      setRecoveredLoans(reportData.data.recoveredLoans || []);
-      setOutstandingLoans(reportData.data.outstandingLoans || []);
+      const summary = reportData?.data?.summary || reportData?.summary || null;
+      const recovered = reportData?.data?.recoveredLoans || reportData?.recoveredLoans || [];
+      const outstanding = reportData?.data?.outstandingLoans || reportData?.outstandingLoans || [];
+      setRecoverySummary(summary);
+      setRecoveredLoans(recovered);
+      setOutstandingLoans(outstanding);
       setRefreshSuccess(true);
       
       // Clear success message after 3 seconds

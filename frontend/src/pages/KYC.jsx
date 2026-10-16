@@ -993,7 +993,7 @@ export default function KYC({ user, onNavigate }) {
 
                       {/* Actions */}
                       <td style={{ padding: '0.85rem 1rem', verticalAlign: 'middle', textAlign: 'center' }}>
-                        {item.status !== 'VERIFIED' && (
+                        {item.status !== 'VERIFIED' ? (
                           <div style={{ display: 'inline-flex', gap: '6px' }}>
                             <button
                               type="button"
@@ -1032,6 +1032,40 @@ export default function KYC({ user, onNavigate }) {
                               }}
                             >
                               <X size={13} /> Reject
+                            </button>
+                          </div>
+                        ) : (
+                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                            <span style={{
+                              padding: '0.25rem 0.65rem',
+                              borderRadius: '6px',
+                              background: '#DCFCE7',
+                              color: '#15803D',
+                              border: '1px solid #86EFAC',
+                              fontSize: '0.75rem',
+                              fontWeight: 750,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '4px'
+                            }}>
+                              <CheckCircle2 size={13} color="#15803D" /> Approved &amp; Verified
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => setShowRejectModal(item.id)}
+                              title="Revoke or Re-evaluate KYC status"
+                              style={{
+                                padding: '0.25rem 0.5rem',
+                                background: '#F8FAFC',
+                                border: '1px solid #CBD5E1',
+                                borderRadius: '5px',
+                                color: '#64748B',
+                                fontSize: '0.72rem',
+                                fontWeight: 600,
+                                cursor: 'pointer'
+                              }}
+                            >
+                              Re-evaluate
                             </button>
                           </div>
                         )}

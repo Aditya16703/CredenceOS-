@@ -9,7 +9,7 @@ const Agent = require('../models/Agent');
 const Payment = require('../models/Payment');
 const { Op } = require('sequelize');
 
-// Get recovered loans (loans with recoveryStatus = 'recovered')
+// Get recovered loans (loans with recoveryStatus = 'recovered' or status = 'CLOSED')
 exports.getRecoveredLoans = asyncHandler(async (req, res) => {
   // Check if user is admin
   if (req.user.role !== 'admin') {
@@ -18,7 +18,10 @@ exports.getRecoveredLoans = asyncHandler(async (req, res) => {
 
   const recoveredLoans = await Loan.findAll({
     where: {
-      recoveryStatus: 'recovered'
+      [Op.or]: [
+        { recoveryStatus: 'recovered' },
+        { status: 'CLOSED' }
+      ]
     },
     include: [
       {
@@ -75,11 +78,18 @@ exports.getRecoveredLoans = asyncHandler(async (req, res) => {
       totalLoansCount,
       averageRecoveryAmount: totalLoansCount > 0 ? (totalRecoveredAmount / totalLoansCount).toFixed(2) : '0.00'
     },
-    data: { loans: loansWithDetails }
+    data: { 
+      loans: loansWithDetails,
+      summary: {
+        totalRecoveredAmount: totalRecoveredAmount.toFixed(2),
+        totalLoansCount,
+        averageRecoveryAmount: totalLoansCount > 0 ? (totalRecoveredAmount / totalLoansCount).toFixed(2) : '0.00'
+      }
+    }
   });
 });
 
-// Get outstanding loans (loans with status = 'approved' and recoveryStatus = 'pending' or 'in-progress')
+// Get outstanding loans (loans with active servicing status)
 exports.getOutstandingLoans = asyncHandler(async (req, res) => {
   // Check if user is admin
   if (req.user.role !== 'admin') {
@@ -88,7 +98,9 @@ exports.getOutstandingLoans = asyncHandler(async (req, res) => {
 
   const outstandingLoans = await Loan.findAll({
     where: {
-      status: 'approved'
+      status: {
+        [Op.in]: ['APPROVED', 'ACTIVE', 'DISBURSED', 'OVERDUE']
+      }
     },
     include: [
       {
@@ -157,7 +169,16 @@ exports.getOutstandingLoans = asyncHandler(async (req, res) => {
       inProgressCount,
       averageOutstandingAmount: totalLoansCount > 0 ? (totalOutstandingAmount / totalLoansCount).toFixed(2) : '0.00'
     },
-    data: { loans: outstandingLoansFiltered }
+    data: { 
+      loans: outstandingLoansFiltered,
+      summary: {
+        totalOutstandingAmount: totalOutstandingAmount.toFixed(2),
+        totalLoansCount,
+        pendingCount,
+        inProgressCount,
+        averageOutstandingAmount: totalLoansCount > 0 ? (totalOutstandingAmount / totalLoansCount).toFixed(2) : '0.00'
+      }
+    }
   });
 });
 
@@ -168,10 +189,12 @@ exports.getRecoveryReport = asyncHandler(async (req, res) => {
     throw new AuthorizationError('Only admins can access reports');
   }
 
-  // Get all loans with recovery status
+  // Get all active, approved, and closed loans
   const allLoans = await Loan.findAll({
     where: {
-      status: 'approved'
+      status: {
+        [Op.in]: ['APPROVED', 'ACTIVE', 'DISBURSED', 'OVERDUE', 'CLOSED']
+      }
     },
     include: [
       {
@@ -218,9 +241,11 @@ exports.getRecoveryReport = asyncHandler(async (req, res) => {
   );
 
   // Categorize loans
-  const recoveredLoans = loansWithDetails.filter(loan => loan.recoveryStatus === 'recovered');
+  const recoveredLoans = loansWithDetails.filter(loan => 
+    loan.recoveryStatus === 'recovered' || loan.status === 'CLOSED'
+  );
   const outstandingLoans = loansWithDetails.filter(loan => 
-    loan.recoveryStatus !== 'recovered' && parseFloat(loan.outstandingAmount) > 0
+    loan.recoveryStatus !== 'recovered' && loan.status !== 'CLOSED' && parseFloat(loan.outstandingAmount) > 0
   );
 
   // Calculate summary statistics
@@ -230,18 +255,21 @@ exports.getRecoveryReport = asyncHandler(async (req, res) => {
 
   const recoveryRate = totalLoansAmount > 0 ? ((totalRecoveredAmount / totalLoansAmount) * 100).toFixed(2) : '0.00';
 
+  const summary = {
+    totalLoans: loansWithDetails.length,
+    recoveredLoans: recoveredLoans.length,
+    outstandingLoans: outstandingLoans.length,
+    totalRecoveredAmount: totalRecoveredAmount.toFixed(2),
+    totalOutstandingAmount: totalOutstandingAmount.toFixed(2),
+    totalLoansAmount: totalLoansAmount.toFixed(2),
+    recoveryRate: `${recoveryRate}%`
+  };
+
   res.json({
     success: true,
-    summary: {
-      totalLoans: loansWithDetails.length,
-      recoveredLoans: recoveredLoans.length,
-      outstandingLoans: outstandingLoans.length,
-      totalRecoveredAmount: totalRecoveredAmount.toFixed(2),
-      totalOutstandingAmount: totalOutstandingAmount.toFixed(2),
-      totalLoansAmount: totalLoansAmount.toFixed(2),
-      recoveryRate: `${recoveryRate}%`
-    },
+    summary,
     data: {
+      summary,
       recoveredLoans,
       outstandingLoans
     }
