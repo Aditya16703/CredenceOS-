@@ -19,6 +19,7 @@ import {
   Calendar,
   Layers,
   Printer,
+  Download,
   X
 } from 'lucide-react';
 import { api, handleApiError, handleApiSuccess, handleTokenExpiration } from '../utils/api';
@@ -36,6 +37,31 @@ function Payments({ user }) {
   const [filterLoanId, setFilterLoanId] = useState('ALL');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedReceipt, setSelectedReceipt] = useState(null);
+
+  // CSV Exporter for Repayments Ledger
+  const handleExportCSV = () => {
+    if (!filteredPayments || filteredPayments.length === 0) return;
+    const headers = ['Txn Reference', 'Facility ID', 'Borrower Name', 'Borrower Email', 'Payment Rail', 'Status', 'Serviced Amount (INR)', 'Timestamp'];
+    const rows = filteredPayments.map(p => [
+      `"${p.transactionReference || p.id}"`,
+      `"${p.loanId}"`,
+      `"${p.Loan?.Customer?.name || 'N/A'}"`,
+      `"${p.Loan?.Customer?.email || 'N/A'}"`,
+      `"${p.paymentMethod || 'MOCK_UPI'}"`,
+      `"${p.status || 'SUCCESS'}"`,
+      p.amount || 0,
+      `"${new Date(p.createdAt || p.paymentDate).toISOString()}"`
+    ]);
+    const csvContent = [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `CredenceOS_Repayments_Ledger_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   // Helper: Calculate EMI, balance, and repayment progress
   const getLoanDetails = loanId => {
@@ -241,7 +267,9 @@ function Payments({ user }) {
       list = list.filter(p => 
         String(p.id).includes(q) ||
         String(p.loanId).includes(q) ||
-        (p.transactionReference && p.transactionReference.toLowerCase().includes(q))
+        (p.transactionReference && p.transactionReference.toLowerCase().includes(q)) ||
+        (p.Loan?.Customer?.name && p.Loan.Customer.name.toLowerCase().includes(q)) ||
+        (p.Loan?.Customer?.email && p.Loan.Customer.email.toLowerCase().includes(q))
       );
     }
     return [...list].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -496,7 +524,7 @@ function Payments({ user }) {
                       <option value="">Choose an active loan account...</option>
                       {activeLoans.map(l => (
                         <option key={l.id} value={l.id}>
-                          Loan #{l.id} — Principal: ₹{Number(l.amount).toLocaleString('en-IN')} ({l.status}) | Term: {l.termMonths} mos
+                          Loan #{l.id} — {l.Customer?.name ? `${l.Customer.name} | ` : ''}Principal: ₹{Number(l.amount).toLocaleString('en-IN')} ({l.status}) | Term: {l.termMonths} mos
                         </option>
                       ))}
                     </>
@@ -870,7 +898,9 @@ function Payments({ user }) {
             >
               <option value="ALL">All Credit Facilities</option>
               {loans.map(l => (
-                <option key={l.id} value={l.id}>Facility #{l.id}</option>
+                <option key={l.id} value={l.id}>
+                  Facility #{l.id}{l.Customer?.name ? ` (${l.Customer.name})` : ''}
+                </option>
               ))}
             </select>
 
@@ -879,7 +909,7 @@ function Payments({ user }) {
               <Search size={14} color="#94A3B8" style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)' }} />
               <input
                 type="text"
-                placeholder="Search Txn UTR / ID..."
+                placeholder="Search Borrower, UTR, or ID..."
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
                 style={{
@@ -888,10 +918,43 @@ function Payments({ user }) {
                   border: '1px solid #CBD5E1',
                   fontSize: '0.82rem',
                   outline: 'none',
-                  width: '200px'
+                  width: '210px'
                 }}
               />
             </div>
+
+            {/* Export CSV Button */}
+            <button
+              type="button"
+              onClick={handleExportCSV}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                padding: '0.55rem 0.85rem',
+                borderRadius: '8px',
+                border: '1px solid #CBD5E1',
+                background: '#FFFFFF',
+                color: '#334155',
+                fontSize: '0.82rem',
+                fontWeight: 650,
+                cursor: 'pointer',
+                transition: 'all 0.15s ease'
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = '#0F172A';
+                e.currentTarget.style.color = '#FFFFFF';
+                e.currentTarget.style.borderColor = '#0F172A';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = '#FFFFFF';
+                e.currentTarget.style.color = '#334155';
+                e.currentTarget.style.borderColor = '#CBD5E1';
+              }}
+            >
+              <Download size={14} />
+              <span>Export CSV</span>
+            </button>
           </div>
         </div>
 
@@ -906,6 +969,9 @@ function Payments({ user }) {
                   </th>
                   <th style={{ padding: '0.85rem 1rem', fontSize: '0.78rem', fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'center' }}>
                     Facility
+                  </th>
+                  <th style={{ padding: '0.85rem 1rem', fontSize: '0.78rem', fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                    Borrower Account
                   </th>
                   <th style={{ padding: '0.85rem 1rem', fontSize: '0.78rem', fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'center' }}>
                     Payment Rail
@@ -973,6 +1039,16 @@ function Payments({ user }) {
                         }}>
                           #{p.loanId}
                         </span>
+                      </td>
+
+                      {/* Borrower Account */}
+                      <td style={{ padding: '0.85rem 1rem', verticalAlign: 'middle' }}>
+                        <div style={{ fontWeight: 700, color: '#0F172A', fontSize: '0.86rem' }}>
+                          {p.Loan?.Customer?.name || 'Borrower Account'}
+                        </div>
+                        <div style={{ fontSize: '0.74rem', color: '#64748B' }}>
+                          {p.Loan?.Customer?.email || 'Registered Borrower'}
+                        </div>
                       </td>
 
                       {/* Payment Rail */}
@@ -1188,6 +1264,12 @@ function Payments({ user }) {
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '9px', fontSize: '0.83rem' }}>
                   <span style={{ color: '#64748B' }}>Credit Facility ID</span>
                   <span style={{ fontWeight: 700, color: '#0F172A' }}>Loan #{selectedReceipt.loanId}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '9px', fontSize: '0.83rem' }}>
+                  <span style={{ color: '#64748B' }}>Payer / Borrower</span>
+                  <span style={{ fontWeight: 700, color: '#0F172A' }}>
+                    {selectedReceipt.Loan?.Customer?.name || 'Borrower Account'}
+                  </span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '9px', fontSize: '0.83rem' }}>
                   <span style={{ color: '#64748B' }}>Beneficiary</span>

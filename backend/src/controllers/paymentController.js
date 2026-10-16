@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-const { Payment, Loan, RepaymentSchedule, sequelize } = require('../models');
+const { Payment, Loan, Customer, Agent, RepaymentSchedule, sequelize } = require('../models');
 const { recordAudit } = require('../services/auditService');
 const { asyncHandler, NotFoundError, ValidationError, AuthorizationError } = require('../utils/errorHandler');
 
@@ -13,7 +13,14 @@ exports.getAllPayments = asyncHandler(async (req, res) => {
 
   const payments = await Payment.findAll({
     where,
-    include: [{ model: Loan, attributes: ['id', 'amount', 'status', 'customerId', 'agentId'] }],
+    include: [{ 
+      model: Loan, 
+      attributes: ['id', 'amount', 'status', 'customerId', 'agentId'],
+      include: [
+        { model: Customer, attributes: ['id', 'name', 'email', 'phone'] },
+        { model: Agent, attributes: ['id', 'name', 'email', 'phone'] }
+      ]
+    }],
     order: [['createdAt', 'DESC']]
   });
 
@@ -123,6 +130,14 @@ exports.getPaymentsByLoan = asyncHandler(async (req, res) => {
   const { loanId } = req.params;
   const payments = await Payment.findAll({
     where: { loanId },
+    include: [{ 
+      model: Loan, 
+      attributes: ['id', 'amount', 'status', 'customerId', 'agentId'],
+      include: [
+        { model: Customer, attributes: ['id', 'name', 'email', 'phone'] },
+        { model: Agent, attributes: ['id', 'name', 'email', 'phone'] }
+      ]
+    }],
     order: [['paymentDate', 'DESC']]
   });
 
