@@ -259,23 +259,6 @@ function Loans({ user }) {
     }
   };
 
-  // Agent: Update recovery status
-  const handleRecoveryStatus = async (id, recoveryStatus) => {
-    setError(''); 
-    setSuccess('');
-    
-    try {
-      await api.updateRecoveryStatus(id, recoveryStatus);
-      handleApiSuccess('Recovery status updated!', setSuccess);
-    } catch (err) {
-      if (err.status === 401) {
-        handleTokenExpiration();
-      } else {
-        handleApiError(err, setError);
-      }
-    }
-  };
-
   const handleRecoverySelect = (loanId, value) => {
     setSelectedRecovery(prev => ({ ...prev, [loanId]: value }));
     setEditingRecovery(prev => ({ ...prev, [loanId]: true }));
@@ -1356,7 +1339,7 @@ function Loans({ user }) {
                     )}
                     <td style={{ padding: '0.85rem 0.75rem', verticalAlign: 'middle', textAlign: 'right' }}>
                       <div style={{ fontWeight: 700, color: '#0F172A', fontSize: '0.9rem' }}>
-                        ₹{Number(loan.amount).toLocaleString('en-IN')}
+                        ₹{Number(loan.amount || 0).toLocaleString('en-IN')}
                       </div>
                     </td>
                     <td style={{ padding: '0.85rem 0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
@@ -1365,7 +1348,7 @@ function Loans({ user }) {
                         color: '#1E293B', 
                         fontWeight: 600
                       }}>
-                        {parseFloat(loan.interestRate).toFixed(1)}% p.a.
+                        {parseFloat(loan.interestRate || 0).toFixed(1)}% p.a.
                       </div>
                     </td>
                     <td style={{ padding: '0.85rem 0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
