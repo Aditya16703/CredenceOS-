@@ -200,14 +200,17 @@ function Loans({ user }) {
     }
   };
 
+  const [updatingLoanId, setUpdatingLoanId] = useState(null);
+
   // Approve/Reject loan
   const handleStatus = async (id, status) => {
     setError(''); 
     setSuccess('');
+    setUpdatingLoanId(id);
     
     try {
       await api.updateLoanStatus(id, status);
-      handleApiSuccess('Loan status updated!', setSuccess);
+      handleApiSuccess(`Credit facility #${id} status successfully transitioned to ${status}!`, setSuccess);
       
       // Refresh loans list
       let loansData;
@@ -218,13 +221,15 @@ function Loans({ user }) {
       } else {
         loansData = await api.getAllLoans();
       }
-      setLoans(Array.isArray(loansData.data.loans) ? loansData.data.loans : []);
+      setLoans(Array.isArray(loansData?.data?.loans) ? loansData.data.loans : []);
     } catch (err) {
       if (err.status === 401) {
         handleTokenExpiration();
       } else {
         handleApiError(err, setError);
       }
+    } finally {
+      setUpdatingLoanId(null);
     }
   };
 
@@ -1123,6 +1128,45 @@ function Loans({ user }) {
               </div>
             </div>
           )}
+          {/* Universal Alert Feedback for Admin, Underwriters & Registry */}
+          {error && (
+            <div style={{
+              marginBottom: '1.25rem',
+              padding: '0.9rem 1.25rem',
+              background: '#FEF2F2',
+              border: '1px solid #FECACA',
+              borderRadius: '12px',
+              color: '#991B1B',
+              fontSize: '0.88rem',
+              fontWeight: 600,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              boxShadow: '0 2px 8px rgba(220, 38, 38, 0.08)'
+            }}>
+              <AlertCircle size={18} color="#DC2626" />
+              <span>{error}</span>
+            </div>
+          )}
+          {success && (
+            <div style={{
+              marginBottom: '1.25rem',
+              padding: '0.9rem 1.25rem',
+              background: '#F0FDF4',
+              border: '1px solid #BBF7D0',
+              borderRadius: '12px',
+              color: '#166534',
+              fontSize: '0.88rem',
+              fontWeight: 600,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              boxShadow: '0 2px 8px rgba(22, 163, 74, 0.08)'
+            }}>
+              <CheckCircle2 size={18} color="#16A34A" />
+              <span>{success}</span>
+            </div>
+          )}
           {/* Loans Table Section */}
       <div style={{ 
         background: '#fff', 
@@ -1432,11 +1476,13 @@ function Loans({ user }) {
                         {renderCIRAuditButton(loan)}
 
                         {/* Approve/Reject buttons for submitted/pending loans */}
-                        {(['SUBMITTED', 'PENDING', 'UNDER_REVIEW', 'pending'].includes(loan.status)) && user.role !== 'agent' && user.role !== 'customer' && (
+                        {(['SUBMITTED', 'PENDING', 'UNDER_REVIEW', 'DRAFT'].includes((loan.status || '').toUpperCase())) && user.role !== 'agent' && user.role !== 'customer' && (
                           <div style={{ display: 'flex', gap: '0.35rem' }}>
                             <button 
                               className="btn btn-success btn-sm"
+                              disabled={updatingLoanId === loan.id}
                               onClick={() => handleStatus(loan.id, 'APPROVED')}
+                              title="Approve Credit Facility"
                               style={{
                                 fontSize: '0.72rem',
                                 padding: '0.22rem 0.55rem',
@@ -1444,14 +1490,18 @@ function Loans({ user }) {
                                 fontWeight: 700,
                                 background: '#16A34A',
                                 border: 'none',
-                                boxShadow: '0 1px 3px rgba(22, 163, 74, 0.3)'
+                                boxShadow: '0 1px 3px rgba(22, 163, 74, 0.3)',
+                                cursor: updatingLoanId === loan.id ? 'not-allowed' : 'pointer',
+                                opacity: updatingLoanId === loan.id ? 0.7 : 1
                               }}
                             >
-                              Approve
+                              {updatingLoanId === loan.id ? '...' : 'Approve'}
                             </button>
                             <button 
                               className="btn btn-danger btn-sm"
+                              disabled={updatingLoanId === loan.id}
                               onClick={() => handleStatus(loan.id, 'REJECTED')}
+                              title="Reject Credit Facility"
                               style={{
                                 fontSize: '0.72rem',
                                 padding: '0.22rem 0.55rem',
@@ -1459,10 +1509,12 @@ function Loans({ user }) {
                                 fontWeight: 700,
                                 background: '#DC2626',
                                 border: 'none',
-                                boxShadow: '0 1px 3px rgba(220, 38, 38, 0.3)'
+                                boxShadow: '0 1px 3px rgba(220, 38, 38, 0.3)',
+                                cursor: updatingLoanId === loan.id ? 'not-allowed' : 'pointer',
+                                opacity: updatingLoanId === loan.id ? 0.7 : 1
                               }}
                             >
-                              Reject
+                              {updatingLoanId === loan.id ? '...' : 'Reject'}
                             </button>
                           </div>
                         )}

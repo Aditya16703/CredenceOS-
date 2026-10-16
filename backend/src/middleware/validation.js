@@ -139,8 +139,18 @@ const loanValidation = {
   },
 
   updateStatus: (req, res, next) => {
-    const { status } = req.body;
-    const validStatuses = ['pending', 'approved', 'rejected', 'active', 'closed', 'defaulted'];
+    const rawStatus = req.body?.status;
+    if (!rawStatus || typeof rawStatus !== 'string') {
+      const error = new ValidationError('Loan status is required');
+      error.errors = [{ field: 'status', message: 'Status must be a non-empty string' }];
+      return next(error);
+    }
+
+    const status = rawStatus.toUpperCase();
+    const validStatuses = [
+      'DRAFT', 'SUBMITTED', 'PENDING', 'UNDER_REVIEW', 'APPROVED', 
+      'REJECTED', 'DISBURSED', 'ACTIVE', 'OVERDUE', 'CLOSED', 'CANCELLED'
+    ];
     
     if (!validStatuses.includes(status)) {
       const error = new ValidationError('Invalid loan status');
@@ -148,6 +158,7 @@ const loanValidation = {
       return next(error);
     }
 
+    req.body.status = status;
     next();
   }
 };

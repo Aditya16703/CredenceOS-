@@ -22,12 +22,13 @@ const {
 const VALID_TRANSITIONS = {
   'DRAFT': ['SUBMITTED', 'CANCELLED'],
   'SUBMITTED': ['UNDER_REVIEW', 'APPROVED', 'REJECTED', 'CANCELLED'],
-  'UNDER_REVIEW': ['APPROVED', 'REJECTED'],
-  'APPROVED': ['DISBURSED', 'CANCELLED'],
+  'PENDING': ['UNDER_REVIEW', 'APPROVED', 'REJECTED', 'CANCELLED'],
+  'UNDER_REVIEW': ['APPROVED', 'REJECTED', 'CANCELLED'],
+  'APPROVED': ['DISBURSED', 'ACTIVE', 'CANCELLED', 'UNDER_REVIEW', 'REJECTED'],
   'DISBURSED': ['ACTIVE'],
   'ACTIVE': ['OVERDUE', 'CLOSED'],
   'OVERDUE': ['ACTIVE', 'CLOSED'],
-  'REJECTED': [],
+  'REJECTED': ['UNDER_REVIEW', 'APPROVED'],
   'CLOSED': [],
   'CANCELLED': []
 };
@@ -254,7 +255,7 @@ exports.updateLoanStatus = asyncHandler(async (req, res) => {
     throw new NotFoundError('Loan record not found');
   }
 
-  const currentStatus = loan.status;
+  const currentStatus = (loan.status || '').toUpperCase();
   const validNext = VALID_TRANSITIONS[currentStatus] || [];
   const normalizedStatus = (status || '').toUpperCase();
 
