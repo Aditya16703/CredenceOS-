@@ -23,7 +23,8 @@
   <img src="https://img.shields.io/badge/Backend-Node.js_v20+-339933?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node" />
   <img src="https://img.shields.io/badge/Frontend-React_19_+_Vite-61DAFB?style=flat-square&logo=react&logoColor=black" alt="React" />
   <img src="https://img.shields.io/badge/Docker-Multi--Container-2496ED?style=flat-square&logo=docker&logoColor=white" alt="Docker" />
-  <img src="https://img.shields.io/badge/Tests-18%2F18_Passing-brightgreen?style=flat-square&logo=node.js&logoColor=white" alt="Tests" />
+  <img src="https://img.shields.io/badge/Tests-23%2F23_Passing-brightgreen?style=flat-square&logo=node.js&logoColor=white" alt="Tests" />
+  <img src="https://img.shields.io/badge/DigiLocker_e--KYC-UIDAI_%26_PMLA_Rule_9-blue?style=flat-square&logo=shield&logoColor=white" alt="DigiLocker e-KYC" />
   <img src="https://img.shields.io/badge/Account_Aggregator-ReBIT_2.0_Standard-blueviolet?style=flat-square&logo=shield&logoColor=white" alt="Account Aggregator" />
   <img src="https://img.shields.io/badge/Credit_Bureau-CIBIL_%2F_Experian_Verified-blue?style=flat-square&logo=shield&logoColor=white" alt="Credit Bureau" />
   <img src="https://img.shields.io/badge/Email_Auth-6--Digit_OTP_Verified-2563EB?style=flat-square&logo=gmail&logoColor=white" alt="Email Auth" />
@@ -67,11 +68,12 @@ Test the complete institutional lending, cashflow underwriting, and debt recover
 
 Unlike naive CRUD loan demos, CredenceOS incorporates core financial engineering primitives:
 1. **Deterministic State Machine**: Strictly enforces regulatory state lifecycles (`DRAFT` → `SUBMITTED` → `UNDER_REVIEW` → `APPROVED` → `DISBURSED` → `ACTIVE` → `CLOSED` / `OVERDUE`).
-2. **Authenticated Credit Bureau Gateway**: Pulls KYC-bound Credit Information Reports (CIBIL/Experian), validates 10-char PAN tax format, issues 12-digit Control Numbers, and signs reports with HMAC-SHA256 signatures to prevent client score spoofing.
-3. **Explainable Underwriting Engine**: Automated multi-factor Debt-to-Income (DTI) computation, leverage checks, and transparent positive/neutral/negative risk factors.
-4. **Reducing-Balance Amortization Engine**: Precision monthly repayment calculation with penny/cent-level final installment reconciliation down to exactly `0.00`.
-5. **Cryptographic Payment Idempotency**: Atomic database transactions protected by `Idempotency-Key` headers to eliminate double-debit anomalies.
-6. **Event-Sourced Audit Ledger**: Append-only compliance log capturing actor, role, IP address, and JSON state deltas.
+2. **Sovereign DigiLocker & UIDAI e-KYC Gateway**: Simulates sovereign identity verification, enforces PAN-Aadhaar biometric linkage, applies PMLA Rule 9 canonical legal name overwrite, and seals identity with HMAC-SHA256 checksums.
+3. **Authenticated Credit Bureau Gateway**: Pulls KYC-bound Credit Information Reports (CIBIL/Experian), validates 10-char PAN tax format, issues 12-digit Control Numbers, and signs reports with HMAC-SHA256 signatures to prevent client score spoofing.
+4. **Explainable Underwriting & Anti-Loan-Stacking Engine**: Multi-factor Debt-to-Income (DTI) computation, tradeline reconciliation across internal and external bureaus, and transparent risk factor attribution.
+5. **Reducing-Balance Amortization Engine**: Precision monthly repayment calculation with penny/cent-level final installment reconciliation down to exactly `0.00`.
+6. **Cryptographic Payment Idempotency**: Atomic database transactions protected by `Idempotency-Key` headers to eliminate double-debit anomalies.
+7. **Event-Sourced Audit Ledger**: Append-only compliance log capturing actor, role, IP address, and JSON state deltas.
 
 ---
 
@@ -82,7 +84,7 @@ flowchart TD
     subgraph Client ["Client Presentation Tier (React 19 + Vite)"]
         UI["🏛️ CredenceOS Portal"]
         AuthM["🔐 1-Click Persona Auth"]
-        KYCU["🪪 Masked KYC Portal"]
+        KYCU["🪪 Sovereign e-KYC Modal"]
         LoanU["📊 Amortization & Apply"]
         CIRU["🛡️ CIR Underwriting Dossier Modal"]
         PayU["💳 Idempotent Payments"]
@@ -96,9 +98,10 @@ flowchart TD
     end
 
     subgraph Engines ["Core Financial & Verification Engines"]
+        SVE["🪪 Sovereign DigiLocker e-KYC\n(UIDAI OTP, PAN-Aadhaar, HMAC-SHA256)"]
         CBG["🏛️ Credit Bureau Gateway\n(CIBIL/Experian, HMAC-SHA256)"]
         AAE["⚡ RBI Account Aggregator\n(ReBIT 2.0, Cashflows, AMB)"]
-        UWE["🧠 Rule-Based Underwriting Engine\n(DTI, Risk Tier, Capacity)"]
+        UWE["🧠 Rule-Based Underwriting Engine\n(DTI, Anti-Stacking, Risk Tier)"]
         AME["📈 Reducing-Balance Amortization\n(EMI, Penny Reconciliation)"]
         SME["⚙️ Finite Loan State Machine\n(Valid Transitions)"]
         IDE["🔒 Idempotency Guard\n(Double-Debit Prevention)"]
@@ -113,8 +116,10 @@ flowchart TD
     UI --> CORS
     CORS --> JWT
     JWT --> Val
+    Val --> SVE
     Val --> CBG
     Val --> AAE
+    SVE --> UWE
     CBG --> UWE
     AAE --> UWE
     Val --> AME
@@ -143,9 +148,9 @@ Where:
 > **Reconciliation Guarantee**: The final installment automatically absorbs fractional rounding residues so that:
 > $$\text{Closing Principal}_{n} \equiv 0.00$$
 
-### 2. Explainable Underwriting Rule Engine
+### 2. Explainable Underwriting & Anti-Loan-Stacking Engine
 
-The underwriting decision engine evaluates credit eligibility before loan creation:
+The underwriting decision engine evaluates credit eligibility and prevents **loan stacking** before credit facility origination:
 
 $$\text{DTI Ratio} = \frac{\text{Existing Monthly Debts} + \text{Proposed EMI}}{\text{Monthly Income}} \times 100\%$$
 
@@ -154,7 +159,17 @@ $$\text{DTI Ratio} = \frac{\text{Existing Monthly Debts} + \text{Proposed EMI}}{
 | $\le 35\%$ | $\ge 750$ | **LOW RISK** | ✅ Auto-Approved (Prime rate) |
 | $36\% - 50\%$ | $650 - 749$ | **MODERATE RISK** | 🔍 Referred for Underwriter Review |
 | $> 50\%$ | $< 650$ | **HIGH RISK** | ⚠️ Flagged for Collateral / Guarantor |
-| $> 70\%$ | Any | **UNACCEPTABLE** | ❌ Hard Rejection |
+| $> 60\%$ | Any | **UNACCEPTABLE** | ❌ Hard Rejection (`REJECT_OR_REFER`) |
+
+#### Multi-Layer Anti-Loan-Stacking Architecture:
+To prevent borrowers from taking multiple simultaneous loans across lenders:
+1. **Internal Platform Query**: Counts existing `ACTIVE`, `OVERDUE`, and `DISBURSED` facilities on CredenceOS.
+2. **External Bureau Tradelines**: Reconciles external active facilities from credit bureaus (CIBIL/Experian):
+   $$\text{Total Active Tradelines} = \max(\text{Internal Active Loans},\, \text{Bureau Tradelines})$$
+3. **Obligation Floor**: Takes the higher of declared monthly debt and bureau-verified monthly obligations:
+   $$\text{Effective Monthly Debt} = \max(\text{Declared Debt},\, \text{Bureau Reported Debt})$$
+4. **Leverage Threshold**: If active loans exceed 3 facilities, the engine flags the application as `OVER_LEVERAGED` and applies an automated risk score penalty.
+5. **Account Aggregator Cashflow Audit**: Scans bank statements for hidden recurring ECS/NACH loan debits and bounce returns.
 
 ### 3. Institutional Credit Bureau (CIC) Gateway & Anti-Spoofing Architecture
 
@@ -185,6 +200,17 @@ To ensure verified account ownership without requiring expensive third-party SMS
 * **Zero-Cost Architecture**: Built on `nodemailer` to support free standard SMTP (such as a **free Gmail App Password**, Brevo free tier, or custom SMTP) with automatic [Ethereal Email](https://ethereal.email) test inboxes and terminal fallback logging for zero-friction development.
 * **Cryptographic 6-Digit OTP**: Generates random 6-digit codes (`crypto.randomInt(100000, 999999)`) with a strict 10-minute time-to-live.
 * **2-Step Onboarding Experience**: Borrowers register identity details and are transitioned to an interactive verification card with a 60-second "Resend Code" countdown timer and auto-login upon confirmation.
+
+### 6. 🪪 Sovereign DigiLocker & UIDAI e-KYC Gateway (PMLA Rule 9 & Section 139AA)
+
+CredenceOS implements an institutional, bank-grade e-KYC architecture compliant with statutory identity verification standards:
+* **UIDAI / DigiLocker Sovereign OTP Challenge**: 2-stage verification protocol (`initiateEKYCChallenge` and `verifyEKYCOTP`) with session state caching, masked mobile dispatch (`+91 ******4829`), and last-4-digit Aadhaar tokenization (`XXXX-XXXX-XXXX`).
+* **CBDT / NSDL Protean Biometric Linkage**: Validates Income Tax PAN against national registries under Section 139AA; hard-blocks unlinked or `INOPERATIVE` PAN credentials from credit origination.
+* **PMLA Rule 9 Canonical Source-of-Truth Overwrite**: Strictly avoids fuzzy name guesswork. The official government registry name is the immutable source of truth; borrower account profiles are authoritatively overwritten and bound to their verified legal entity name.
+* **Statutory Underage Gate**: Enforces a strict age floor ($\ge 18$ years) derived deterministically from the statutory date of birth.
+* **HMAC-SHA256 Tamper-Proof Audit Sealing**: Every verified dossier generates an immutable cryptographic signature:
+  $$\text{Seal} = \text{HMAC-SHA256}(\text{PAN} \parallel \text{AadhaarLast4} \parallel \text{CanonicalName} \parallel \text{DOB} \parallel \text{UIDAIRef} \parallel \text{VerifiedAt})$$
+* **Anti-Theft Bank Disbursement Legal Ownership Matching**: In accordance with the **RBI 2022 Digital Lending Mandate**, loan disbursements verify that the destination bank Core Banking Solution (CBS) account holder matches the borrower's sovereign canonical legal entity.
 
 ---
 
@@ -269,8 +295,13 @@ ok 15 - Email Verification - Generates and dispatches 6-digit OTP code
 ok 16 - Account Aggregator - Registry lists valid RBI-registered FIP banks
 ok 17 - Account Aggregator - Initiates ReBIT consent and returns valid consent handle
 ok 18 - Account Aggregator - Verifies OTP and retrieves authenticated cashflows
-1..18
-# tests 18 | pass 18 | fail 0
+ok 19 - Sovereign e-KYC - Initiates DigiLocker challenge session and returns masked phone
+ok 20 - Sovereign e-KYC - Verifies OTP, executes canonical overwrite, and generates HMAC seal
+ok 21 - Sovereign e-KYC - Rejects unlinked PAN-Aadhaar records
+ok 22 - Sovereign e-KYC - Rejects underage applicant (under 18)
+ok 23 - Sovereign e-KYC - Bank disbursement ownership validation (Anti-Theft)
+1..23
+# tests 23 | pass 23 | fail 0
 ```
 
 ---
@@ -282,12 +313,12 @@ CredenceOS-
 ├── .github/workflows/         # Automated GitHub Actions CI/CD pipeline
 ├── backend/
 │   ├── src/
-│   │   ├── controllers/      # auth, loan, payment, kyc, audit, accountAggregator
+│   │   ├── controllers/      # auth, loan, payment, kyc, audit, accountAggregator, report
 │   │   ├── models/           # Sequelize ORM schema definitions & UnderwritingRecord
-│   │   ├── routes/           # RESTful API route definitions (auth, loan, kyc, audit, accountAggregator)
-│   │   ├── services/         # Amortization, underwriting, creditBureauService, accountAggregatorService, mailService
+│   │   ├── routes/           # RESTful API route definitions (auth, loan, kyc, audit, accountAggregator, report)
+│   │   ├── services/         # Amortization, underwriting, creditBureauService, accountAggregatorService, kycVerificationService, mailService
 │   │   └── server.js         # Express server entry point & error handlers
-│   └── tests/                # Mathematical calculation, bureau security, AA & OTP tests
+│   └── tests/                # Mathematical calculation, bureau security, AA, OTP & Sovereign e-KYC tests
 ├── frontend/
 │   ├── src/
 │   │   ├── components/       # UnderwritingModal, Account Aggregator consent modal, Notifications
