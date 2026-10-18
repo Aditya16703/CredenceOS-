@@ -106,11 +106,19 @@ exports.createLoan = asyncHandler(async (req, res) => {
     throw new ValidationError('Customer must have a VERIFIED KYC before applying for credit');
   }
 
+  if (kyc.panStatus && kyc.panStatus !== 'OPERATIVE') {
+    throw new ValidationError('Loan creation blocked: Customer Income Tax PAN is INOPERATIVE');
+  }
+
+  if (kyc.panAadhaarLinked === false) {
+    throw new ValidationError('Loan creation blocked: Biometric PAN-Aadhaar linkage unconfirmed');
+  }
+
   // Institutional CIC Credit Bureau Pull (CIBIL / Experian)
   // Scores are authenticated against national bureau registries using KYC PAN and identity
   const bureauReport = await pullCreditReport({
     panNumber: kyc.panNumber,
-    fullName: customer.name,
+    fullName: kyc.canonicalLegalName || customer.name,
     phone: customer.phone,
     dateOfBirth: kyc.dateOfBirth,
     consent: bureauConsent
@@ -269,6 +277,11 @@ exports.updateLoanStatus = asyncHandler(async (req, res) => {
   if (normalizedStatus === 'APPROVED') {
     updateData.startDate = new Date();
   } else if (normalizedStatus === 'DISBURSED') {
+    // RBI Digital Lending Mandate: Verify borrower sovereign identity compliance
+    const kyc = await KYC.findOne({ where: { customerId: loan.customerId } });
+    if (kyc && (!kyc.panAadhaarLinked || kyc.panStatus !== 'OPERATIVE')) {
+      throw new ValidationError('Disbursement locked: Borrower does not satisfy statutory sovereign e-KYC compliance');
+    }
     updateData.disbursedDate = new Date();
     updateData.status = 'ACTIVE'; // Auto-transition to ACTIVE once funds are released
   }

@@ -279,4 +279,106 @@ test('Account Aggregator - Verifies OTP and retrieves authenticated cashflows', 
   assert.ok(uwResult.contributingFactors.some(f => f.factor === 'AA_SALARY_VERIFIED'));
 });
 
+// 9. Sovereign DigiLocker & e-KYC Identity Tests
+const {
+  initiateEKYCChallenge,
+  verifyEKYCOTP,
+  deriveSovereignProfile,
+  verifyBankDisbursementMatch,
+  generateTamperProofKYCHash,
+  calculateAge
+} = require('../src/services/kycVerificationService');
+
+test('Sovereign e-KYC - Initiates DigiLocker challenge session and returns masked phone', async () => {
+  const result = await initiateEKYCChallenge({
+    customerId: 1,
+    panNumber: 'ABCDE1234F',
+    aadhaarNumber: '541289014829',
+    phone: '9876544829',
+    customerName: 'Aditya Singh'
+  });
+
+  assert.strictEqual(result.success, true);
+  assert.ok(result.sessionHandle.startsWith('EKYC-REQ-'));
+  assert.strictEqual(result.maskedAadhaar, 'XXXX-XXXX-4829');
+  assert.strictEqual(result.maskedMobile, '+91 ******4829');
+});
+
+test('Sovereign e-KYC - Verifies OTP, executes canonical overwrite, and generates HMAC seal', async () => {
+  const challenge = await initiateEKYCChallenge({
+    customerId: 1,
+    panNumber: 'ABCDE1234F',
+    aadhaarNumber: '541289014829',
+    phone: '9876544829',
+    customerName: 'Aditya Singh'
+  });
+
+  const verified = await verifyEKYCOTP({
+    sessionHandle: challenge.sessionHandle,
+    otp: '1234',
+    dateOfBirth: '1998-05-15',
+    address: '12/4 Connaught Place, New Delhi, 110001'
+  });
+
+  assert.strictEqual(verified.success, true);
+  assert.strictEqual(verified.canonicalLegalName, 'ADITYA KUMAR SINGH', 'Canonical legal name should overwrite display name');
+  assert.strictEqual(verified.panStatus, 'OPERATIVE');
+  assert.strictEqual(verified.panAadhaarLinked, true);
+  assert.ok(verified.uidaiTransactionRef.startsWith('UIDAI-EKYC-'));
+  assert.ok(verified.tamperProofHash, 'Must generate HMAC-SHA256 signature');
+  assert.ok(verified.age >= 18);
+});
+
+test('Sovereign e-KYC - Rejects unlinked PAN-Aadhaar records', async () => {
+  const challenge = await initiateEKYCChallenge({
+    customerId: 2,
+    panNumber: 'UNLNK9999F',
+    aadhaarNumber: '999988887777',
+    phone: '9876543210',
+    customerName: 'Mohit Verma'
+  });
+
+  await assert.rejects(
+    async () => {
+      await verifyEKYCOTP({
+        sessionHandle: challenge.sessionHandle,
+        otp: '1234',
+        dateOfBirth: '1995-10-10'
+      });
+    },
+    /PAN-Aadhaar biometric linkage not confirmed/
+  );
+});
+
+test('Sovereign e-KYC - Rejects underage applicant (under 18)', async () => {
+  const challenge = await initiateEKYCChallenge({
+    customerId: 3,
+    panNumber: 'ABCDE1234F',
+    aadhaarNumber: '541289014829',
+    phone: '9876543210'
+  });
+
+  await assert.rejects(
+    async () => {
+      await verifyEKYCOTP({
+        sessionHandle: challenge.sessionHandle,
+        otp: '1234',
+        dateOfBirth: '2015-01-01' // Under 18
+      });
+    },
+    /credit applicants must be at least 18 years old/
+  );
+});
+
+test('Sovereign e-KYC - Bank disbursement ownership validation (Anti-Theft)', () => {
+  const matchResult = verifyBankDisbursementMatch('ADITYA KUMAR SINGH', 'ADITYA KUMAR SINGH');
+  assert.strictEqual(matchResult.isMatch, true);
+  assert.strictEqual(matchResult.status, 'BENEFICIARY_OWNERSHIP_CONFIRMED');
+
+  const mismatchResult = verifyBankDisbursementMatch('ADITYA KUMAR SINGH', 'SURESH SHARMA');
+  assert.strictEqual(mismatchResult.isMatch, false);
+  assert.strictEqual(mismatchResult.status, 'BENEFICIARY_MISMATCH_SUSPECTED');
+});
+
+
 

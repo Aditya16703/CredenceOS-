@@ -134,6 +134,19 @@ const KYC = sequelize.define('KYC', {
     type: DataTypes.ENUM('NOT_STARTED', 'SUBMITTED', 'UNDER_REVIEW', 'VERIFIED', 'REJECTED'), 
     defaultValue: 'SUBMITTED' 
   },
+  panStatus: { 
+    type: DataTypes.ENUM('OPERATIVE', 'INOPERATIVE', 'SUSPENDED'), 
+    defaultValue: 'OPERATIVE' 
+  },
+  panAadhaarLinked: { type: DataTypes.BOOLEAN, defaultValue: true },
+  canonicalLegalName: { type: DataTypes.STRING, allowNull: true },
+  ekycTransactionRef: { type: DataTypes.STRING, allowNull: true },
+  ekycVerifiedAt: { type: DataTypes.DATE, allowNull: true },
+  bankAccountValidated: { type: DataTypes.BOOLEAN, defaultValue: false },
+  cbsAccountHolderName: { type: DataTypes.STRING, allowNull: true },
+  tamperProofHash: { type: DataTypes.STRING, allowNull: true },
+  riskScore: { type: DataTypes.INTEGER, defaultValue: 100 },
+  fraudFlags: { type: DataTypes.JSONB, defaultValue: [] },
   submittedAt: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
   reviewedAt: { type: DataTypes.DATE, allowNull: true },
   reviewerId: { type: DataTypes.INTEGER, allowNull: true },

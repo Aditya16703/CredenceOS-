@@ -119,6 +119,21 @@ export const api = {
     });
   },
 
+  // Sovereign DigiLocker / UIDAI e-KYC Endpoints
+  async initiateEKYC(data) {
+    return this.request('/api/kyc/ekyc/initiate', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  async verifyEKYCOTP(data) {
+    return this.request('/api/kyc/ekyc/verify', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
   // KYC Endpoints
   async submitKYC(kycData) {
     return this.request('/api/kyc/submit', {
