@@ -108,8 +108,8 @@ function Home({ onLogin }) {
     let creds = { email: '', password: '' };
     if (role === 'admin') {
       creds = { email: 'admin@example.com', password: 'admin123' };
-    } else if (role === 'agent') {
-      creds = { email: 'agent@example.com', password: 'agent123' };
+    } else if (role === 'officer' || role === 'loan_officer' || role === 'agent') {
+      creds = { email: 'officer@example.com', password: 'agent123' };
     } else {
       creds = { email: 'customer@example.com', password: 'customer123' };
     }
@@ -612,13 +612,13 @@ function Home({ onLogin }) {
                       <button
                         type="button"
                         disabled={loading}
-                        onClick={() => handlePersonaLogin('agent')}
-                        title="Sign in as Recovery Officer (Delinquency Workbench)"
+                        onClick={() => handlePersonaLogin('officer')}
+                        title="Sign in as Loan Officer (Credit Underwriting & KYC Compliance Desk)"
                         style={{
                           padding: '0.65rem 0.4rem',
                           fontSize: '0.78rem',
                           fontWeight: 700,
-                          background: activePersona === 'agent' ? '#2563EB' : '#1C2541',
+                          background: (activePersona === 'officer' || activePersona === 'agent') ? '#2563EB' : '#1C2541',
                           color: '#FFFFFF',
                           border: 'none',
                           borderRadius: '8px',
