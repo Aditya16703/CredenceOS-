@@ -108,8 +108,10 @@ function Home({ onLogin }) {
     let creds = { email: '', password: '' };
     if (role === 'admin') {
       creds = { email: 'admin@example.com', password: 'admin123' };
-    } else if (role === 'officer' || role === 'loan_officer' || role === 'agent') {
+    } else if (role === 'officer' || role === 'loan_officer') {
       creds = { email: 'officer@example.com', password: 'agent123' };
+    } else if (role === 'agent') {
+      creds = { email: 'agent@example.com', password: 'agent123' };
     } else {
       creds = { email: 'customer@example.com', password: 'customer123' };
     }
@@ -582,14 +584,14 @@ function Home({ onLogin }) {
                       </span>
                       <span style={{ color: '#2563EB', fontWeight: 700, fontSize: '0.7rem' }}>INSTANT ACCESS</span>
                     </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem' }}>
                       <button
                         type="button"
                         disabled={loading}
                         onClick={() => handlePersonaLogin('admin')}
                         title="Sign in as Admin (Credit Underwriting & Audit Ledgers)"
                         style={{
-                          padding: '0.65rem 0.4rem',
+                          padding: '0.65rem 0.5rem',
                           fontSize: '0.78rem',
                           fontWeight: 700,
                           background: activePersona === 'admin' ? '#1E293B' : '#0B132B',
@@ -603,7 +605,7 @@ function Home({ onLogin }) {
                           display: 'inline-flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          gap: '5px'
+                          gap: '6px'
                         }}
                       >
                         <ShieldAlert size={14} color="#38BDF8" />
@@ -615,10 +617,10 @@ function Home({ onLogin }) {
                         onClick={() => handlePersonaLogin('officer')}
                         title="Sign in as Loan Officer (Credit Underwriting & KYC Compliance Desk)"
                         style={{
-                          padding: '0.65rem 0.4rem',
+                          padding: '0.65rem 0.5rem',
                           fontSize: '0.78rem',
                           fontWeight: 700,
-                          background: (activePersona === 'officer' || activePersona === 'agent') ? '#2563EB' : '#1C2541',
+                          background: activePersona === 'officer' ? '#1E293B' : '#1C2541',
                           color: '#FFFFFF',
                           border: 'none',
                           borderRadius: '8px',
@@ -629,11 +631,37 @@ function Home({ onLogin }) {
                           display: 'inline-flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          gap: '5px'
+                          gap: '6px'
                         }}
                       >
                         <Briefcase size={14} color="#60A5FA" />
-                        <span>Officer</span>
+                        <span>Loan Officer</span>
+                      </button>
+                      <button
+                        type="button"
+                        disabled={loading}
+                        onClick={() => handlePersonaLogin('agent')}
+                        title="Sign in as Recovery Agent (Delinquency Workbench & Field Collections)"
+                        style={{
+                          padding: '0.65rem 0.5rem',
+                          fontSize: '0.78rem',
+                          fontWeight: 700,
+                          background: activePersona === 'agent' ? '#EA580C' : '#9A3412',
+                          color: '#FFFFFF',
+                          border: 'none',
+                          borderRadius: '8px',
+                          cursor: loading ? 'not-allowed' : 'pointer',
+                          textAlign: 'center',
+                          transition: 'all 0.2s ease',
+                          boxShadow: '0 2px 4px rgba(154, 52, 18, 0.2)',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '6px'
+                        }}
+                      >
+                        <Briefcase size={14} color="#FDBA74" />
+                        <span>Recovery Agent</span>
                       </button>
                       <button
                         type="button"
@@ -641,7 +669,7 @@ function Home({ onLogin }) {
                         onClick={() => handlePersonaLogin('customer')}
                         title="Sign in as Retail Borrower (Loan Application & EMI Payments)"
                         style={{
-                          padding: '0.65rem 0.4rem',
+                          padding: '0.65rem 0.5rem',
                           fontSize: '0.78rem',
                           fontWeight: 700,
                           background: activePersona === 'customer' ? '#1D4ED8' : '#2563EB',
@@ -655,7 +683,7 @@ function Home({ onLogin }) {
                           display: 'inline-flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          gap: '5px'
+                          gap: '6px'
                         }}
                       >
                         <UserCheck size={14} color="#93C5FD" />
