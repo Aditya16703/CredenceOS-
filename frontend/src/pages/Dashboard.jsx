@@ -42,11 +42,11 @@ function Dashboard({ user }) {
   }, []);
 
   const navItems = [
-    { id: 'loans', label: 'Loan Portfolios', icon: Building2, roles: ['admin', 'agent', 'customer'] },
-    { id: 'payments', label: 'Repayments & Ledger', icon: CreditCard, roles: ['admin', 'agent', 'customer'] },
-    { id: 'kyc', label: 'KYC & Compliance', icon: ShieldCheck, roles: ['admin', 'agent', 'customer'] },
-    { id: 'reports', label: 'Financial Analytics', icon: BarChart3, roles: ['admin'] },
-    { id: 'audit', label: 'Immutable Audit Trail', icon: History, roles: ['admin'] }
+    { id: 'loans', label: 'Loan Portfolios', icon: Building2, roles: ['admin', 'loan_officer', 'agent', 'customer'] },
+    { id: 'kyc', label: 'KYC & Compliance', icon: ShieldCheck, roles: ['admin', 'loan_officer', 'agent', 'customer'] },
+    { id: 'payments', label: 'Repayments & Ledger', icon: CreditCard, roles: ['admin', 'loan_officer', 'agent', 'customer'] },
+    { id: 'reports', label: 'Financial Analytics', icon: BarChart3, roles: ['admin', 'loan_officer'] },
+    { id: 'audit', label: 'Immutable Audit Trail', icon: History, roles: ['admin', 'loan_officer'] }
   ];
 
   return (
@@ -135,7 +135,7 @@ function Dashboard({ user }) {
           }}>
             <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#10B981', boxShadow: '0 0 5px #10B981' }}></span>
             <span>
-              {user.role === 'admin' ? 'Executive Workspace' : user.role === 'agent' ? 'Collections Desk' : 'Borrower Portal'}
+              {user.role === 'admin' ? 'Executive Workspace' : user.role === 'loan_officer' ? 'Credit & Underwriting Desk' : user.role === 'agent' ? 'Collections Desk' : 'Borrower Portal'}
             </span>
           </div>
 
@@ -207,10 +207,10 @@ function Dashboard({ user }) {
         boxSizing: 'border-box'
       }}>
         {page === 'loans' && <Loans user={user} onNavigate={setPage} />}
-        {page === 'payments' && <Payments user={user} onNavigate={setPage} />}
         {page === 'kyc' && <KYC user={user} onNavigate={setPage} />}
-        {page === 'reports' && user.role === 'admin' && <Reports user={user} onNavigate={setPage} />}
-        {page === 'audit' && user.role === 'admin' && <AuditLogs user={user} onNavigate={setPage} />}
+        {page === 'payments' && <Payments user={user} onNavigate={setPage} />}
+        {page === 'reports' && ['admin', 'loan_officer'].includes(user.role) && <Reports user={user} onNavigate={setPage} />}
+        {page === 'audit' && ['admin', 'loan_officer'].includes(user.role) && <AuditLogs user={user} onNavigate={setPage} />}
       </div>
 
       {/* Notifications Modal */}
