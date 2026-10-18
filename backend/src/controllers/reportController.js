@@ -11,9 +11,9 @@ const { Op } = require('sequelize');
 
 // Get recovered loans (loans with recoveryStatus = 'recovered' or status = 'CLOSED')
 exports.getRecoveredLoans = asyncHandler(async (req, res) => {
-  // Check if user is admin
-  if (req.user.role !== 'admin') {
-    throw new AuthorizationError('Only admins can access reports');
+  // Check if user is admin or loan officer
+  if (!['admin', 'loan_officer'].includes(req.user.role)) {
+    throw new AuthorizationError('Only admins and loan officers can access reports');
   }
 
   const recoveredLoans = await Loan.findAll({
@@ -91,9 +91,9 @@ exports.getRecoveredLoans = asyncHandler(async (req, res) => {
 
 // Get outstanding loans (loans with active servicing status)
 exports.getOutstandingLoans = asyncHandler(async (req, res) => {
-  // Check if user is admin
-  if (req.user.role !== 'admin') {
-    throw new AuthorizationError('Only admins can access reports');
+  // Check if user is admin or loan officer
+  if (!['admin', 'loan_officer'].includes(req.user.role)) {
+    throw new AuthorizationError('Only admins and loan officers can access reports');
   }
 
   const outstandingLoans = await Loan.findAll({
@@ -184,9 +184,9 @@ exports.getOutstandingLoans = asyncHandler(async (req, res) => {
 
 // Get comprehensive recovery report with both recovered and outstanding loans
 exports.getRecoveryReport = asyncHandler(async (req, res) => {
-  // Check if user is admin
-  if (req.user.role !== 'admin') {
-    throw new AuthorizationError('Only admins can access reports');
+  // Check if user is admin or loan officer
+  if (!['admin', 'loan_officer'].includes(req.user.role)) {
+    throw new AuthorizationError('Only admins and loan officers can access reports');
   }
 
   // Get all active, approved, and closed loans

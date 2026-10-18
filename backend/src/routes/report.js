@@ -3,8 +3,8 @@ const router = express.Router();
 const reportController = require('../controllers/reportController');
 const auth = require('../middleware/auth');
 
-// All report routes require admin authentication
-router.use(auth(['admin']));
+// Report routes accessible by admin and loan officers
+router.use(auth(['admin', 'loan_officer']));
 
 // Get recovered loans report
 router.get('/recovered', reportController.getRecoveredLoans);
